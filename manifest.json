@@ -1,0 +1,15 @@
+{
+  "name": "Block-Spam-Link-Tweet",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "ツイート(返信)からスパム系ツイートを可視化してアフィ系スパムリンクを踏む事を阻止します。",
+  "icons" : {
+    "128" : "icon.png"
+  },
+  "permissions" : [
+  ],
+  "content_scripts": [{
+    "matches": ["https://twitter.com/*"],
+    "js": ["content.js"]
+    }]
+  }
