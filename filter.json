@@ -1,0 +1,2989 @@
+[
+  {
+    "developer_update": "20230512",
+    "thanks_user_update": "20230504",
+    "thanks_name": "孤迂闊ℹ️貴方がRTいいねしたツイ、スパムかもしれませんよ",
+    "thanks_link": "https://privatter.net/p/9889173"
+  },
+  [
+    {
+      "regex": "bnc.lt"
+    },
+    {
+      "regex": "(asahsi|sancei|sankeii).com"
+    },
+    {
+      "regex": "newss.blogo.jp"
+    },
+    {
+      "regex": "sitess.blog.jp"
+    },
+    {
+      "regex": "[a-z]otton.blog.jp"
+    },
+    {
+      "regex": "[0-9]{1,2}sex.vip"
+    },
+    {
+      "regex": "t[0-9]y[0-9]S.com"
+    },
+    {
+      "regex": "newspost[a-z]{1,2}.com"
+    },
+    {
+      "regex": "newspro[a-z]{1,2}.com"
+    },
+    {
+      "regex": "onenews[0-9]{1,3}.com"
+    },
+    {
+      "regex": "funnyday[0-9].com"
+    },
+    {
+      "regex": "ournews[0-9].com"
+    },
+    {
+      "regex": "pnews[a-z].com"
+    },
+    {
+      "regex": "aliyuncs.com"
+    },
+    {
+      "regex": "nothingtechnologyinc.blogspot.com"
+    },
+    {
+      "regex": "11foodclass.com"
+    },
+    {
+      "regex": "11funlife.com"
+    },
+    {
+      "regex": "11joyclub.com"
+    },
+    {
+      "regex": "12luckyhome.com"
+    },
+    {
+      "regex": "12luckyhomes.com"
+    },
+    {
+      "regex": "12starnews.com"
+    },
+    {
+      "regex": "12starparty.com"
+    },
+    {
+      "regex": "13lifeskills.com"
+    },
+    {
+      "regex": "13sharehealth.com"
+    },
+    {
+      "regex": "15lifetalking.com"
+    },
+    {
+      "regex": "15lovingclub.com"
+    },
+    {
+      "regex": "16fighting.com"
+    },
+    {
+      "regex": "17688game.com"
+    },
+    {
+      "regex": "17688house.com"
+    },
+    {
+      "regex": "17doingba.com"
+    },
+    {
+      "regex": "17gameworld.com"
+    },
+    {
+      "regex": "17sex.vip"
+    },
+    {
+      "regex": "1997star.ltd"
+    },
+    {
+      "regex": "19bestme.com"
+    },
+    {
+      "regex": "19globalnews.com"
+    },
+    {
+      "regex": "1connotative.com"
+    },
+    {
+      "regex": "1daytopnews.com"
+    },
+    {
+      "regex": "1fannylove.com"
+    },
+    {
+      "regex": "1love999.com"
+    },
+    {
+      "regex": "1moneymore.com"
+    },
+    {
+      "regex": "1workcare.com"
+    },
+    {
+      "regex": "2020funtv.com"
+    },
+    {
+      "regex": "24rain.com"
+    },
+    {
+      "regex": "258lifetoo.com"
+    },
+    {
+      "regex": "27luckystory.com"
+    },
+    {
+      "regex": "33lovesports.com"
+    },
+    {
+      "regex": "360digital.tv"
+    },
+    {
+      "regex": "36healthylife.com"
+    },
+    {
+      "regex": "412lala.com"
+    },
+    {
+      "regex": "44finefood.com"
+    },
+    {
+      "regex": "51acfans.com"
+    },
+    {
+      "regex": "51sex.vip"
+    },
+    {
+      "regex": "51striving.com"
+    },
+    {
+      "regex": "51sweetlove.com"
+    },
+    {
+      "regex": "52-pets.com"
+    },
+    {
+      "regex": "53healthnews.com"
+    },
+    {
+      "regex": "55likegame.com"
+    },
+    {
+      "regex": "55newlife.com"
+    },
+    {
+      "regex": "56k88.com"
+    },
+    {
+      "regex": "5gflu.com"
+    },
+    {
+      "regex": "61gametube.com"
+    },
+    {
+      "regex": "76gogonews.com"
+    },
+    {
+      "regex": "76gotravel.com"
+    },
+    {
+      "regex": "77firstfood.com"
+    },
+    {
+      "regex": "77petshome.com"
+    },
+    {
+      "regex": "77yoyojoy.com"
+    },
+    {
+      "regex": "78bigshare.com"
+    },
+    {
+      "regex": "78likecartoon.com"
+    },
+    {
+      "regex": "7reader.me"
+    },
+    {
+      "regex": "87choicefood.com"
+    },
+    {
+      "regex": "88funpet.com"
+    },
+    {
+      "regex": "88lovelypet.com"
+    },
+    {
+      "regex": "88masnews.com"
+    },
+    {
+      "regex": "91meowcutelove.com"
+    },
+    {
+      "regex": "95cartoonfans.com"
+    },
+    {
+      "regex": "99funnews.com"
+    },
+    {
+      "regex": "99joylife.com"
+    },
+    {
+      "regex": "99mygame.com"
+    },
+    {
+      "regex": "99tango.com"
+    },
+    {
+      "regex": "99ygood.com"
+    },
+    {
+      "regex": "abc-talks.com"
+    },
+    {
+      "regex": "abcjsg.com"
+    },
+    {
+      "regex": "abcxinwen.com"
+    },
+    {
+      "regex": "acg1213.com"
+    },
+    {
+      "regex": "acgfansclub.com"
+    },
+    {
+      "regex": "acgfun.wang"
+    },
+    {
+      "regex": "acworld666.com"
+    },
+    {
+      "regex": "addipost.com"
+    },
+    {
+      "regex": "adorable-pet.com"
+    },
+    {
+      "regex": "adornmenti.com"
+    },
+    {
+      "regex": "affectionpet.com"
+    },
+    {
+      "regex": "ahdwik.com"
+    },
+    {
+      "regex": "aidorumatome.com"
+    },
+    {
+      "regex": "ainnts.com"
+    },
+    {
+      "regex": "airdevice.company"
+    },
+    {
+      "regex": "allpetshare.com"
+    },
+    {
+      "regex": "ally8799.com"
+    },
+    {
+      "regex": "amusing365.com"
+    },
+    {
+      "regex": "analysis-car.com"
+    },
+    {
+      "regex": "ananfree.com"
+    },
+    {
+      "regex": "anfoodu.com"
+    },
+    {
+      "regex": "angel-animals.com"
+    },
+    {
+      "regex": "angela-babies.com"
+    },
+    {
+      "regex": "anime0128.com"
+    },
+    {
+      "regex": "animefans21.com"
+    },
+    {
+      "regex": "anyelse.com"
+    },
+    {
+      "regex": "aoode.top"
+    },
+    {
+      "regex": "aoxza.info"
+    },
+    {
+      "regex": "apetplanet.com"
+    },
+    {
+      "regex": "araranews.com"
+    },
+    {
+      "regex": "army1213.com"
+    },
+    {
+      "regex": "ashinenergy.com"
+    },
+    {
+      "regex": "automobile-evaluation.com"
+    },
+    {
+      "regex": "autumnen.com"
+    },
+    {
+      "regex": "babies-expert.com"
+    },
+    {
+      "regex": "babies521.com"
+    },
+    {
+      "regex": "babiesjh.com"
+    },
+    {
+      "regex": "baby-sisi.com"
+    },
+    {
+      "regex": "baby0world.com"
+    },
+    {
+      "regex": "babygoone.com"
+    },
+    {
+      "regex": "babyild.com"
+    },
+    {
+      "regex": "babyimaster.com"
+    },
+    {
+      "regex": "babyoky.com"
+    },
+    {
+      "regex": "babypartyy.com"
+    },
+    {
+      "regex": "babyucute.com"
+    },
+    {
+      "regex": "babyystory.com"
+    },
+    {
+      "regex": "bake8523.com"
+    },
+    {
+      "regex": "ball9874.com"
+    },
+    {
+      "regex": "ballcab.com"
+    },
+    {
+      "regex": "baoliaonews.com"
+    },
+    {
+      "regex": "base9174.com"
+    },
+    {
+      "regex": "basegolfs.com"
+    },
+    {
+      "regex": "basesize.com"
+    },
+    {
+      "regex": "bchea1th.com"
+    },
+    {
+      "regex": "beauty-families.com"
+    },
+    {
+      "regex": "beauty-stylee.com"
+    },
+    {
+      "regex": "beautychannels.net"
+    },
+    {
+      "regex": "beroendecoachen.se"
+    },
+    {
+      "regex": "bestinfo365.com"
+    },
+    {
+      "regex": "bestlovetop.com"
+    },
+    {
+      "regex": "bestone-work.com"
+    },
+    {
+      "regex": "bestpets97.com"
+    },
+    {
+      "regex": "bettermombaby.com"
+    },
+    {
+      "regex": "bindughsan.com"
+    },
+    {
+      "regex": "biubiunew.com"
+    },
+    {
+      "regex": "bjtriz.com"
+    },
+    {
+      "regex": "blibliread.com"
+    },
+    {
+      "regex": "bllkiw.com"
+    },
+    {
+      "regex": "bniko.top"
+    },
+    {
+      "regex": "bnnopen.com"
+    },
+    {
+      "regex": "bnnspace.com"
+    },
+    {
+      "regex": "boom8888.com"
+    },
+    {
+      "regex": "borderlessbr.com"
+    },
+    {
+      "regex": "borderlessdailytime.com"
+    },
+    {
+      "regex": "borderlessdicas.com"
+    },
+    {
+      "regex": "borderlesssaude.com"
+    },
+    {
+      "regex": "bottomj.com"
+    },
+    {
+      "regex": "br-felicidade.com"
+    },
+    {
+      "regex": "br-materias.com"
+    },
+    {
+      "regex": "br-novodia.com"
+    },
+    {
+      "regex": "bturtlle.com"
+    },
+    {
+      "regex": "bucktop.com"
+    },
+    {
+      "regex": "buddhaim.com"
+    },
+    {
+      "regex": "bvvlife.com"
+    },
+    {
+      "regex": "cabsbag.com"
+    },
+    {
+      "regex": "cakeopp.com"
+    },
+    {
+      "regex": "cakesshare.com"
+    },
+    {
+      "regex": "call-beat.com"
+    },
+    {
+      "regex": "car-onez.com"
+    },
+    {
+      "regex": "car-su.com"
+    },
+    {
+      "regex": "carcarwe.com"
+    },
+    {
+      "regex": "carconts.com"
+    },
+    {
+      "regex": "careofkidas.com"
+    },
+    {
+      "regex": "caringwe.com"
+    },
+    {
+      "regex": "carloslevir.com"
+    },
+    {
+      "regex": "carloveu.com"
+    },
+    {
+      "regex": "carmelschoolkeorapukur.in"
+    },
+    {
+      "regex": "carpartying.com"
+    },
+    {
+      "regex": "cartoonfans766.com"
+    },
+    {
+      "regex": "cartoontalking.com"
+    },
+    {
+      "regex": "cartoonxzoon.com"
+    },
+    {
+      "regex": "cartop-s.com"
+    },
+    {
+      "regex": "cat-meowmeow.com"
+    },
+    {
+      "regex": "cause-success.com"
+    },
+    {
+      "regex": "causestyles.com"
+    },
+    {
+      "regex": "center-youth.com"
+    },
+    {
+      "regex": "charming355.com"
+    },
+    {
+      "regex": "cheeselikes.com"
+    },
+    {
+      "regex": "cherryings.com"
+    },
+    {
+      "regex": "child-loves.com"
+    },
+    {
+      "regex": "childpar.com"
+    },
+    {
+      "regex": "childrenplayfun.com"
+    },
+    {
+      "regex": "chiyidavip.com"
+    },
+    {
+      "regex": "chomered.com"
+    },
+    {
+      "regex": "christianhoeller.com"
+    },
+    {
+      "regex": "cicream.com"
+    },
+    {
+      "regex": "co-47.com"
+    },
+    {
+      "regex": "codetd.com"
+    },
+    {
+      "regex": "cokeread.com"
+    },
+    {
+      "regex": "color6699.com"
+    },
+    {
+      "regex": "colorful-tour.com"
+    },
+    {
+      "regex": "come-pets.com"
+    },
+    {
+      "regex": "comeon-petts.com"
+    },
+    {
+      "regex": "comepet1.com"
+    },
+    {
+      "regex": "comeworlds.com"
+    },
+    {
+      "regex": "commonsense11.com"
+    },
+    {
+      "regex": "companion-healthy.com"
+    },
+    {
+      "regex": "cookicway.com"
+    },
+    {
+      "regex": "cookie-food.com"
+    },
+    {
+      "regex": "cookieword.com"
+    },
+    {
+      "regex": "cooking-teach.com"
+    },
+    {
+      "regex": "cookstoree.com"
+    },
+    {
+      "regex": "cool-acar.com"
+    },
+    {
+      "regex": "coolsaid.com"
+    },
+    {
+      "regex": "cosysing.com"
+    },
+    {
+      "regex": "couples21.com"
+    },
+    {
+      "regex": "cuddlylcute.com"
+    },
+    {
+      "regex": "cuddlyopet.com"
+    },
+    {
+      "regex": "cuocsongmoi60s.com"
+    },
+    {
+      "regex": "cute-pops.com"
+    },
+    {
+      "regex": "cute-shibainu.com"
+    },
+    {
+      "regex": "cutetale.com"
+    },
+    {
+      "regex": "cutetalkk.com"
+    },
+    {
+      "regex": "cutonews.com"
+    },
+    {
+      "regex": "cutpet55.com"
+    },
+    {
+      "regex": "cwns8.com"
+    },
+    {
+      "regex": "daagreat.com"
+    },
+    {
+      "regex": "daapower.com"
+    },
+    {
+      "regex": "dadacome.com"
+    },
+    {
+      "regex": "dadiilove.com"
+    },
+    {
+      "regex": "dailly-pets.com"
+    },
+    {
+      "regex": "daily-coup.com"
+    },
+    {
+      "regex": "daily-novel.net"
+    },
+    {
+      "regex": "dailydaily-up.com"
+    },
+    {
+      "regex": "dailypressworld24.com"
+    },
+    {
+      "regex": "dajxg.com"
+    },
+    {
+      "regex": "damyup.com"
+    },
+    {
+      "regex": "danmitop.com"
+    },
+    {
+      "regex": "datouzhi.com"
+    },
+    {
+      "regex": "daybyse.com"
+    },
+    {
+      "regex": "days-health.com"
+    },
+    {
+      "regex": "days-well.com"
+    },
+    {
+      "regex": "dccneed.com"
+    },
+    {
+      "regex": "ddojoy.com"
+    },
+    {
+      "regex": "decorajh.com"
+    },
+    {
+      "regex": "decorate-guide.com"
+    },
+    {
+      "regex": "decorate-manual.com"
+    },
+    {
+      "regex": "decoratestar.com"
+    },
+    {
+      "regex": "decoration-colorful.com"
+    },
+    {
+      "regex": "decoration-encyclopedia.com"
+    },
+    {
+      "regex": "decoration-essence.com"
+    },
+    {
+      "regex": "decoration-expert.com"
+    },
+    {
+      "regex": "decoration-family.com"
+    },
+    {
+      "regex": "decoration-perfect.com"
+    },
+    {
+      "regex": "decoration-skills.com"
+    },
+    {
+      "regex": "decoration-strategy.com"
+    },
+    {
+      "regex": "decoration-talent.com"
+    },
+    {
+      "regex": "decoration-top.com"
+    },
+    {
+      "regex": "decorationdiary.com"
+    },
+    {
+      "regex": "delicacy-map.com"
+    },
+    {
+      "regex": "delicioushare.com"
+    },
+    {
+      "regex": "delicity.com"
+    },
+    {
+      "regex": "design-lover.com"
+    },
+    {
+      "regex": "design-ourhome.com"
+    },
+    {
+      "regex": "design-touching.com"
+    },
+    {
+      "regex": "design-ways.com"
+    },
+    {
+      "regex": "designer-decorate.com"
+    },
+    {
+      "regex": "designiwe.com"
+    },
+    {
+      "regex": "designmyfamily.com"
+    },
+    {
+      "regex": "designstour.com"
+    },
+    {
+      "regex": "devefood.com"
+    },
+    {
+      "regex": "diadosonhador.com"
+    },
+    {
+      "regex": "didadiadi.com"
+    },
+    {
+      "regex": "didiadidia.com"
+    },
+    {
+      "regex": "dinggling.com"
+    },
+    {
+      "regex": "dnnspeak.com"
+    },
+    {
+      "regex": "do-atravel.com"
+    },
+    {
+      "regex": "docilepuppy.com"
+    },
+    {
+      "regex": "dodokeep.com"
+    },
+    {
+      "regex": "dog-withfriend.com"
+    },
+    {
+      "regex": "doshiventures.com"
+    },
+    {
+      "regex": "dreamwe1.com"
+    },
+    {
+      "regex": "driver-skills.com"
+    },
+    {
+      "regex": "dsawjk.com"
+    },
+    {
+      "regex": "dugreat.com"
+    },
+    {
+      "regex": "dwihox.com"
+    },
+    {
+      "regex": "dwjhgx.com"
+    },
+    {
+      "regex": "dyypart.com"
+    },
+    {
+      "regex": "earl123.com"
+    },
+    {
+      "regex": "easily-work.com"
+    },
+    {
+      "regex": "easycookic.com"
+    },
+    {
+      "regex": "easyto-health.com"
+    },
+    {
+      "regex": "edayjoy.com"
+    },
+    {
+      "regex": "edition-eltern.com"
+    },
+    {
+      "regex": "effort-us.com"
+    },
+    {
+      "regex": "endorsep.com"
+    },
+    {
+      "regex": "energy-myhealth.com"
+    },
+    {
+      "regex": "energy-story.net"
+    },
+    {
+      "regex": "engineji.com"
+    },
+    {
+      "regex": "enjoybabyt.com"
+    },
+    {
+      "regex": "eoeodream.com"
+    },
+    {
+      "regex": "eoeolike.com"
+    },
+    {
+      "regex": "eoeonews.com"
+    },
+    {
+      "regex": "eoeostar.com"
+    },
+    {
+      "regex": "eoomiss.com"
+    },
+    {
+      "regex": "eqaqo.com"
+    },
+    {
+      "regex": "erhealthy.com"
+    },
+    {
+      "regex": "eryq7984.com"
+    },
+    {
+      "regex": "esports17.com"
+    },
+    {
+      "regex": "etsbaby.com"
+    },
+    {
+      "regex": "evaluation-notes.com"
+    },
+    {
+      "regex": "evergreen64.info"
+    },
+    {
+      "regex": "exertionu.com"
+    },
+    {
+      "regex": "explore857.com"
+    },
+    {
+      "regex": "f-snack.com"
+    },
+    {
+      "regex": "faawatch.com"
+    },
+    {
+      "regex": "facadeattic.com"
+    },
+    {
+      "regex": "fafa5918.com"
+    },
+    {
+      "regex": "familyethic.com"
+    },
+    {
+      "regex": "fatosvideo.com"
+    },
+    {
+      "regex": "fbiavip.com"
+    },
+    {
+      "regex": "feagreat.com"
+    },
+    {
+      "regex": "fgnj1634.com"
+    },
+    {
+      "regex": "fighthard415.com"
+    },
+    {
+      "regex": "finddelicacy.com"
+    },
+    {
+      "regex": "finish-new.com"
+    },
+    {
+      "regex": "finloves.com"
+    },
+    {
+      "regex": "firhub69.com"
+    },
+    {
+      "regex": "first-hub.com"
+    },
+    {
+      "regex": "firstopdesign.com"
+    },
+    {
+      "regex": "firstsinfo.com"
+    },
+    {
+      "regex": "fitmenthom.com"
+    },
+    {
+      "regex": "fituper.com"
+    },
+    {
+      "regex": "fl248.com"
+    },
+    {
+      "regex": "flavorcen.com"
+    },
+    {
+      "regex": "flcartoon.com"
+    },
+    {
+      "regex": "flipboard.com"
+    },
+    {
+      "regex": "flybiga.com"
+    },
+    {
+      "regex": "fnnhome.com"
+    },
+    {
+      "regex": "food-collections.com"
+    },
+    {
+      "regex": "food-end.com"
+    },
+    {
+      "regex": "food-ham.com"
+    },
+    {
+      "regex": "food-ienjoy.com"
+    },
+    {
+      "regex": "food-ilove.com"
+    },
+    {
+      "regex": "foodbf.com"
+    },
+    {
+      "regex": "foodchef1.com"
+    },
+    {
+      "regex": "fooddier.com"
+    },
+    {
+      "regex": "foodeatt.com"
+    },
+    {
+      "regex": "fooden1.com"
+    },
+    {
+      "regex": "foodiefunn.com"
+    },
+    {
+      "regex": "foodlifen.com"
+    },
+    {
+      "regex": "foodlove1.com"
+    },
+    {
+      "regex": "foods-yummy.com"
+    },
+    {
+      "regex": "foodszon.com"
+    },
+    {
+      "regex": "foodzuser.com"
+    },
+    {
+      "regex": "forever-super.com"
+    },
+    {
+      "regex": "forvte.me"
+    },
+    {
+      "regex": "found-decoration.com"
+    },
+    {
+      "regex": "foying.net"
+    },
+    {
+      "regex": "freeiiwant.com"
+    },
+    {
+      "regex": "friend-bay.com"
+    },
+    {
+      "regex": "friend-color.com"
+    },
+    {
+      "regex": "friend-will.com"
+    },
+    {
+      "regex": "friendcutepets.com"
+    },
+    {
+      "regex": "fruitsspie.com"
+    },
+    {
+      "regex": "fun-decoration.com"
+    },
+    {
+      "regex": "fun-healthy.com"
+    },
+    {
+      "regex": "funnews61.com"
+    },
+    {
+      "regex": "funnyworld11.com"
+    },
+    {
+      "regex": "funstory365.com"
+    },
+    {
+      "regex": "funworld8.com"
+    },
+    {
+      "regex": "furnishour.com"
+    },
+    {
+      "regex": "furnishwe.com"
+    },
+    {
+      "regex": "future-pet.com"
+    },
+    {
+      "regex": "fxsqrt.com"
+    },
+    {
+      "regex": "garfie1d.com"
+    },
+    {
+      "regex": "garmentboom.com"
+    },
+    {
+      "regex": "geoweb.online"
+    },
+    {
+      "regex": "gettinggz.com"
+    },
+    {
+      "regex": "ggethealth.com"
+    },
+    {
+      "regex": "ghdd3456.com"
+    },
+    {
+      "regex": "girlask21.com"
+    },
+    {
+      "regex": "girly.today"
+    },
+    {
+      "regex": "gloriousfine.com"
+    },
+    {
+      "regex": "gmja8.com"
+    },
+    {
+      "regex": "godababy.com"
+    },
+    {
+      "regex": "godogym.com"
+    },
+    {
+      "regex": "gogo-babies.com"
+    },
+    {
+      "regex": "gogodayday.com"
+    },
+    {
+      "regex": "good-eatt.com"
+    },
+    {
+      "regex": "good-forhealth.com"
+    },
+    {
+      "regex": "good-pregnancy.com"
+    },
+    {
+      "regex": "good-timess.com"
+    },
+    {
+      "regex": "goodhappy11.com"
+    },
+    {
+      "regex": "goodhealh.com"
+    },
+    {
+      "regex": "goodtime-life.com"
+    },
+    {
+      "regex": "goodword123.com"
+    },
+    {
+      "regex": "gowellwork.com"
+    },
+    {
+      "regex": "gowork-place.com"
+    },
+    {
+      "regex": "greendotnews.com"
+    },
+    {
+      "regex": "growing-day.com"
+    },
+    {
+      "regex": "guide-newbie.com"
+    },
+    {
+      "regex": "gunews97.com"
+    },
+    {
+      "regex": "gymball1.com"
+    },
+    {
+      "regex": "gyyplay.com"
+    },
+    {
+      "regex": "hamernail.com"
+    },
+    {
+      "regex": "happy-petts.com"
+    },
+    {
+      "regex": "happyday-health.com"
+    },
+    {
+      "regex": "happydecastle.com"
+    },
+    {
+      "regex": "happynews01.com"
+    },
+    {
+      "regex": "happypy1.com"
+    },
+    {
+      "regex": "happytime15.com"
+    },
+    {
+      "regex": "happyue.com"
+    },
+    {
+      "regex": "health-am.com"
+    },
+    {
+      "regex": "health-goodway.com"
+    },
+    {
+      "regex": "health-happylife.com"
+    },
+    {
+      "regex": "health-newday.com"
+    },
+    {
+      "regex": "health-planweb.com"
+    },
+    {
+      "regex": "health-wonderful.com"
+    },
+    {
+      "regex": "healthdst.com"
+    },
+    {
+      "regex": "healthgoi.com"
+    },
+    {
+      "regex": "healthllove.com"
+    },
+    {
+      "regex": "healthtiimes.com"
+    },
+    {
+      "regex": "healthvigorous.com"
+    },
+    {
+      "regex": "healthwer.com"
+    },
+    {
+      "regex": "healthy-blessed.com"
+    },
+    {
+      "regex": "healthy-lifestylle.com"
+    },
+    {
+      "regex": "healthyhubv.com"
+    },
+    {
+      "regex": "healthylife-energy.com"
+    },
+    {
+      "regex": "healthysj.com"
+    },
+    {
+      "regex": "healthyue.com"
+    },
+    {
+      "regex": "healthyy-daily.com"
+    },
+    {
+      "regex": "heartzo.com"
+    },
+    {
+      "regex": "heytime365.com"
+    },
+    {
+      "regex": "hibabywe.com"
+    },
+    {
+      "regex": "high-today.com"
+    },
+    {
+      "regex": "higherey.com"
+    },
+    {
+      "regex": "hihipets.com"
+    },
+    {
+      "regex": "hipeted.com"
+    },
+    {
+      "regex": "history-story.com"
+    },
+    {
+      "regex": "history-year.com"
+    },
+    {
+      "regex": "hkdaliynew.com"
+    },
+    {
+      "regex": "hkgerposter.com"
+    },
+    {
+      "regex": "hklocalfeed.com"
+    },
+    {
+      "regex": "homenews11.com"
+    },
+    {
+      "regex": "homeome11.com"
+    },
+    {
+      "regex": "hostfy.io"
+    },
+    {
+      "regex": "hotnewsclub.com"
+    },
+    {
+      "regex": "hotsums.com"
+    },
+    {
+      "regex": "hoursfor.com"
+    },
+    {
+      "regex": "house-petdaily.com"
+    },
+    {
+      "regex": "houseborn.com"
+    },
+    {
+      "regex": "houseddesign.com"
+    },
+    {
+      "regex": "houses-planning.com"
+    },
+    {
+      "regex": "housesdevise.com"
+    },
+    {
+      "regex": "hslqp.com"
+    },
+    {
+      "regex": "huazai11.com"
+    },
+    {
+      "regex": "hydrotek.com"
+    },
+    {
+      "regex": "i-besthome.com"
+    },
+    {
+      "regex": "i-designer.net"
+    },
+    {
+      "regex": "i-findshops.com"
+    },
+    {
+      "regex": "i-petlife.com"
+    },
+    {
+      "regex": "ibaby16.com"
+    },
+    {
+      "regex": "idforread.com"
+    },
+    {
+      "regex": "ifbelieve.com"
+    },
+    {
+      "regex": "ifoodsworld.com"
+    },
+    {
+      "regex": "ifsuperr.com"
+    },
+    {
+      "regex": "igo-japan.net"
+    },
+    {
+      "regex": "ihealth-time.com"
+    },
+    {
+      "regex": "iiceredteas.com"
+    },
+    {
+      "regex": "iitrendwadai.com"
+    },
+    {
+      "regex": "ikeep-body.com"
+    },
+    {
+      "regex": "ilove-peace.com"
+    },
+    {
+      "regex": "ilove-top.com"
+    },
+    {
+      "regex": "in-decorating.com"
+    },
+    {
+      "regex": "indodecorat.com"
+    },
+    {
+      "regex": "ingame33.com"
+    },
+    {
+      "regex": "inlove77.com"
+    },
+    {
+      "regex": "insfruit.com"
+    },
+    {
+      "regex": "inspirational-saying.com"
+    },
+    {
+      "regex": "inspirational-share.com"
+    },
+    {
+      "regex": "intalkz.com"
+    },
+    {
+      "regex": "ipetparadise.com"
+    },
+    {
+      "regex": "iqiqulife.com"
+    },
+    {
+      "regex": "isaacvacuum.com"
+    },
+    {
+      "regex": "itigeryou.com"
+    },
+    {
+      "regex": "itrorw.com"
+    },
+    {
+      "regex": "ivel-sat.com"
+    },
+    {
+      "regex": "iwork-perfect.com"
+    },
+    {
+      "regex": "jdquw113.com"
+    },
+    {
+      "regex": "jiastar11.com"
+    },
+    {
+      "regex": "jinglemom.com"
+    },
+    {
+      "regex": "jkingtimes.com"
+    },
+    {
+      "regex": "jog-sport.com"
+    },
+    {
+      "regex": "jojbaby.com"
+    },
+    {
+      "regex": "jojosunny.com"
+    },
+    {
+      "regex": "jonlovefood.com"
+    },
+    {
+      "regex": "jooright.com"
+    },
+    {
+      "regex": "journey-day.com"
+    },
+    {
+      "regex": "journey-fun.com"
+    },
+    {
+      "regex": "journeyvi.com"
+    },
+    {
+      "regex": "jp-anyelse.com"
+    },
+    {
+      "regex": "jp-funny.com"
+    },
+    {
+      "regex": "jp-hotnews.com"
+    },
+    {
+      "regex": "jp-starnews.com"
+    },
+    {
+      "regex": "jpfunvideo.com"
+    },
+    {
+      "regex": "jpshareba.com"
+    },
+    {
+      "regex": "juicelse.com"
+    },
+    {
+      "regex": "justyeye.com"
+    },
+    {
+      "regex": "kaka-pets.com"
+    },
+    {
+      "regex": "kako-pets.com"
+    },
+    {
+      "regex": "keeeping-healthy.com"
+    },
+    {
+      "regex": "keep-petss.com"
+    },
+    {
+      "regex": "keephealthy21.com"
+    },
+    {
+      "regex": "keeping-health.com"
+    },
+    {
+      "regex": "keepingjk.com"
+    },
+    {
+      "regex": "keepingl.com"
+    },
+    {
+      "regex": "keepkeepfit.com"
+    },
+    {
+      "regex": "keepsjk.com"
+    },
+    {
+      "regex": "kid-ify.com"
+    },
+    {
+      "regex": "kidssity.com"
+    },
+    {
+      "regex": "kidy-kidy.com"
+    },
+    {
+      "regex": "kidy-party.com"
+    },
+    {
+      "regex": "kknsays.com"
+    },
+    {
+      "regex": "knifetipster.com"
+    },
+    {
+      "regex": "knnbeauty.com"
+    },
+    {
+      "regex": "knnwork.com"
+    },
+    {
+      "regex": "knowledgekhabar.com"
+    },
+    {
+      "regex": "kobcar.com"
+    },
+    {
+      "regex": "kokfood.com"
+    },
+    {
+      "regex": "kokoanew.com"
+    },
+    {
+      "regex": "kokoready.com"
+    },
+    {
+      "regex": "kold.top"
+    },
+    {
+      "regex": "kolovers.com"
+    },
+    {
+      "regex": "komica.org"
+    },
+    {
+      "regex": "kwpsg.com"
+    },
+    {
+      "regex": "kzclip.com"
+    },
+    {
+      "regex": "laugh-more.com"
+    },
+    {
+      "regex": "learnaha.com"
+    },
+    {
+      "regex": "lemonlin.com"
+    },
+    {
+      "regex": "life-knowhow.com"
+    },
+    {
+      "regex": "life-lovehealth.com"
+    },
+    {
+      "regex": "life-lovehealthy.com"
+    },
+    {
+      "regex": "life-ours.com"
+    },
+    {
+      "regex": "lifebeautyy.com"
+    },
+    {
+      "regex": "lifenewsjr.com"
+    },
+    {
+      "regex": "lifestarup.com"
+    },
+    {
+      "regex": "likehealth21.com"
+    },
+    {
+      "regex": "likevideo16.com"
+    },
+    {
+      "regex": "ling-baby.com"
+    },
+    {
+      "regex": "loft-stair.com"
+    },
+    {
+      "regex": "longevity-s.com"
+    },
+    {
+      "regex": "loolook88.com"
+    },
+    {
+      "regex": "lot-pets.com"
+    },
+    {
+      "regex": "love-families.com"
+    },
+    {
+      "regex": "love-happyday.com"
+    },
+    {
+      "regex": "love-heallth.com"
+    },
+    {
+      "regex": "love-puppys.com"
+    },
+    {
+      "regex": "lovehealth-newday.com"
+    },
+    {
+      "regex": "lovehealthy365.com"
+    },
+    {
+      "regex": "lovehouse123.com"
+    },
+    {
+      "regex": "lovehouse456.com"
+    },
+    {
+      "regex": "lovelife75.com"
+    },
+    {
+      "regex": "lovelyhi.com"
+    },
+    {
+      "regex": "lovelypetfamily.com"
+    },
+    {
+      "regex": "lovepet-paradise.com"
+    },
+    {
+      "regex": "lovepet-peace.com"
+    },
+    {
+      "regex": "lovepetsfuture.com"
+    },
+    {
+      "regex": "lovepetzi.com"
+    },
+    {
+      "regex": "lovers521.com"
+    },
+    {
+      "regex": "lovestylehouse.com"
+    },
+    {
+      "regex": "loveuniques.com"
+    },
+    {
+      "regex": "lovey-puppys.com"
+    },
+    {
+      "regex": "loveyou-pets.com"
+    },
+    {
+      "regex": "lovvebaby.com"
+    },
+    {
+      "regex": "luckyibaby.com"
+    },
+    {
+      "regex": "lylywellhouse.com"
+    },
+    {
+      "regex": "mamababy6.com"
+    },
+    {
+      "regex": "mamiable.com"
+    },
+    {
+      "regex": "marriage-woman.com"
+    },
+    {
+      "regex": "matomake.com"
+    },
+    {
+      "regex": "matttaulmusic.com"
+    },
+    {
+      "regex": "mdndy.com"
+    },
+    {
+      "regex": "mdsw8.com"
+    },
+    {
+      "regex": "meall-times.com"
+    },
+    {
+      "regex": "meallhealth.com"
+    },
+    {
+      "regex": "mealwebs.com"
+    },
+    {
+      "regex": "media-groove.com"
+    },
+    {
+      "regex": "media802news.com"
+    },
+    {
+      "regex": "meek-pet.com"
+    },
+    {
+      "regex": "meekloves.com"
+    },
+    {
+      "regex": "meekspet.com"
+    },
+    {
+      "regex": "meetcutepet.com"
+    },
+    {
+      "regex": "melhores24hrs.com"
+    },
+    {
+      "regex": "melhoresaqui.com"
+    },
+    {
+      "regex": "memeslong.com"
+    },
+    {
+      "regex": "mentsmaster.com"
+    },
+    {
+      "regex": "mew-cats.com"
+    },
+    {
+      "regex": "mewmewinfo.com"
+    },
+    {
+      "regex": "mhkslo.com"
+    },
+    {
+      "regex": "mi-malist.com"
+    },
+    {
+      "regex": "mild-way.com"
+    },
+    {
+      "regex": "milkbre.com"
+    },
+    {
+      "regex": "missebaby.com"
+    },
+    {
+      "regex": "mlsjqa.com"
+    },
+    {
+      "regex": "mmeowv.com"
+    },
+    {
+      "regex": "mmjspots.com"
+    },
+    {
+      "regex": "mmuscular.com"
+    },
+    {
+      "regex": "mnewsb.com"
+    },
+    {
+      "regex": "mnewsp.com"
+    },
+    {
+      "regex": "mom1love.com"
+    },
+    {
+      "regex": "move-styles.com"
+    },
+    {
+      "regex": "mrbigtalking.com"
+    },
+    {
+      "regex": "mundocurioso24hrs.com"
+    },
+    {
+      "regex": "muscle865.com"
+    },
+    {
+      "regex": "musiccweb.com"
+    },
+    {
+      "regex": "my-styledesign.com"
+    },
+    {
+      "regex": "mydesign-cases.com"
+    },
+    {
+      "regex": "myhappyz.com"
+    },
+    {
+      "regex": "myhealth-lifestyle.com"
+    },
+    {
+      "regex": "myhealth-living.com"
+    },
+    {
+      "regex": "myhealth-time.com"
+    },
+    {
+      "regex": "myhome-lovely.com"
+    },
+    {
+      "regex": "myhomeoclinic.com"
+    },
+    {
+      "regex": "myhouse-renovation.com"
+    },
+    {
+      "regex": "mylifegood20.com"
+    },
+    {
+      "regex": "mylifeofpets.com"
+    },
+    {
+      "regex": "mypet-lovely.com"
+    },
+    {
+      "regex": "mypet520.com"
+    },
+    {
+      "regex": "mypets-world.com"
+    },
+    {
+      "regex": "mystyle-health.com"
+    },
+    {
+      "regex": "nanawait.com"
+    },
+    {
+      "regex": "nanikorematome.com"
+    },
+    {
+      "regex": "nathalieaziz.com"
+    },
+    {
+      "regex": "new-lifehealth.com"
+    },
+    {
+      "regex": "newalmighty.com"
+    },
+    {
+      "regex": "newenteri.com"
+    },
+    {
+      "regex": "newline365.com"
+    },
+    {
+      "regex": "news-egg.com"
+    },
+    {
+      "regex": "news30links.com"
+    },
+    {
+      "regex": "news39zone.com"
+    },
+    {
+      "regex": "newsdadii.com"
+    },
+    {
+      "regex": "newsdbl.com"
+    },
+    {
+      "regex": "newsdidida.com"
+    },
+    {
+      "regex": "newsipost.com"
+    },
+    {
+      "regex": "newsldp.com"
+    },
+    {
+      "regex": "newsrdp.com"
+    },
+    {
+      "regex": "newstvc.com"
+    },
+    {
+      "regex": "newstvd.com"
+    },
+    {
+      "regex": "nice-foood.com"
+    },
+    {
+      "regex": "nicelifea.com"
+    },
+    {
+      "regex": "niice-woker.com"
+    },
+    {
+      "regex": "nofail8.com"
+    },
+    {
+      "regex": "northgamountains.com"
+    },
+    {
+      "regex": "noticiasbombastica.com"
+    },
+    {
+      "regex": "noticiasespaco.com"
+    },
+    {
+      "regex": "novaatual.com"
+    },
+    {
+      "regex": "nowefor.com"
+    },
+    {
+      "regex": "nutritious-breakfast.com"
+    },
+    {
+      "regex": "nvkkpi.com"
+    },
+    {
+      "regex": "ob-pets.com"
+    },
+    {
+      "regex": "oeoestay.com"
+    },
+    {
+      "regex": "ohofirst.com"
+    },
+    {
+      "regex": "okeyread.com"
+    },
+    {
+      "regex": "okkfamilies.com"
+    },
+    {
+      "regex": "onbest-pets.com"
+    },
+    {
+      "regex": "one-sups.com"
+    },
+    {
+      "regex": "onedayabc.com"
+    },
+    {
+      "regex": "oneonstyle.com"
+    },
+    {
+      "regex": "onepron.com"
+    },
+    {
+      "regex": "onionew.com"
+    },
+    {
+      "regex": "onlylove-one.com"
+    },
+    {
+      "regex": "onlypet1.com"
+    },
+    {
+      "regex": "onocute.com"
+    },
+    {
+      "regex": "open-selfless.com"
+    },
+    {
+      "regex": "openipartner.com"
+    },
+    {
+      "regex": "opopgame.com"
+    },
+    {
+      "regex": "opoplike.com"
+    },
+    {
+      "regex": "optimal-partner.com"
+    },
+    {
+      "regex": "ourbegin.com"
+    },
+    {
+      "regex": "ourcars-guide.com"
+    },
+    {
+      "regex": "paintbucke.com"
+    },
+    {
+      "regex": "parent-babies.com"
+    },
+    {
+      "regex": "parent-diary.com"
+    },
+    {
+      "regex": "parenthi.com"
+    },
+    {
+      "regex": "parents-strategy.com"
+    },
+    {
+      "regex": "parentscomeon.com"
+    },
+    {
+      "regex": "parentups.com"
+    },
+    {
+      "regex": "parroi1t.com"
+    },
+    {
+      "regex": "partner-we.com"
+    },
+    {
+      "regex": "pass345.com"
+    },
+    {
+      "regex": "peach1234.com"
+    },
+    {
+      "regex": "people-cause.com"
+    },
+    {
+      "regex": "perfect-encounter.com"
+    },
+    {
+      "regex": "perfectde-coration.com"
+    },
+    {
+      "regex": "pet-angela.com"
+    },
+    {
+      "regex": "pet-beautiful.com"
+    },
+    {
+      "regex": "pet-comeon.com"
+    },
+    {
+      "regex": "pet-cutelovely.com"
+    },
+    {
+      "regex": "pet-docile.com"
+    },
+    {
+      "regex": "pet-encyclopedia.com"
+    },
+    {
+      "regex": "pet-goparty.com"
+    },
+    {
+      "regex": "pet-gorun.com"
+    },
+    {
+      "regex": "pet-growth.com"
+    },
+    {
+      "regex": "pet-habits.com"
+    },
+    {
+      "regex": "pet-iget.com"
+    },
+    {
+      "regex": "pet-loveandhealth.com"
+    },
+    {
+      "regex": "pet-myfriend.com"
+    },
+    {
+      "regex": "pet-shy.com"
+    },
+    {
+      "regex": "pet-tito.com"
+    },
+    {
+      "regex": "pet-welove.com"
+    },
+    {
+      "regex": "petbasego.com"
+    },
+    {
+      "regex": "petbeai.com"
+    },
+    {
+      "regex": "petclev.com"
+    },
+    {
+      "regex": "petfama.com"
+    },
+    {
+      "regex": "petgrouplife.com"
+    },
+    {
+      "regex": "petilovey.com"
+    },
+    {
+      "regex": "petimiou.com"
+    },
+    {
+      "regex": "petisits.com"
+    },
+    {
+      "regex": "pets-angela.com"
+    },
+    {
+      "regex": "pets-beautiful.com"
+    },
+    {
+      "regex": "pets-dote.com"
+    },
+    {
+      "regex": "pets-feedder.com"
+    },
+    {
+      "regex": "pets-happylife.com"
+    },
+    {
+      "regex": "pets-homee.com"
+    },
+    {
+      "regex": "pets-inmyhome.com"
+    },
+    {
+      "regex": "pets-master.com"
+    },
+    {
+      "regex": "pets-myfriend.com"
+    },
+    {
+      "regex": "pets-naivety.com"
+    },
+    {
+      "regex": "pets-onlyperfect.com"
+    },
+    {
+      "regex": "pets-surprise.com"
+    },
+    {
+      "regex": "pets-worldsd.com"
+    },
+    {
+      "regex": "pets-zones.com"
+    },
+    {
+      "regex": "pets699.com"
+    },
+    {
+      "regex": "petsccs.com"
+    },
+    {
+      "regex": "petslove4uu.com"
+    },
+    {
+      "regex": "petsonelove.com"
+    },
+    {
+      "regex": "petstube35.com"
+    },
+    {
+      "regex": "petts-online.com"
+    },
+    {
+      "regex": "petvigorous.com"
+    },
+    {
+      "regex": "petzaza.com"
+    },
+    {
+      "regex": "physiquego.com"
+    },
+    {
+      "regex": "pig-pets.com"
+    },
+    {
+      "regex": "pip-cute.com"
+    },
+    {
+      "regex": "planforrbaby.com"
+    },
+    {
+      "regex": "playball-pet.com"
+    },
+    {
+      "regex": "playing-pets.com"
+    },
+    {
+      "regex": "pnewsap.com"
+    },
+    {
+      "regex": "pnewsj.com"
+    },
+    {
+      "regex": "pnyjjt.com"
+    },
+    {
+      "regex": "pock2342.com"
+    },
+    {
+      "regex": "poflod.com"
+    },
+    {
+      "regex": "pooede.top"
+    },
+    {
+      "regex": "pool-lover.com"
+    },
+    {
+      "regex": "popjony.com"
+    },
+    {
+      "regex": "praiseme12.com"
+    },
+    {
+      "regex": "prefect-home.com"
+    },
+    {
+      "regex": "pressworld24hrs.com"
+    },
+    {
+      "regex": "pretty-myhealth.com"
+    },
+    {
+      "regex": "prettycutepet.com"
+    },
+    {
+      "regex": "pttfunnews.com"
+    },
+    {
+      "regex": "qaafunny.com"
+    },
+    {
+      "regex": "qaaplan.com"
+    },
+    {
+      "regex": "qiqi-home.com"
+    },
+    {
+      "regex": "qiqu11.com"
+    },
+    {
+      "regex": "qiqushow.com"
+    },
+    {
+      "regex": "quiet-pet.com"
+    },
+    {
+      "regex": "quotationsi.com"
+    },
+    {
+      "regex": "qwspeed.com"
+    },
+    {
+      "regex": "radiometodista.com.bo"
+    },
+    {
+      "regex": "rccday.com"
+    },
+    {
+      "regex": "recipes-forfood.com"
+    },
+    {
+      "regex": "redawine.com"
+    },
+    {
+      "regex": "regimen-life.com"
+    },
+    {
+      "regex": "regimengo.com"
+    },
+    {
+      "regex": "remodelsh.com"
+    },
+    {
+      "regex": "renovation-beauty.com"
+    },
+    {
+      "regex": "renovmo.com"
+    },
+    {
+      "regex": "review996.com"
+    },
+    {
+      "regex": "rifusy.com"
+    },
+    {
+      "regex": "rightem.com"
+    },
+    {
+      "regex": "roadstert.com"
+    },
+    {
+      "regex": "romanti-design.com"
+    },
+    {
+      "regex": "room-size.com"
+    },
+    {
+      "regex": "rorohope.com"
+    },
+    {
+      "regex": "rttdaily.com"
+    },
+    {
+      "regex": "rulejo.com"
+    },
+    {
+      "regex": "run-pet.com"
+    },
+    {
+      "regex": "running-pet.com"
+    },
+    {
+      "regex": "sajerhat.com"
+    },
+    {
+      "regex": "sarahtalking.com"
+    },
+    {
+      "regex": "sarahtalkshow.com"
+    },
+    {
+      "regex": "sddmovie.com"
+    },
+    {
+      "regex": "setsailsweb.com"
+    },
+    {
+      "regex": "share-healthy.com"
+    },
+    {
+      "regex": "shareba.com"
+    },
+    {
+      "regex": "sharefood-top.com"
+    },
+    {
+      "regex": "shishimom.com"
+    },
+    {
+      "regex": "shovelofficer.com"
+    },
+    {
+      "regex": "sight-try.com"
+    },
+    {
+      "regex": "skiingno.com"
+    },
+    {
+      "regex": "skiisport.com"
+    },
+    {
+      "regex": "skillprofession.com"
+    },
+    {
+      "regex": "skills-driving.com"
+    },
+    {
+      "regex": "sky-want.com"
+    },
+    {
+      "regex": "skyrainbowco.com"
+    },
+    {
+      "regex": "smallpopo.com"
+    },
+    {
+      "regex": "smkiss.sch.id"
+    },
+    {
+      "regex": "snackil.com"
+    },
+    {
+      "regex": "snoosport.com"
+    },
+    {
+      "regex": "solveapro.com"
+    },
+    {
+      "regex": "sosomind.com"
+    },
+    {
+      "regex": "sosoword.com"
+    },
+    {
+      "regex": "speedrq.com"
+    },
+    {
+      "regex": "sportt-do.com"
+    },
+    {
+      "regex": "sradha.org"
+    },
+    {
+      "regex": "ssrsbj.com"
+    },
+    {
+      "regex": "staripet.com"
+    },
+    {
+      "regex": "starixk.com"
+    },
+    {
+      "regex": "starlala11.com"
+    },
+    {
+      "regex": "starlight0.com"
+    },
+    {
+      "regex": "starsays12.com"
+    },
+    {
+      "regex": "starup-cool.com"
+    },
+    {
+      "regex": "stat-art.com"
+    },
+    {
+      "regex": "stationcc.com"
+    },
+    {
+      "regex": "stay-healthhy.com"
+    },
+    {
+      "regex": "stefanhuth.com"
+    },
+    {
+      "regex": "storfamily.com"
+    },
+    {
+      "regex": "style-healthway.com"
+    },
+    {
+      "regex": "styleartt.com"
+    },
+    {
+      "regex": "styleddecoration.com"
+    },
+    {
+      "regex": "styleihome.com"
+    },
+    {
+      "regex": "stylewantd.com"
+    },
+    {
+      "regex": "suaboya.com"
+    },
+    {
+      "regex": "successarticle.com"
+    },
+    {
+      "regex": "successs-experience.com"
+    },
+    {
+      "regex": "successture.com"
+    },
+    {
+      "regex": "succulenter.net"
+    },
+    {
+      "regex": "sunflyday.com"
+    },
+    {
+      "regex": "sup-friend.com"
+    },
+    {
+      "regex": "super-cutepet.com"
+    },
+    {
+      "regex": "super-delicacy.com"
+    },
+    {
+      "regex": "super-puppys.com"
+    },
+    {
+      "regex": "superbaby0127.com"
+    },
+    {
+      "regex": "supercatdogs.com"
+    },
+    {
+      "regex": "supermyhouse.com"
+    },
+    {
+      "regex": "superoomq.com"
+    },
+    {
+      "regex": "supertime01.com"
+    },
+    {
+      "regex": "surprise-journey.com"
+    },
+    {
+      "regex": "svsvves.com"
+    },
+    {
+      "regex": "sweetastes.com"
+    },
+    {
+      "regex": "swordsman94.com"
+    },
+    {
+      "regex": "symbiorsolar.com"
+    },
+    {
+      "regex": "synthesistop.com"
+    },
+    {
+      "regex": "taaparty.com"
+    },
+    {
+      "regex": "tad-j.com"
+    },
+    {
+      "regex": "takhgc.com"
+    },
+    {
+      "regex": "talk-furnish.com"
+    },
+    {
+      "regex": "tastysdel.com"
+    },
+    {
+      "regex": "tdchuxing.com"
+    },
+    {
+      "regex": "teach-healthy.com"
+    },
+    {
+      "regex": "team-method.com"
+    },
+    {
+      "regex": "tenscars.com"
+    },
+    {
+      "regex": "testcome.com"
+    },
+    {
+      "regex": "the-besthealth.com"
+    },
+    {
+      "regex": "thecar-butler.com"
+    },
+    {
+      "regex": "thecar-repair.com"
+    },
+    {
+      "regex": "themind529.com"
+    },
+    {
+      "regex": "thenewslens.com"
+    },
+    {
+      "regex": "tiantojia16.com"
+    },
+    {
+      "regex": "tile-afloor.com"
+    },
+    {
+      "regex": "timenowstyle.com"
+    },
+    {
+      "regex": "titisyz.com"
+    },
+    {
+      "regex": "todayfunnews.com"
+    },
+    {
+      "regex": "todaytwnews.com"
+    },
+    {
+      "regex": "togetherii.com"
+    },
+    {
+      "regex": "togetherjapantw.com"
+    },
+    {
+      "regex": "toop-workers.com"
+    },
+    {
+      "regex": "toopartner.com"
+    },
+    {
+      "regex": "topcarweb.com"
+    },
+    {
+      "regex": "topline321.com"
+    },
+    {
+      "regex": "topnews321.com"
+    },
+    {
+      "regex": "topvcars.com"
+    },
+    {
+      "regex": "totripp.com"
+    },
+    {
+      "regex": "totsuper.com"
+    },
+    {
+      "regex": "tour-learn.com"
+    },
+    {
+      "regex": "tour-lucky.com"
+    },
+    {
+      "regex": "tours-game.com"
+    },
+    {
+      "regex": "trackvt.com"
+    },
+    {
+      "regex": "trhen.com"
+    },
+    {
+      "regex": "ttechat.com"
+    },
+    {
+      "regex": "ttoocome.com"
+    },
+    {
+      "regex": "tubtok.com"
+    },
+    {
+      "regex": "u-kidy.com"
+    },
+    {
+      "regex": "uhealthweb.com"
+    },
+    {
+      "regex": "ukwidereps.co.uk"
+    },
+    {
+      "regex": "umbpet.com"
+    },
+    {
+      "regex": "uncgsd.com"
+    },
+    {
+      "regex": "unicapa.com.br"
+    },
+    {
+      "regex": "uoty5771.com"
+    },
+    {
+      "regex": "uskjid.com"
+    },
+    {
+      "regex": "v-cereals.com"
+    },
+    {
+      "regex": "v6nwm.com"
+    },
+    {
+      "regex": "vaacase.com"
+    },
+    {
+      "regex": "vaalue-healthy.com"
+    },
+    {
+      "regex": "vdsh8.com"
+    },
+    {
+      "regex": "vestiirk.ru:443"
+    },
+    {
+      "regex": "vevechat.com"
+    },
+    {
+      "regex": "vidamelhoresaude.com"
+    },
+    {
+      "regex": "videosshows.com"
+    },
+    {
+      "regex": "viewsh.com"
+    },
+    {
+      "regex": "vklvip.com"
+    },
+    {
+      "regex": "voohappy.com"
+    },
+    {
+      "regex": "voosuper.com"
+    },
+    {
+      "regex": "voosweet.com"
+    },
+    {
+      "regex": "vovfood.com"
+    },
+    {
+      "regex": "vovostar.com"
+    },
+    {
+      "regex": "vsdm8.com"
+    },
+    {
+      "regex": "vvetalk.com"
+    },
+    {
+      "regex": "waagreat.com"
+    },
+    {
+      "regex": "wadainoitiniti.com"
+    },
+    {
+      "regex": "wantitry.com"
+    },
+    {
+      "regex": "warm-decorate.com"
+    },
+    {
+      "regex": "warm-familys.com"
+    },
+    {
+      "regex": "warmdesignn.com"
+    },
+    {
+      "regex": "watchingnew.com"
+    },
+    {
+      "regex": "wateronn.com"
+    },
+    {
+      "regex": "wayflyz.com"
+    },
+    {
+      "regex": "wayto-health.com"
+    },
+    {
+      "regex": "wduiwg.com"
+    },
+    {
+      "regex": "we-reminisce.com"
+    },
+    {
+      "regex": "wealwomen.com"
+    },
+    {
+      "regex": "webs-cute.com"
+    },
+    {
+      "regex": "weebokm.com"
+    },
+    {
+      "regex": "wel-baby.com"
+    },
+    {
+      "regex": "wellbeing97.com"
+    },
+    {
+      "regex": "welltonsteak.com"
+    },
+    {
+      "regex": "wellwaypro.com"
+    },
+    {
+      "regex": "welook365.com"
+    },
+    {
+      "regex": "welove-cat.com"
+    },
+    {
+      "regex": "welove-gourmet.com"
+    },
+    {
+      "regex": "wendybaby127.com"
+    },
+    {
+      "regex": "wewegame99.com"
+    },
+    {
+      "regex": "wewegrow.com"
+    },
+    {
+      "regex": "willreng.com"
+    },
+    {
+      "regex": "windows-server11.com"
+    },
+    {
+      "regex": "wioau.com"
+    },
+    {
+      "regex": "with-ipet.com"
+    },
+    {
+      "regex": "with-summer.com"
+    },
+    {
+      "regex": "wityy.com"
+    },
+    {
+      "regex": "wiudx.com"
+    },
+    {
+      "regex": "wiusbh.com"
+    },
+    {
+      "regex": "wokxcn.com"
+    },
+    {
+      "regex": "wonderfuleat.com"
+    },
+    {
+      "regex": "woof-puppys.com"
+    },
+    {
+      "regex": "work-efficientlly.com"
+    },
+    {
+      "regex": "work3254.com"
+    },
+    {
+      "regex": "workplace-rule.com"
+    },
+    {
+      "regex": "workplacetop.com"
+    },
+    {
+      "regex": "wowolook.com"
+    },
+    {
+      "regex": "wprofessiion.com"
+    },
+    {
+      "regex": "wsvsw.com"
+    },
+    {
+      "regex": "wuwu666.com"
+    },
+    {
+      "regex": "xfoodstuffs.com"
+    },
+    {
+      "regex": "xgaj8.com"
+    },
+    {
+      "regex": "xgno8.com"
+    },
+    {
+      "regex": "xigorgeous.com"
+    },
+    {
+      "regex": "xinlisten.com"
+    },
+    {
+      "regex": "xulook.com"
+    },
+    {
+      "regex": "xuustory.com"
+    },
+    {
+      "regex": "yaonews96.com"
+    },
+    {
+      "regex": "yaya0506.com"
+    },
+    {
+      "regex": "ybbhouse.com"
+    },
+    {
+      "regex": "yeereader.com"
+    },
+    {
+      "regex": "yings365.com"
+    },
+    {
+      "regex": "ymlove99.com"
+    },
+    {
+      "regex": "you1236.com"
+    },
+    {
+      "regex": "yoyoeasy.com"
+    },
+    {
+      "regex": "yuuenjoy.com"
+    },
+    {
+      "regex": "yuutoday.com"
+    },
+    {
+      "regex": "yuyhonor.com"
+    },
+    {
+      "regex": "zanread.com"
+    },
+    {
+      "regex": "zccshop.com"
+    },
+    {
+      "regex": "zhao1236.com"
+    },
+    {
+      "regex": "znsav.com"
+    },
+    {
+      "regex": "zofight.com"
+    },
+    {
+      "regex": "zoomnewslive.com"
+    },
+    {
+      "regex": "zxhammer.com"
+    },
+    {
+      "regex": "ikktoday.com"
+    },
+    {
+      "regex": "dayfgh.com"
+    },
+    {
+      "regex": "baobaowe.com"
+    },
+    {
+      "regex": "csiwee.com"
+    }
+  ],
+  {
+    "concat_regex": "(bnc.lt|(asahsi|sancei|sankeii).com|newss.blogo.jp|sitess.blog.jp|[a-z]otton.blog.jp|[0-9]{1,2}sex.vip|t[0-9]y[0-9]S.com|newspost[a-z]{1,2}.com|newspro[a-z]{1,2}.com|onenews[0-9]{1,3}.com|funnyday[0-9].com|ournews[0-9].com|pnews[a-z].com|aliyuncs.com|nothingtechnologyinc.blogspot.com|11foodclass.com|11funlife.com|11joyclub.com|12luckyhome.com|12luckyhomes.com|12starnews.com|12starparty.com|13lifeskills.com|13sharehealth.com|15lifetalking.com|15lovingclub.com|16fighting.com|17688game.com|17688house.com|17doingba.com|17gameworld.com|17sex.vip|1997star.ltd|19bestme.com|19globalnews.com|1connotative.com|1daytopnews.com|1fannylove.com|1love999.com|1moneymore.com|1workcare.com|2020funtv.com|24rain.com|258lifetoo.com|27luckystory.com|33lovesports.com|360digital.tv|36healthylife.com|412lala.com|44finefood.com|51acfans.com|51sex.vip|51striving.com|51sweetlove.com|52-pets.com|53healthnews.com|55likegame.com|55newlife.com|56k88.com|5gflu.com|61gametube.com|76gogonews.com|76gotravel.com|77firstfood.com|77petshome.com|77yoyojoy.com|78bigshare.com|78likecartoon.com|7reader.me|87choicefood.com|88funpet.com|88lovelypet.com|88masnews.com|91meowcutelove.com|95cartoonfans.com|99funnews.com|99joylife.com|99mygame.com|99tango.com|99ygood.com|abc-talks.com|abcjsg.com|abcxinwen.com|acg1213.com|acgfansclub.com|acgfun.wang|acworld666.com|addipost.com|adorable-pet.com|adornmenti.com|affectionpet.com|ahdwik.com|aidorumatome.com|ainnts.com|airdevice.company|allpetshare.com|ally8799.com|amusing365.com|analysis-car.com|ananfree.com|anfoodu.com|angel-animals.com|angela-babies.com|anime0128.com|animefans21.com|anyelse.com|aoode.top|aoxza.info|apetplanet.com|araranews.com|army1213.com|ashinenergy.com|automobile-evaluation.com|autumnen.com|babies-expert.com|babies521.com|babiesjh.com|baby-sisi.com|baby0world.com|babygoone.com|babyild.com|babyimaster.com|babyoky.com|babypartyy.com|babyucute.com|babyystory.com|bake8523.com|ball9874.com|ballcab.com|baoliaonews.com|base9174.com|basegolfs.com|basesize.com|bchea1th.com|beauty-families.com|beauty-stylee.com|beautychannels.net|beroendecoachen.se|bestinfo365.com|bestlovetop.com|bestone-work.com|bestpets97.com|bettermombaby.com|bindughsan.com|biubiunew.com|bjtriz.com|blibliread.com|bllkiw.com|bniko.top|bnnopen.com|bnnspace.com|boom8888.com|borderlessbr.com|borderlessdailytime.com|borderlessdicas.com|borderlesssaude.com|bottomj.com|br-felicidade.com|br-materias.com|br-novodia.com|bturtlle.com|bucktop.com|buddhaim.com|bvvlife.com|cabsbag.com|cakeopp.com|cakesshare.com|call-beat.com|car-onez.com|car-su.com|carcarwe.com|carconts.com|careofkidas.com|caringwe.com|carloslevir.com|carloveu.com|carmelschoolkeorapukur.in|carpartying.com|cartoonfans766.com|cartoontalking.com|cartoonxzoon.com|cartop-s.com|cat-meowmeow.com|cause-success.com|causestyles.com|center-youth.com|charming355.com|cheeselikes.com|cherryings.com|child-loves.com|childpar.com|childrenplayfun.com|chiyidavip.com|chomered.com|christianhoeller.com|cicream.com|co-47.com|codetd.com|cokeread.com|color6699.com|colorful-tour.com|come-pets.com|comeon-petts.com|comepet1.com|comeworlds.com|commonsense11.com|companion-healthy.com|cookicway.com|cookie-food.com|cookieword.com|cooking-teach.com|cookstoree.com|cool-acar.com|coolsaid.com|cosysing.com|couples21.com|cuddlylcute.com|cuddlyopet.com|cuocsongmoi60s.com|cute-pops.com|cute-shibainu.com|cutetale.com|cutetalkk.com|cutonews.com|cutpet55.com|cwns8.com|daagreat.com|daapower.com|dadacome.com|dadiilove.com|dailly-pets.com|daily-coup.com|daily-novel.net|dailydaily-up.com|dailypressworld24.com|dajxg.com|damyup.com|danmitop.com|datouzhi.com|daybyse.com|days-health.com|days-well.com|dccneed.com|ddojoy.com|decorajh.com|decorate-guide.com|decorate-manual.com|decoratestar.com|decoration-colorful.com|decoration-encyclopedia.com|decoration-essence.com|decoration-expert.com|decoration-family.com|decoration-perfect.com|decoration-skills.com|decoration-strategy.com|decoration-talent.com|decoration-top.com|decorationdiary.com|delicacy-map.com|delicioushare.com|delicity.com|design-lover.com|design-ourhome.com|design-touching.com|design-ways.com|designer-decorate.com|designiwe.com|designmyfamily.com|designstour.com|devefood.com|diadosonhador.com|didadiadi.com|didiadidia.com|dinggling.com|dnnspeak.com|do-atravel.com|docilepuppy.com|dodokeep.com|dog-withfriend.com|doshiventures.com|dreamwe1.com|driver-skills.com|dsawjk.com|dugreat.com|dwihox.com|dwjhgx.com|dyypart.com|earl123.com|easily-work.com|easycookic.com|easyto-health.com|edayjoy.com|edition-eltern.com|effort-us.com|endorsep.com|energy-myhealth.com|energy-story.net|engineji.com|enjoybabyt.com|eoeodream.com|eoeolike.com|eoeonews.com|eoeostar.com|eoomiss.com|eqaqo.com|erhealthy.com|eryq7984.com|esports17.com|etsbaby.com|evaluation-notes.com|evergreen64.info|exertionu.com|explore857.com|f-snack.com|faawatch.com|facadeattic.com|fafa5918.com|familyethic.com|fatosvideo.com|fbiavip.com|feagreat.com|fgnj1634.com|fighthard415.com|finddelicacy.com|finish-new.com|finloves.com|firhub69.com|first-hub.com|firstopdesign.com|firstsinfo.com|fitmenthom.com|fituper.com|fl248.com|flavorcen.com|flcartoon.com|flipboard.com|flybiga.com|fnnhome.com|food-collections.com|food-end.com|food-ham.com|food-ienjoy.com|food-ilove.com|foodbf.com|foodchef1.com|fooddier.com|foodeatt.com|fooden1.com|foodiefunn.com|foodlifen.com|foodlove1.com|foods-yummy.com|foodszon.com|foodzuser.com|forever-super.com|forvte.me|found-decoration.com|foying.net|freeiiwant.com|friend-bay.com|friend-color.com|friend-will.com|friendcutepets.com|fruitsspie.com|fun-decoration.com|fun-healthy.com|funnews61.com|funnyworld11.com|funstory365.com|funworld8.com|furnishour.com|furnishwe.com|future-pet.com|fxsqrt.com|garfie1d.com|garmentboom.com|geoweb.online|gettinggz.com|ggethealth.com|ghdd3456.com|girlask21.com|girly.today|gloriousfine.com|gmja8.com|godababy.com|godogym.com|gogo-babies.com|gogodayday.com|good-eatt.com|good-forhealth.com|good-pregnancy.com|good-timess.com|goodhappy11.com|goodhealh.com|goodtime-life.com|goodword123.com|gowellwork.com|gowork-place.com|greendotnews.com|growing-day.com|guide-newbie.com|gunews97.com|gymball1.com|gyyplay.com|hamernail.com|happy-petts.com|happyday-health.com|happydecastle.com|happynews01.com|happypy1.com|happytime15.com|happyue.com|health-am.com|health-goodway.com|health-happylife.com|health-newday.com|health-planweb.com|health-wonderful.com|healthdst.com|healthgoi.com|healthllove.com|healthtiimes.com|healthvigorous.com|healthwer.com|healthy-blessed.com|healthy-lifestylle.com|healthyhubv.com|healthylife-energy.com|healthysj.com|healthyue.com|healthyy-daily.com|heartzo.com|heytime365.com|hibabywe.com|high-today.com|higherey.com|hihipets.com|hipeted.com|history-story.com|history-year.com|hkdaliynew.com|hkgerposter.com|hklocalfeed.com|homenews11.com|homeome11.com|hostfy.io|hotnewsclub.com|hotsums.com|hoursfor.com|house-petdaily.com|houseborn.com|houseddesign.com|houses-planning.com|housesdevise.com|hslqp.com|huazai11.com|hydrotek.com|i-besthome.com|i-designer.net|i-findshops.com|i-petlife.com|ibaby16.com|idforread.com|ifbelieve.com|ifoodsworld.com|ifsuperr.com|igo-japan.net|ihealth-time.com|iiceredteas.com|iitrendwadai.com|ikeep-body.com|ilove-peace.com|ilove-top.com|in-decorating.com|indodecorat.com|ingame33.com|inlove77.com|insfruit.com|inspirational-saying.com|inspirational-share.com|intalkz.com|ipetparadise.com|iqiqulife.com|isaacvacuum.com|itigeryou.com|itrorw.com|ivel-sat.com|iwork-perfect.com|jdquw113.com|jiastar11.com|jinglemom.com|jkingtimes.com|jog-sport.com|jojbaby.com|jojosunny.com|jonlovefood.com|jooright.com|journey-day.com|journey-fun.com|journeyvi.com|jp-anyelse.com|jp-funny.com|jp-hotnews.com|jp-starnews.com|jpfunvideo.com|jpshareba.com|juicelse.com|justyeye.com|kaka-pets.com|kako-pets.com|keeeping-healthy.com|keep-petss.com|keephealthy21.com|keeping-health.com|keepingjk.com|keepingl.com|keepkeepfit.com|keepsjk.com|kid-ify.com|kidssity.com|kidy-kidy.com|kidy-party.com|kknsays.com|knifetipster.com|knnbeauty.com|knnwork.com|knowledgekhabar.com|kobcar.com|kokfood.com|kokoanew.com|kokoready.com|kold.top|kolovers.com|komica.org|kwpsg.com|kzclip.com|laugh-more.com|learnaha.com|lemonlin.com|life-knowhow.com|life-lovehealth.com|life-lovehealthy.com|life-ours.com|lifebeautyy.com|lifenewsjr.com|lifestarup.com|likehealth21.com|likevideo16.com|ling-baby.com|loft-stair.com|longevity-s.com|loolook88.com|lot-pets.com|love-families.com|love-happyday.com|love-heallth.com|love-puppys.com|lovehealth-newday.com|lovehealthy365.com|lovehouse123.com|lovehouse456.com|lovelife75.com|lovelyhi.com|lovelypetfamily.com|lovepet-paradise.com|lovepet-peace.com|lovepetsfuture.com|lovepetzi.com|lovers521.com|lovestylehouse.com|loveuniques.com|lovey-puppys.com|loveyou-pets.com|lovvebaby.com|luckyibaby.com|lylywellhouse.com|mamababy6.com|mamiable.com|marriage-woman.com|matomake.com|matttaulmusic.com|mdndy.com|mdsw8.com|meall-times.com|meallhealth.com|mealwebs.com|media-groove.com|media802news.com|meek-pet.com|meekloves.com|meekspet.com|meetcutepet.com|melhores24hrs.com|melhoresaqui.com|memeslong.com|mentsmaster.com|mew-cats.com|mewmewinfo.com|mhkslo.com|mi-malist.com|mild-way.com|milkbre.com|missebaby.com|mlsjqa.com|mmeowv.com|mmjspots.com|mmuscular.com|mnewsb.com|mnewsp.com|mom1love.com|move-styles.com|mrbigtalking.com|mundocurioso24hrs.com|muscle865.com|musiccweb.com|my-styledesign.com|mydesign-cases.com|myhappyz.com|myhealth-lifestyle.com|myhealth-living.com|myhealth-time.com|myhome-lovely.com|myhomeoclinic.com|myhouse-renovation.com|mylifegood20.com|mylifeofpets.com|mypet-lovely.com|mypet520.com|mypets-world.com|mystyle-health.com|nanawait.com|nanikorematome.com|nathalieaziz.com|new-lifehealth.com|newalmighty.com|newenteri.com|newline365.com|news-egg.com|news30links.com|news39zone.com|newsdadii.com|newsdbl.com|newsdidida.com|newsipost.com|newsldp.com|newsrdp.com|newstvc.com|newstvd.com|nice-foood.com|nicelifea.com|niice-woker.com|nofail8.com|northgamountains.com|noticiasbombastica.com|noticiasespaco.com|novaatual.com|nowefor.com|nutritious-breakfast.com|nvkkpi.com|ob-pets.com|oeoestay.com|ohofirst.com|okeyread.com|okkfamilies.com|onbest-pets.com|one-sups.com|onedayabc.com|oneonstyle.com|onepron.com|onionew.com|onlylove-one.com|onlypet1.com|onocute.com|open-selfless.com|openipartner.com|opopgame.com|opoplike.com|optimal-partner.com|ourbegin.com|ourcars-guide.com|paintbucke.com|parent-babies.com|parent-diary.com|parenthi.com|parents-strategy.com|parentscomeon.com|parentups.com|parroi1t.com|partner-we.com|pass345.com|peach1234.com|people-cause.com|perfect-encounter.com|perfectde-coration.com|pet-angela.com|pet-beautiful.com|pet-comeon.com|pet-cutelovely.com|pet-docile.com|pet-encyclopedia.com|pet-goparty.com|pet-gorun.com|pet-growth.com|pet-habits.com|pet-iget.com|pet-loveandhealth.com|pet-myfriend.com|pet-shy.com|pet-tito.com|pet-welove.com|petbasego.com|petbeai.com|petclev.com|petfama.com|petgrouplife.com|petilovey.com|petimiou.com|petisits.com|pets-angela.com|pets-beautiful.com|pets-dote.com|pets-feedder.com|pets-happylife.com|pets-homee.com|pets-inmyhome.com|pets-master.com|pets-myfriend.com|pets-naivety.com|pets-onlyperfect.com|pets-surprise.com|pets-worldsd.com|pets-zones.com|pets699.com|petsccs.com|petslove4uu.com|petsonelove.com|petstube35.com|petts-online.com|petvigorous.com|petzaza.com|physiquego.com|pig-pets.com|pip-cute.com|planforrbaby.com|playball-pet.com|playing-pets.com|pnewsap.com|pnewsj.com|pnyjjt.com|pock2342.com|poflod.com|pooede.top|pool-lover.com|popjony.com|praiseme12.com|prefect-home.com|pressworld24hrs.com|pretty-myhealth.com|prettycutepet.com|pttfunnews.com|qaafunny.com|qaaplan.com|qiqi-home.com|qiqu11.com|qiqushow.com|quiet-pet.com|quotationsi.com|qwspeed.com|radiometodista.com.bo|rccday.com|recipes-forfood.com|redawine.com|regimen-life.com|regimengo.com|remodelsh.com|renovation-beauty.com|renovmo.com|review996.com|rifusy.com|rightem.com|roadstert.com|romanti-design.com|room-size.com|rorohope.com|rttdaily.com|rulejo.com|run-pet.com|running-pet.com|sajerhat.com|sarahtalking.com|sarahtalkshow.com|sddmovie.com|setsailsweb.com|share-healthy.com|shareba.com|sharefood-top.com|shishimom.com|shovelofficer.com|sight-try.com|skiingno.com|skiisport.com|skillprofession.com|skills-driving.com|sky-want.com|skyrainbowco.com|smallpopo.com|smkiss.sch.id|snackil.com|snoosport.com|solveapro.com|sosomind.com|sosoword.com|speedrq.com|sportt-do.com|sradha.org|ssrsbj.com|staripet.com|starixk.com|starlala11.com|starlight0.com|starsays12.com|starup-cool.com|stat-art.com|stationcc.com|stay-healthhy.com|stefanhuth.com|storfamily.com|style-healthway.com|styleartt.com|styleddecoration.com|styleihome.com|stylewantd.com|suaboya.com|successarticle.com|successs-experience.com|successture.com|succulenter.net|sunflyday.com|sup-friend.com|super-cutepet.com|super-delicacy.com|super-puppys.com|superbaby0127.com|supercatdogs.com|supermyhouse.com|superoomq.com|supertime01.com|surprise-journey.com|svsvves.com|sweetastes.com|swordsman94.com|symbiorsolar.com|synthesistop.com|taaparty.com|tad-j.com|takhgc.com|talk-furnish.com|tastysdel.com|tdchuxing.com|teach-healthy.com|team-method.com|tenscars.com|testcome.com|the-besthealth.com|thecar-butler.com|thecar-repair.com|themind529.com|thenewslens.com|tiantojia16.com|tile-afloor.com|timenowstyle.com|titisyz.com|todayfunnews.com|todaytwnews.com|togetherii.com|togetherjapantw.com|toop-workers.com|toopartner.com|topcarweb.com|topline321.com|topnews321.com|topvcars.com|totripp.com|totsuper.com|tour-learn.com|tour-lucky.com|tours-game.com|trackvt.com|trhen.com|ttechat.com|ttoocome.com|tubtok.com|u-kidy.com|uhealthweb.com|ukwidereps.co.uk|umbpet.com|uncgsd.com|unicapa.com.br|uoty5771.com|uskjid.com|v-cereals.com|v6nwm.com|vaacase.com|vaalue-healthy.com|vdsh8.com|vestiirk.ru:443|vevechat.com|vidamelhoresaude.com|videosshows.com|viewsh.com|vklvip.com|voohappy.com|voosuper.com|voosweet.com|vovfood.com|vovostar.com|vsdm8.com|vvetalk.com|waagreat.com|wadainoitiniti.com|wantitry.com|warm-decorate.com|warm-familys.com|warmdesignn.com|watchingnew.com|wateronn.com|wayflyz.com|wayto-health.com|wduiwg.com|we-reminisce.com|wealwomen.com|webs-cute.com|weebokm.com|wel-baby.com|wellbeing97.com|welltonsteak.com|wellwaypro.com|welook365.com|welove-cat.com|welove-gourmet.com|wendybaby127.com|wewegame99.com|wewegrow.com|willreng.com|windows-server11.com|wioau.com|with-ipet.com|with-summer.com|wityy.com|wiudx.com|wiusbh.com|wokxcn.com|wonderfuleat.com|woof-puppys.com|work-efficientlly.com|work3254.com|workplace-rule.com|workplacetop.com|wowolook.com|wprofessiion.com|wsvsw.com|wuwu666.com|xfoodstuffs.com|xgaj8.com|xgno8.com|xigorgeous.com|xinlisten.com|xulook.com|xuustory.com|yaonews96.com|yaya0506.com|ybbhouse.com|yeereader.com|yings365.com|ymlove99.com|you1236.com|yoyoeasy.com|yuuenjoy.com|yuutoday.com|yuyhonor.com|zanread.com|zccshop.com|zhao1236.com|znsav.com|zofight.com|zoomnewslive.com|zxhammer.com|ikktoday.com|dayfgh.com|baobaowe.com|csiwee.com)"
+  }
+]
