@@ -14,9 +14,16 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 **使用後**<img width="281" src="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet/assets/44832116/de38f8bb-50b4-48bf-9ba0-d5e02e16cc13">
 
 
-## 使用方法(Chrome Web Store経由)
-近日、WebStore登録予定
-登録されるまでの間、デベロッパーモードより、追加をしてください。
+## 使用方法(Chrome Web Store経由) **[推奨]**
+[Chrome Web Storeのリンク](https://chrome.google.com/webstore/detail/clean-spam-link-tweet/bniigfmpkmcabajbkelbmphoelijoang) より、 
+
+[Chrome(Brave等)に追加]ボタン押下で簡単にお使いの端末へ導入が完了します。 
+
+追加後、Twitterにて動作しているかどうかを確認してください。
+
+[動作確認URL](https://twitter.com/search?q=bnc.lt&f=live)
+
+**※Chrome Web Store経由で追加した場合、アップデートはお使いのブラウザが自動的に行いますので常に最新の状態で使用できます。**
 
 ## 使用方法(デベロッパーモード)
 
@@ -34,6 +41,12 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 
 7.お疲れ様でした。導入は完了しました。実際にTwitterへアクセスし、動作しているかどうかを確認してください。
 [動作確認URL](https://twitter.com/search?q=bnc.lt&f=live)
+
+デベロッパーモードを経由で追加した場合、アップデートは自動的に行われません。
+
+新バージョンがリリースされた際に上記手順を行う必要があります。
+
+**※常に最新のバージョンで使用したい場合は[Chrome Web Store](https://chrome.google.com/webstore/detail/clean-spam-link-tweet/bniigfmpkmcabajbkelbmphoelijoang)より追加を行って下さい**
 
 
 ## Special Thanks
