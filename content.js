@@ -4,6 +4,7 @@ let block_list;
 let block_regexp;
 let s_key_down = null;
 let debug_block_num = 0;
+let shift_key_status = 0;
 fetch(chrome.runtime.getURL('filter.json'), {
     method: "GET",
     cache: "no-store"
@@ -15,16 +16,7 @@ fetch(chrome.runtime.getURL('filter.json'), {
 }).then(json => {
     console.log(`List Load!\r\nList update:${json[0].developer_update}\r\nList provider:${json[0].thanks_link}\r\nThanks '${json[0].thanks_name}' !`);
     let reg_exp = json[2].concat_regex;
-    //block_list = json;
-    /*
-    //結合された正規表現を作成するときに使う
-    let concat_list = new Array();
-    for (let index_b = 0; index_b < json[1].length; index_b++) {
-        //console.log(index_b)
-        concat_list.push(`${json[1][index_b].regex}|`)
-    }
-    console.log(`(${concat_list.join("")})`)
-    */
+    block_list = json;
     //設定
     let cslp_settings = null;
     chrome.storage.local.get("cslp_settings", function(value){
@@ -66,6 +58,30 @@ fetch(chrome.runtime.getURL('filter.json'), {
                 reg_exp += "|(amazon.co.jp)";
             }
             block_regexp = new RegExp(reg_exp);
+            //コピー用divキーダウン有効
+            if(cslp_settings.hit_url_copy == true){
+                document.addEventListener("keydown", function(key){
+                    if(key.code == "ControlLeft") {
+                        if(shift_key_status == 0){
+                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
+                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "visible";
+                            }
+                        }
+                        shift_key_status = 1;
+                      }
+                });
+                document.addEventListener("keyup", function(key){
+                    if(key.code == "ControlLeft") {
+                        if(shift_key_status == 1){
+                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
+                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "hidden";
+                            }
+                        }
+                        shift_key_status = 0;
+                      }
+                });
+            }
+            //メイン動作関数
             function run(){
                 for (let index = 0; index < document.querySelectorAll('[data-testid="card.wrapper"]').length; index++) {
                     debug_block_num += 1;
@@ -77,7 +93,7 @@ fetch(chrome.runtime.getURL('filter.json'), {
                             document.querySelectorAll('[data-testid="card.wrapper"]')[index].setAttribute("cslt_flag", "ok");
                             document.querySelectorAll('[data-testid="card.wrapper"]')[index].insertAdjacentHTML("beforebegin", ins_html);
                             if(cslp_settings.hit_url_copy == true){
-                                let debug_ins_html = `<div id="cslt_filter${debug_block_num}" style="width: 100%;height: 100%;position: absolute;z-index: 100;"></div>`;
+                                let debug_ins_html = `<div id="cslt_filter${debug_block_num}" class="cslt_copy_filter" style="width: 100%;height: 100%;position: absolute;z-index: 100;display: flex;align-items: center;text-align: center;justify-content: center;font-weight:bold;background-color: rgba(0,0,0,0.75);color: #fff;outline:solid 5px #ffab11;outline-offset:-5px;cursor:copy;visibility:hidden;">クリックでURLをコピー</div>`;
                                 document.querySelectorAll('[data-testid="card.wrapper"]')[index].closest('[data-testid="cellInnerDiv"]').insertAdjacentHTML("afterbegin", debug_ins_html);
                                 document.getElementById(`cslt_filter${debug_block_num}`).addEventListener("click", function(){
                                     async function get_blockurl(tco_url){
@@ -102,29 +118,56 @@ fetch(chrome.runtime.getURL('filter.json'), {
                                     }
                                     switch (cslp_settings.hit_url_copy_mode) {
                                         case "0":
-                                            get_blockurl(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href).then(function(url){
-                                                navigator.clipboard.writeText(url);
-                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${url}`);
-                                            });
+                                            if(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href.match(/([^\/]+)/g)[1] != "t.co"){
+                                                navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href);
+                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href}\r\n他の拡張機能と競合している可能性があります。`);
+                                            }else{
+                                                get_blockurl(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href).then(function(url){
+                                                    navigator.clipboard.writeText(url);
+                                                    alert(`クリップボードにURLをコピーしました!\r\nCopy->${url}`);
+                                                });
+                                            }
+                                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
+                                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "hidden";
+                                            }
+                                            shift_key_status = 0;
                                             break;
                                         case "1":
-                                            //console.log(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href);
-                                            navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href);
-                                            alert(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href}`);
+                                            if(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href.match(/([^\/]+)/g)[1] != "t.co"){
+                                                navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href);
+                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href}\r\n他の拡張機能と競合している可能性があるため\r\nt.coのアドレスでコピーできませんでした。`);
+                                            }else{
+                                                navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href);
+                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href}`);
+                                            }
+                                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
+                                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "hidden";
+                                            }
+                                            shift_key_status = 0;
                                             break;
                                         case "2":
-                                            let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href;
-                                            get_blockurl(tco_addr).then(function(url){
-                                                let cl_text = `${url},${tco_addr}`;
-                                                //console.log(cl_text);
-                                                navigator.clipboard.writeText(cl_text);
-                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${cl_text}`);
-                                            })
+                                            if(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href.match(/([^\/]+)/g)[1] != "t.co"){
+                                                let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href;
+                                                navigator.clipboard.writeText(`${tco_addr},${tco_addr}`);
+                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${tco_addr},${tco_addr}\r\n他の拡張機能と競合している可能性があるため\r\nt.coのアドレスがコピーできませんでした。`);
+                                            }else{
+                                                let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href;
+                                                get_blockurl(tco_addr).then(function(url){
+                                                    let cl_text = `${url},${tco_addr}`;
+                                                    //console.log(cl_text);
+                                                    navigator.clipboard.writeText(cl_text);
+                                                    alert(`クリップボードにURLをコピーしました!\r\nCopy->${cl_text}`);
+                                                })
+                                            }
+                                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
+                                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "hidden";
+                                            }
+                                            shift_key_status = 0;
                                             break;
-                                    }
-                                });
+                                        }
+                                    });
+                                }
                             }
-                        }
                         if(cslp_settings.hit_del == true && block_regexp.test(document.querySelectorAll('[data-testid="card.wrapper"]')[index].querySelectorAll('[dir="auto"]')[0].textContent)){
                             document.querySelectorAll('[data-testid="card.wrapper"]')[index].closest('[data-testid="cellInnerDiv"]').textContent = "";
                         }
@@ -148,3 +191,12 @@ fetch(chrome.runtime.getURL('filter.json'), {
 }).catch(error => {
     console.error('List load error!', error);
 });
+//結合された正規表現を作成するときに使う関数(定義更新を作るときとか。)
+function concat_block_list(){
+    let concat_list = new Array();
+    for (let index_b = 0; index_b < block_list[1].length; index_b++) {
+        //console.log(index_b)
+        concat_list.push(`${block_list[1][index_b].regex}|`)
+    }
+    console.log(`(${concat_list.join("").slice(0, -1)})`);
+}

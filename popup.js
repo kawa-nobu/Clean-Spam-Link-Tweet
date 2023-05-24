@@ -55,7 +55,7 @@ window.addEventListener("load", function(){
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
-        alert("設定を適用するには\r\nTwitterを再読み込みを行ってください。");
+        alert("設定を適用するには\r\nTwitterを再読み込みを行ってください。\r\nURLをコピーするには、[Alt]キーを押してブラックアウトされたツイートをクリックしてください。");
     })
     document.getElementById("hiturl_copy_opt").addEventListener("change", function(){
         cslp_settings.hit_url_copy_mode = document.getElementById("hiturl_copy_opt").value;
