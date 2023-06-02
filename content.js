@@ -1,5 +1,4 @@
 console.log("Clean-Spam-Link-Tweet is Working!");
-
 let block_list;
 let block_regexp;
 let s_key_down = null;
