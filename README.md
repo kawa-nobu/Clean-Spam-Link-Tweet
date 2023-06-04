@@ -37,7 +37,19 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 **※Chrome Web Store経由で追加した場合、アップデートはお使いのブラウザが自動的に行いますので常に最新の状態で使用できます。**
 
 ## 使用方法(Mozilla公式サイト経由) **[推奨]**
-**現在審査中です...**
+**FireFoxの仕様により、現在URLコピー機能が利用できません。同様にAndroid版では満足のいく動作は現時点で出来ていません。**
+
+[addons.mozilla.org(AMO)](https://addons.mozilla.org/ja/firefox/addon/clean-spam-link-tweet/) より、 
+
+[Firefox へ追加]ボタン押下で簡単にお使いの端末へ導入が完了します。 
+
+* 追加後、設定の構築を行う為、画面に表示されるメッセージに従ってTwitterの再読み込みやTwitterを開いてください。
+
+**※追加で設定したい場合は拡張機能のポップアップメニューを開いて設定し、表示された指示に従ってください。**
+
+**※Android版のFireFoxでは、一応動作はしますがTwitterのタブを新規で開く毎に拡張機能の設定画面を一度開く必要があります。**
+
+[動作確認URL](https://twitter.com/search?q=bnc.lt&f=live)
 
 ## 使用方法(デベロッパーモード)
 
