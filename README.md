@@ -20,13 +20,13 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 * 阻止ツイート(ヒットツイート)の非表示機能
 * Amazon.co.jpリンクの阻止(同時に非表示機能をONにすると一緒に非表示になります)
 - 調査・開発者用機能
-  - URLコピー機能(コピー項目はプルダウンメニューにより選択可、**FireFoxでは無効化**)
+  - URLコピー機能(コピー項目はプルダウンメニューにより選択可、**FireFox、Kiwi Browser等では無効化**)
   - 設定初期化機能
 
 ## 使用方法(Chrome Web Store経由) **[推奨]**
 [Chrome Web Storeのリンク](https://chrome.google.com/webstore/detail/clean-spam-link-tweet/bniigfmpkmcabajbkelbmphoelijoang) より、 
 
-[Chrome(Brave等)に追加]ボタン押下で簡単にお使いの端末へ導入が完了します。 
+[Chrome(Brave等)に追加]ボタン押下で簡単にお使いの端末へ導入が完了します。 **AndroidユーザーはKiwi Browserで使えます！**
 
 * 追加後、設定の構築を行う為、画面に表示されるメッセージに従ってTwitterの再読み込みやTwitterを開いてください。
 
@@ -37,7 +37,7 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 **※Chrome Web Store経由で追加した場合、アップデートはお使いのブラウザが自動的に行いますので常に最新の状態で使用できます。**
 
 ## 使用方法(Mozilla公式サイト経由) **[推奨]**
-**FireFoxの仕様により、現在URLコピー機能が利用できません。同様にAndroid版では満足のいく動作は現時点で出来ていません。**
+**FireFoxの仕様により、現在URLコピー機能が利用できません。同様にAndroid版のFireFoxでは満足のいく動作は現時点で出来ていません。**
 
 [addons.mozilla.org(AMO)](https://addons.mozilla.org/ja/firefox/addon/clean-spam-link-tweet/) より、 
 
