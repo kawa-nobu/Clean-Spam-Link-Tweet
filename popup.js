@@ -37,10 +37,15 @@ window.addEventListener("load", function(){
             //現在はAndroid版ベータ版
             document.getElementById("extt_ver").innerText = `${cslp_settings.version}(FireFox)`;
         }else{
-            if(window.navigator.userAgent.toLowerCase().indexOf("android") != -1 ){
+            if(window.navigator.userAgent.toLowerCase().indexOf("android") != -1 && window.navigator.userAgent.toLowerCase().indexOf("chrome") != -1){
                 document.getElementById("dev_menu").style.visibility = "hidden";
                 document.getElementById("dev_menu").style.height = 0;
-                //現在はAndroid版ベータ版
+                document.getElementById("extt_ver").innerText = `${cslp_settings.version}(ChromiumベースAndroid OS版)`;
+            }
+            if(window.navigator.userAgent.toLowerCase().indexOf("android") != -1 && window.navigator.userAgent.toLowerCase().indexOf("firefox") != -1){
+                document.getElementById("dev_menu").style.visibility = "hidden";
+                document.getElementById("dev_menu").style.height = 0;
+                //Android版FireFoxはMozilla側の対応待ち
                 document.getElementById("extt_ver").innerText = `${cslp_settings.version}(FireFox Android ベータ版)`;
             }
         }

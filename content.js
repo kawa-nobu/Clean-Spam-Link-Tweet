@@ -2,6 +2,7 @@ console.log("Clean-Spam-Link-Tweet is Working!");
 let block_list;
 let block_regexp;
 let s_key_down = null;
+let debug_block_num_text = 0;
 let debug_block_num = 0;
 let shift_key_status = 0;
 fetch(chrome.runtime.getURL('filter.json'), {
@@ -82,91 +83,40 @@ fetch(chrome.runtime.getURL('filter.json'), {
             }
             //メイン動作関数
             function run(){
+                //TwitterCardではないスパムの場合
+                for(let index = 0; index < document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]').length; index++){
+                    debug_block_num_text += 1;
+                    //ツイート内にリンク(要素全体)を検出
+                    if(document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index] != undefined){
+                        //ヒットツイート削除設定無効で、リスト内に該当のURLが存在かつ阻止済フラグがあるかどうか->阻止
+                        if(cslp_settings.hit_del == false && block_regexp.test(document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].textContent) && document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].getAttribute("cslt_flag") != "ok"){
+                            //console.log(document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].textContent);
+                            let ins_html = `<div style="position: absolute;z-index: 99999;width: 100%;height: ${document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].offsetHeight + 5}px;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;"><p>スパムを検出!&nbsp;ヒットしたURL:${document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].textContent.match(/\/\/([^/]*)/)[1]}</p></div>`;
+                            document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].setAttribute("cslt_flag", "ok");
+                            document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].insertAdjacentHTML("beforebegin", ins_html);
+                            copy_url(index, debug_block_num_text, "text");
+                        }
+                        //ヒットツイート削除設定有効で、リスト内に該当のURLが存在かつ阻止済フラグがあるかどうか->削除
+                        if(cslp_settings.hit_del == true && block_regexp.test(document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].textContent)){
+                            document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].closest('[data-testid="cellInnerDiv"]').textContent = "";
+                        }
+                    }
+                }
+                //TwitterCardの場合(bnc.ltなど)
                 for (let index = 0; index < document.querySelectorAll('[data-testid="card.wrapper"]').length; index++) {
                     debug_block_num += 1;
+                    //TwitterCard内にリンク(要素全体)を検出
                     if(document.querySelectorAll('[data-testid="card.wrapper"]')[index].querySelectorAll('[dir="auto"]')[0] != undefined){
+                        //ヒットツイート削除設定無効で、リスト内に該当のURLが存在かつ阻止済フラグがあるかどうか->阻止
                         if(cslp_settings.hit_del == false && block_regexp.test(document.querySelectorAll('[data-testid="card.wrapper"]')[index].querySelectorAll('[dir="auto"]')[0].textContent) && document.querySelectorAll('[data-testid="card.wrapper"]')[index].getAttribute("cslt_flag") != "ok"){
                             //console.log("found!");
                             //console.log(document.querySelectorAll('[data-testid="card.wrapper"]')[index]);
                             let ins_html = `<div style="position: absolute;z-index: 99999;width: 100%;height: 100%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 16px;"><p>スパムを検出!<br>ヒットしたURL:${document.querySelectorAll('[data-testid="card.wrapper"]')[index].querySelectorAll('[dir="auto"]')[0].textContent}<br>クリックでツイートを開く</p></div>`;
                             document.querySelectorAll('[data-testid="card.wrapper"]')[index].setAttribute("cslt_flag", "ok");
                             document.querySelectorAll('[data-testid="card.wrapper"]')[index].insertAdjacentHTML("beforebegin", ins_html);
-                            if(cslp_settings.hit_url_copy == true){
-                                let debug_ins_html = `<div id="cslt_filter${debug_block_num}" class="cslt_copy_filter" style="width: 100%;height: 100%;position: absolute;z-index: 100;display: flex;align-items: center;text-align: center;justify-content: center;font-weight:bold;background-color: rgba(0,0,0,0.75);color: #fff;outline:solid 5px #ffab11;outline-offset:-5px;cursor:copy;visibility:hidden;">クリックでURLをコピー</div>`;
-                                document.querySelectorAll('[data-testid="card.wrapper"]')[index].closest('[data-testid="cellInnerDiv"]').insertAdjacentHTML("afterbegin", debug_ins_html);
-                                document.getElementById(`cslt_filter${debug_block_num}`).addEventListener("click", function(){
-                                    async function get_blockurl(tco_url){
-                                        let get_url = null;
-                                        await fetch(tco_url).then(response => {
-                                            if (!response.ok) {
-                                                console.error('t.co load error!');
-                                            }
-                                            return response.text();
-                                        }).then(text => {
-                                            let tco_resp = null;
-                                            tco_resp = new DOMParser().parseFromString(text, 'text/html');
-                                            for (let index_url_get = 0; index_url_get < tco_resp.querySelectorAll("meta").length; index_url_get++) {
-                                                if(tco_resp.querySelectorAll("meta")[index_url_get].content.match(/https?:\/\/\S*/) != null){
-                                                    //console.log(tco_resp.querySelectorAll("meta")[index_url_get].content.match(/https?:\/\/\S*/)[0]);
-                                                    get_url = tco_resp.querySelectorAll("meta")[index_url_get].content.match(/https?:\/\/\S*/)[0];
-                                                    break;
-                                                }
-                                            }
-                                        });
-                                        return get_url;
-                                    }
-                                    switch (cslp_settings.hit_url_copy_mode) {
-                                        case "0":
-                                            if(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href.match(/([^\/]+)/g)[1] != "t.co"){
-                                                navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href);
-                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href}\r\n他の拡張機能と競合している可能性があります。`);
-                                            }else{
-                                                get_blockurl(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href).then(function(url){
-                                                    navigator.clipboard.writeText(url);
-                                                    alert(`クリップボードにURLをコピーしました!\r\nCopy->${url}`);
-                                                });
-                                            }
-                                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
-                                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "hidden";
-                                            }
-                                            shift_key_status = 0;
-                                            break;
-                                        case "1":
-                                            if(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href.match(/([^\/]+)/g)[1] != "t.co"){
-                                                navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href);
-                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href}\r\n他の拡張機能と競合している可能性があるため\r\nt.coのアドレスでコピーできませんでした。`);
-                                            }else{
-                                                navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href);
-                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href}`);
-                                            }
-                                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
-                                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "hidden";
-                                            }
-                                            shift_key_status = 0;
-                                            break;
-                                        case "2":
-                                            if(this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href.match(/([^\/]+)/g)[1] != "t.co"){
-                                                let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href;
-                                                navigator.clipboard.writeText(`${tco_addr},${tco_addr}`);
-                                                alert(`クリップボードにURLをコピーしました!\r\nCopy->${tco_addr},${tco_addr}\r\n他の拡張機能と競合している可能性があるため\r\nt.coのアドレスがコピーできませんでした。`);
-                                            }else{
-                                                let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"]')[0].querySelectorAll("a")[0].href;
-                                                get_blockurl(tco_addr).then(function(url){
-                                                    let cl_text = `${url},${tco_addr}`;
-                                                    //console.log(cl_text);
-                                                    navigator.clipboard.writeText(cl_text);
-                                                    alert(`クリップボードにURLをコピーしました!\r\nCopy->${cl_text}`);
-                                                })
-                                            }
-                                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
-                                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "hidden";
-                                            }
-                                            shift_key_status = 0;
-                                            break;
-                                        }
-                                    });
-                                }
-                            }
+                            copy_url(index, debug_block_num, "tw_card");
+                        }
+                        //ヒットツイート削除設定有効で、リスト内に該当のURLが存在かつ阻止済フラグがあるかどうか->削除
                         if(cslp_settings.hit_del == true && block_regexp.test(document.querySelectorAll('[data-testid="card.wrapper"]')[index].querySelectorAll('[dir="auto"]')[0].textContent)){
                             document.querySelectorAll('[data-testid="card.wrapper"]')[index].closest('[data-testid="cellInnerDiv"]').textContent = "";
                         }
@@ -184,12 +134,102 @@ fetch(chrome.runtime.getURL('filter.json'), {
                     characterDataOldValue: true
                 });
             }
-        }
-    })
-    //
-}).catch(error => {
-    console.error('List load error!', error);
-});
+            //URLコピー関数
+            function copy_url(index, debug_block_num, mode) {
+                if (cslp_settings.hit_url_copy == true) {
+                    let node_index = null;
+                  let debug_ins_html = `<div id="cslt_filter${debug_block_num}" class="cslt_copy_filter" style="width: 100%;height: 100%;position: absolute;z-index: 100;display: flex;align-items: center;text-align: center;justify-content: center;font-weight:bold;background-color: rgba(0,0,0,0.75);color: #fff;outline:solid 5px #ffab11;outline-offset:-5px;cursor:copy;visibility:hidden;">クリックでURLをコピー</div>`;
+                  switch (mode) {
+                    case "text":
+                        document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].closest('[data-testid="cellInnerDiv"]').insertAdjacentHTML("afterbegin", debug_ins_html);
+                        node_index = 0;
+                        break;
+                    case "tw_card":
+                        document.querySelectorAll('[data-testid="card.wrapper"]')[index].closest('[data-testid="cellInnerDiv"]').insertAdjacentHTML("afterbegin", debug_ins_html);
+                        node_index = 1;
+                        break;
+                  }
+                  
+                  document.getElementById(`cslt_filter${debug_block_num}`).addEventListener("click", function () {
+                    async function get_blockurl(tco_url) {
+                      let get_url = null;
+                      await fetch(tco_url).then(response => {
+                        if (!response.ok) {
+                          console.error('t.co load error!');
+                        }
+                        return response.text();
+                      }).then(text => {
+                        let tco_resp = null;
+                        tco_resp = new DOMParser().parseFromString(text, 'text/html');
+                        for (let index_url_get = 0; index_url_get < tco_resp.querySelectorAll("meta").length; index_url_get++) {
+                          if (tco_resp.querySelectorAll("meta")[index_url_get].content.match(/https?:\/\/\S*/) != null) {
+                            //console.log(tco_resp.querySelectorAll("meta")[index_url_get].content.match(/https?:\/\/\S*/)[0]);
+                            get_url = tco_resp.querySelectorAll("meta")[index_url_get].content.match(/https?:\/\/\S*/)[0];
+                            break;
+                          }
+                        }
+                      });
+                      return get_url;
+                    }
+                    switch (cslp_settings.hit_url_copy_mode) {
+                    case "0":
+                      if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href.match(/([^\/]+)/g)[1] != "t.co") {
+                        navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href);
+                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href}\r\n他の拡張機能との競合や広告をコピーした可能性があります。`);
+                      } else {
+                        get_blockurl(this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href).then(function (url) {
+                          navigator.clipboard.writeText(url);
+                          hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${url}`);
+                        });
+                      }
+                      break;
+                    case "1":
+                      if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href.match(/([^\/]+)/g)[1] != "t.co") {
+                        navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href);
+                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスでコピーできませんでした。`);
+                      } else {
+                        navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href);
+                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href}`);
+                      }
+                      break;
+                    case "2":
+                      if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href.match(/([^\/]+)/g)[1] != "t.co") {
+                        let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href;
+                        navigator.clipboard.writeText(`${tco_addr},${tco_addr}`);
+                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${tco_addr},${tco_addr}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。`);
+                      } else {
+                        let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"], [data-testid="tweetText"]')[node_index].querySelectorAll("a")[0].href;
+                        get_blockurl(tco_addr).then(function (url) {
+                          let cl_text = `${url},${tco_addr}`;
+                          //console.log(cl_text);
+                          navigator.clipboard.writeText(cl_text);
+                          hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${cl_text}`);
+                        })
+                      }
+                      break;
+                    }
+                    function hide_cp_msg(message){
+                        if(confirm(message)){
+                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
+                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "hidden";
+                            }
+                            shift_key_status = 0;
+                        }else{
+                            for (let index = 0; index < document.getElementsByClassName("cslt_copy_filter").length; index++) {
+                                document.getElementsByClassName("cslt_copy_filter")[index].style.visibility = "hidden";
+                            }
+                            shift_key_status = 0;
+                        }
+                    }
+                  });
+                }
+              }
+            }
+        })
+    }).catch(error => {
+        console.error('List load error!', error);
+    });
+
 //結合された正規表現を作成するときに使う関数(定義更新を作るときとか。)
 function concat_block_list(){
     let concat_list = new Array();

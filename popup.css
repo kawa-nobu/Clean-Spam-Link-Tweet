@@ -124,7 +124,7 @@ input:checked + label:after {
   height: 40px;
 }
 
-@media screen and (min-width: 300px) {
+@media screen and (min-width: 270px) {
   body{
     width: 100%;
     height: 100%;
@@ -133,24 +133,24 @@ input:checked + label:after {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 2.5rem;
+    font-size: 1.5rem;
   }
   .settings{
     position: relative;
   }
   h1{
-    font-size: 4rem;
+    font-size: 2rem;
     text-align: center;
   }
   h3{
-    font-size: 2rem;
+    font-size: 1rem;
   }
   details{
-    font-size: 3rem;
+    font-size: 1rem;
   }
   .about h3{
     margin-bottom: 0;
-    font-size: 2rem;
+    font-size: 1rem;
   }
   .settings div{
     display: flex;
@@ -171,8 +171,8 @@ input:checked + label:after {
   }
 
   .sw_1 {
-    width: 140px;
-    height: 60px;
+    width: 100px;
+    height: 50px;
     padding: 5px;
   }
   div .sw_1_input {
@@ -185,8 +185,8 @@ input:checked + label:after {
     cursor: pointer;
   }
   div .sw_1_label {
-    width: 140px;
-    height: 60px;
+    width: 100px;
+    height: 50px;
     background: #ccc;
     position: relative;
     display: inline-block;
@@ -200,8 +200,8 @@ input:checked + label:after {
   label:after {
     content: '';
     position: absolute;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     border-radius: 100%;
     left: 0;
     top: 0;
@@ -212,7 +212,7 @@ input:checked + label:after {
     cursor: pointer;
   }
   input:checked + label:after {
-    left: 80px;
+    left: 50px;
   }
   #settings_reset_sw {
     margin: 5px;
@@ -224,11 +224,11 @@ input:checked + label:after {
   .append_alert{
     position: absolute;
     z-index: 1000;
-    width: 100%;
-    height: 100%;
+    width: 120%;
+    height: 120vh;
     background: rgba(0, 0, 0, 0.45);
     top: 0;
-    right: 0;
+    left: 0;
     display: flex;
     align-items: center;
     justify-content: center;
