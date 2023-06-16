@@ -20,7 +20,7 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 * 阻止ツイート(ヒットツイート)の非表示機能
 * Amazon.co.jpリンクの阻止(同時に非表示機能をONにすると一緒に非表示になります)
 - 調査・開発者用機能
-  - URLコピー機能(コピー項目はプルダウンメニューにより選択可、**FireFox、Kiwi Browser等では無効化**)
+  - URLコピー機能(コピー項目はプルダウンメニューにより選択可)
   - 設定初期化機能
 
 ## 使用方法(Chrome Web Store経由) **[推奨]**
@@ -37,26 +37,25 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 **※Chrome Web Store経由で追加した場合、アップデートはお使いのブラウザが自動的に行いますので常に最新の状態で使用できます。**
 
 ## 使用方法(Mozilla公式サイト経由) **[推奨]**
-**FireFoxの仕様により、現在URLコピー機能が利用できません。同様にAndroid版のFireFoxでは満足のいく動作は現時点で出来ていません。**
 
 [addons.mozilla.org(AMO)](https://addons.mozilla.org/ja/firefox/addon/clean-spam-link-tweet/) より、 
 
 [Firefox へ追加]ボタン押下で簡単にお使いの端末へ導入が完了します。 
 
-**※導入後、FireFoxでは導入後にTwitterへアクセスし、
-拡張機能のアイコンを右クリックして「データの取得と変更を許可する条件」の「twitter.com サイト上」をクリックしてください。
-この操作を行わなければ、正常に動作しません。**
-
-<img width="200" src="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet/assets/44832116/2e85cb83-49aa-4a58-820d-66e54379e347">
-
-
 * 追加後、設定の構築を行う為、画面に表示されるメッセージに従ってTwitterの再読み込みやTwitterを開いてください。
 
 **※追加で設定したい場合は拡張機能のポップアップメニューを開いて設定し、表示された指示に従ってください。**
 
-**※Android版のFireFoxでは、一応動作はしますがTwitterのタブを新規で開く毎に拡張機能の設定画面を一度開く必要があります。**
-
 [動作確認URL](https://twitter.com/search?q=bnc.lt&f=live)
+
+
+### Android版FireFox(Beta、Nightly)の場合
+- ユーザー ID:17926836
+- コレクション名:cslt
+
+**Android版FireFox(Beta、Nightly)バージョン113以上、カスタムアドオンコレクション経由で導入してください。**
+
+**対応はしていますが、通常版のFireFoxでは導入できない為Kiwi Browserでの使用を推奨します。**
 
 ## 使用方法(デベロッパーモード)
 
@@ -99,7 +98,6 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 4.ポップアップメニューが出ます。
 
 ## URLコピー機能の使い方
-**※FireFoxでは無効化しています。**
 **※あらかじめ、設定画面にてコピー機能の有効化とコピーしたい種類の選択を行ってください。**
 <img width="500" src="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet/assets/44832116/0075c37f-595f-4d4c-a71d-57ea3fc226e1">
 
