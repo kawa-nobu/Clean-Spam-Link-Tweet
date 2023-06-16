@@ -32,20 +32,12 @@ window.addEventListener("load", function(){
             document.getElementById("filter_thanks").innerText = cslp_settings.filter_thanks+" 様";
         }
         if(window.navigator.userAgent.toLowerCase().indexOf("firefox") != -1 ){
-            document.getElementById("hiturl_menu").style.visibility = "hidden";
-            document.getElementById("hiturl_menu").style.height = 0;
-            //現在はAndroid版ベータ版
             document.getElementById("extt_ver").innerText = `${cslp_settings.version}(FireFox)`;
         }else{
             if(window.navigator.userAgent.toLowerCase().indexOf("android") != -1 && window.navigator.userAgent.toLowerCase().indexOf("chrome") != -1){
-                document.getElementById("dev_menu").style.visibility = "hidden";
-                document.getElementById("dev_menu").style.height = 0;
                 document.getElementById("extt_ver").innerText = `${cslp_settings.version}(ChromiumベースAndroid OS版)`;
             }
             if(window.navigator.userAgent.toLowerCase().indexOf("android") != -1 && window.navigator.userAgent.toLowerCase().indexOf("firefox") != -1){
-                document.getElementById("dev_menu").style.visibility = "hidden";
-                document.getElementById("dev_menu").style.height = 0;
-                //Android版FireFoxはMozilla側の対応待ち
                 document.getElementById("extt_ver").innerText = `${cslp_settings.version}(FireFox Android ベータ版)`;
             }
         }
@@ -82,7 +74,7 @@ window.addEventListener("load", function(){
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
-        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p><p>URLをコピーするには、[Alt]キーを押してブラックアウトされたツイートをクリックしてください。</p>");
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p><p>URLをコピーするには、[Ctrl]キーを押してブラックアウトされたツイートをクリックしてください。</p>");
     })
     document.getElementById("hiturl_copy_opt").addEventListener("change", function(){
         cslp_settings.hit_url_copy_mode = document.getElementById("hiturl_copy_opt").value;

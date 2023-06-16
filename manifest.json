@@ -1,20 +1,10 @@
 {
   "name": "Clean-Spam-Link-Tweet",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "manifest_version": 3,
   "description": "ツイート(返信)からスパム系ツイートを可視化してアフィ系スパムリンクを踏む事を阻止します。",
   "icons" : {
     "128" : "icon.png"
-  },
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "kwnobu@gmail.com",
-      "strict_min_version": "109.0"
-    },
-    "gecko_android": {
-      "id": "kwnobu@gmail.com",
-      "strict_min_version": "113.0"
-    }
   },
   "action": {
     "default_popup": "popup.html",
