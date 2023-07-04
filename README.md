@@ -15,10 +15,12 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 **ヒットしたツイートの非表示もできます!**
 
 ## 搭載機能
-<img width="500px" src="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet/assets/44832116/f60777af-8ada-41c2-86ee-fd427fcdfa3f">
+<img width="500px" src="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet/assets/44832116/cfe368b3-e1f6-48a1-ada7-ebc2123144e7">
 
 * 阻止ツイート(ヒットツイート)の非表示機能
+* 活動停止済(無効ドメイン)阻止機能
 * Amazon.co.jpリンクの阻止(同時に非表示機能をONにすると一緒に非表示になります)
+* 常に最新のリスト利用機能(定義用リポジトリhttps://github.com/kawa-nobu/Clean-Spam-Link-Tweet_Filter)
 - 調査・開発者用機能
   - URLコピー機能(コピー項目はプルダウンメニューにより選択可)
   - 設定初期化機能
