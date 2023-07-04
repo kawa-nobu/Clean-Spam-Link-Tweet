@@ -1,21 +1,39 @@
-console.log("Clean-Spam-Link-Tweet is Working!");
 let block_list;
 let block_regexp;
 let s_key_down = null;
 let debug_block_num_text = 0;
 let debug_block_num = 0;
 let shift_key_status = 0;
-fetch(chrome.runtime.getURL('filter.json'), {
+chrome.storage.local.get("cslp_settings", function(value){
+    if(value.cslp_settings != undefined){
+        if(JSON.parse(value.cslp_settings).filter_latest == true){
+            main("https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Filter@latest/filter.json");
+        }else{
+            main(chrome.runtime.getURL("filter.json"));
+        }
+    }else{
+        main(chrome.runtime.getURL("filter.json"));
+    }
+});
+function main(filter_url){
+console.log("Clean-Spam-Link-Tweet is Working!");
+if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Filter@latest/filter.json"){
+    console.log(`Use Official Online List:${filter_url}`);
+}else{
+    console.log(`Use internal List:${filter_url}`);
+}  
+    fetch(filter_url, {
     method: "GET",
     cache: "no-store"
 }).then(response => {
     if (!response.ok) {
         console.error('List load error!');
+        alert("Clean-Spam-Link-Tweetのフィルタ読み込みに失敗しました。「常に最新のリストを使用」を無効にしてください。")
     }
     return response.json();
 }).then(json => {
     console.log(`List Load!\r\nList update:${json[0].developer_update}\r\nList provider:${json[0].thanks_link}\r\nThanks '${json[0].thanks_name}' !`);
-    let reg_exp = json[2].concat_regex;
+    let reg_exp = json[1].concat_regex;
     block_list = json;
     //設定
     let cslp_settings = null;
@@ -34,7 +52,9 @@ fetch(chrome.runtime.getURL('filter.json'), {
             cslp_settings = {
                 filter:true, 
                 hit_del:false,
+                disable_hit:false,
                 amazon_hit:false,
+                filter_latest:true,
                 hit_url_copy:false,
                 hit_url_copy_mode:"0",
                 version:chrome.runtime.getManifest().version,
@@ -54,6 +74,17 @@ fetch(chrome.runtime.getURL('filter.json'), {
             console.log("settings found!");
             cslp_settings = JSON.parse(cslp_settings.cslp_settings);
             const target_elem = document.getElementById("react-root");
+            //Write Latest Version
+            cslp_settings.filter_update = json[0].developer_update;
+            cslp_settings.filter_link = json[0].thanks_link;
+            cslp_settings.filter_thanks = json[0].thanks_name;
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log("Filter Version Write OK");
+            });
+            //Regex
+            if(cslp_settings.disable_hit == true){
+                reg_exp += `|${json[1].disable_concat_regex}`;
+            }
             if(cslp_settings.amazon_hit == true){
                 reg_exp += "|(amazon.co.jp)";
             }
@@ -90,8 +121,13 @@ fetch(chrome.runtime.getURL('filter.json'), {
                     if(document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index] != undefined){
                         //ヒットツイート削除設定無効で、リスト内に該当のURLが存在かつ阻止済フラグがあるかどうか->阻止
                         if(cslp_settings.hit_del == false && block_regexp.test(document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].textContent) && document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].getAttribute("cslt_flag") != "ok"){
-                            //console.log(document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].textContent);
-                            let ins_html = `<div style="position: absolute;z-index: 99999;width: 100%;height: ${document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].offsetHeight + 5}px;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;"><p>スパムを検出!&nbsp;ヒットしたURL:${document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].textContent.match(/\/\/([^/]*)/)[1]}</p></div>`;
+                            let ins_html;
+                            if(document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].offsetWidth < 100){
+                                ins_html = `<div style="position: absolute;z-index: 99999;width: ${document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].offsetWidth+1}px;height: ${document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].offsetHeight+5}px;max-height:25px;display: inline-flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;font-size: 0.5rem;"><p>スパム</p></div>`;
+                            }else{
+                                ins_html = `<div style="position: absolute;z-index: 99999;width: ${document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].offsetWidth+1}px;height: ${document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].offsetHeight+5}px;max-height:25px;display: inline-flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;"><p>スパムを検出!&nbsp;(${document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].textContent.match(/\/\/([^/]*)/)[1]})</p></div>`;
+                            }
+                            document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].style.whiteSpace = "nowrap";
                             document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].setAttribute("cslt_flag", "ok");
                             document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index].insertAdjacentHTML("beforebegin", ins_html);
                             copy_url(index, debug_block_num_text, "text");
@@ -238,4 +274,5 @@ function concat_block_list(){
         concat_list.push(`${block_list[1][index_b].regex}|`)
     }
     console.log(`(${concat_list.join("").slice(0, -1)})`);
+}
 }

@@ -23,7 +23,9 @@ window.addEventListener("load", function(){
             console.log(cslp_settings);
             document.getElementById("filter_sw").checked = cslp_settings.filter;
             document.getElementById("hit_tweet_sw").checked = cslp_settings.hit_del;
+            document.getElementById("disable_url_sw").checked = cslp_settings.disable_hit;
             document.getElementById("amz_aff_sw").checked = cslp_settings.amazon_hit;
+            document.getElementById("filter_latest_sw").checked = cslp_settings.filter_latest;
             document.getElementById("filter_ver").innerText = cslp_settings.filter_update;
             document.getElementById("extt_ver").innerText = cslp_settings.version;
             document.getElementById("hiturl_copy_sw").checked = cslp_settings.hit_url_copy;
@@ -62,12 +64,26 @@ window.addEventListener("load", function(){
         }
         
     })
+    document.getElementById("disable_url_sw").addEventListener("change", function(){
+        cslp_settings.disable_hit = document.getElementById("disable_url_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
     document.getElementById("amz_aff_sw").addEventListener("change", function(){
         cslp_settings.amazon_hit = document.getElementById("amz_aff_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("filter_latest_sw").addEventListener("change", function(){
+        cslp_settings.filter_latest = document.getElementById("filter_latest_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>無効にした場合、最新でない可能性のある内蔵フィルタを使用します。<br>有効にした場合、常に最新のフィルタリストを使用します。<br>変更を適用するには、Twitterの再読み込みを行ってください。</p>");
     })
     document.getElementById("hiturl_copy_sw").addEventListener("change", function(){
         cslp_settings.hit_url_copy = document.getElementById("hiturl_copy_sw").checked;
