@@ -1,30 +1,22 @@
 {
-  "name": "Clean-Spam-Link-Tweet",
-  "version": "1.6",
+  "name": "Come-back-deck",
+  "version": "1.1",
   "manifest_version": 3,
-  "description": "ツイート(返信)からスパム系ツイートを可視化してアフィ系スパムリンクを踏む事を阻止します。",
-  "icons" : {
-    "128" : "icon.png"
-  },
+  "description": "TweetDeckを取り戻せ!",
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon.png"
   },
-  "web_accessible_resources": [{
-    "resources": [
-      "filter.json"
-    ],
-    "matches": [
-      "https://twitter.com/*",
-      "https://t.co/*",
-      "https://cdn.jsdelivr.net/*"
-    ]
-  }],
-  "permissions" : [
-    "storage"
+  "icons" : {
+    "128" : "icon.png"
+  },
+  "host_permissions": [
+    "*://*.twitter.com/*"
   ],
+  "permissions" : ["cookies"],
+  "background" : {"service_worker" : "background.js"},
   "content_scripts": [{
-    "matches": ["https://twitter.com/*"],
+    "matches": ["https://*.twitter.com/*"],
     "js": ["content.js"]
     }]
   }
