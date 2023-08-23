@@ -1,9 +1,89 @@
 <!DOCTYPE html>
 <head>
     <meta charset="UTF-8" >
-    <title>TweetDeckを開く</title>
+    <title>CSLT PopUp</title>
     <script src="popup.js" charset="UTF-8"></script>
+    <link href="popup.css" rel="stylesheet">
 </head>
 <body>
+    <h1>Clean-Spam-Link-Tweet<br>(CSLT)</h1>
+    <section class="main">
+        <div class="main_func">
+            <span>無効</span>
+            <div class="sw_1">
+                <input class="sw_1_input" type="checkbox" id="filter_sw"> 
+                <label for="sw_1" class="sw_1_label"></label>
+            </div>
+            <span>有効</span>
+        </div>
+        <div>定義リストVer:<span id="filter_ver">xxxxxxxx</span></div>
+    </section>
+    <section>
+        <details class="settings" open>
+            <summary>設定</summary>
+            <div>
+                <h3>ヒットツイート非表示</h3>
+                <div class="sw_1">
+                    <input class="sw_1_input" type="checkbox" id="hit_tweet_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div>
+                <h3>無効ドメイン阻止</h3>
+                <div class="sw_1">
+                    <input class="sw_1_input" type="checkbox" id="disable_url_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div>
+                <h3>Amazonリンク阻止</h3>
+                <div class="sw_1">
+                    <input class="sw_1_input" type="checkbox" id="amz_aff_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div>
+                <h3>常に最新のリストを使用</h3>
+                <div class="sw_1">
+                    <input class="sw_1_input" type="checkbox" id="filter_latest_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+          </details>
+    </section>
+    <section id="dev_menu">
+        <details class="dev">
+            <summary>解析・調査・開発用</summary>
+            <div id="hiturl_menu">
+                <h3>ヒットURLコピー</h3>
+                <div class="sw_1">
+                    <input class="sw_1_input" type="checkbox" id="hiturl_copy_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+                <div>
+                    <select id="hiturl_copy_opt">
+                        <option value="0">ブロックURL</option>
+                        <option value="1">t.co</option>
+                        <option value="2">ブロックURL+t.co</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <button id="settings_reset_sw">設定を初期化</button>
+            </div>
+          </details>
+    </section>
+    <section>
+        <details class="about">
+            <summary>CSLTについて</summary>
+            <div>
+                <div><h3>拡張機能Ver</h3><span id="extt_ver"></span></div>
+                <div><h3>定義リスト参考元</h3><span id="filter_list"></span></div>
+                <div><h3>定義リスト協力</h3><span id="filter_thanks"></span></div>
+                <div><h3>拡張機能リポジトリ</h3><a href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+            </div>
+          </details>
+    </section>
+    
 </body>
 </html>
