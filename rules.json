@@ -1,0 +1,14 @@
+[
+    {
+    "id" : 1,
+    "priority": 1,
+    "action" : {
+        "type" : "modifyHeaders",
+        "requestHeaders": [{ "header": "cookie", "operation": "set", "value":"guest_id=;"}]
+    },
+    "condition" : {
+      "urlFilter" : "twitter.com/undefined",
+      "resourceTypes": ["xmlhttprequest"]
+    }
+  }
+]

@@ -1,6 +1,6 @@
 {
   "name": "Clean-Spam-Link-Tweet",
-  "version": "1.6",
+  "version": "1.7",
   "manifest_version": 3,
   "description": "ツイート(返信)からスパム系ツイートを可視化してアフィ系スパムリンクを踏む事を阻止します。",
   "icons" : {
@@ -10,9 +10,17 @@
     "default_popup": "popup.html",
     "default_icon": "icon.png"
   },
+  "declarative_net_request" : {
+    "rule_resources" : [{
+      "id": "ruleset_1",
+      "enabled": true,
+      "path": "rules.json"
+    }]
+  },
   "web_accessible_resources": [{
     "resources": [
-      "filter.json"
+      "filter.json",
+      "stealth_icon.svg"
     ],
     "matches": [
       "https://twitter.com/*",
@@ -20,8 +28,15 @@
       "https://cdn.jsdelivr.net/*"
     ]
   }],
+  "background" : {
+    "service_worker" : "background.js"
+  },
   "permissions" : [
-    "storage"
+    "storage",
+    "declarativeNetRequest"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
   "content_scripts": [{
     "matches": ["https://twitter.com/*"],

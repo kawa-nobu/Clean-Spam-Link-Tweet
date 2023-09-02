@@ -10,7 +10,7 @@
     <section class="main">
         <div class="main_func">
             <span>無効</span>
-            <div class="sw_1">
+            <div class="sw_1" title="この拡張機能の有効/無効を設定できます">
                 <input class="sw_1_input" type="checkbox" id="filter_sw"> 
                 <label for="sw_1" class="sw_1_label"></label>
             </div>
@@ -20,62 +20,110 @@
     </section>
     <section>
         <details class="settings" open>
-            <summary>設定</summary>
+            <summary title="動作の設定を行います">設定</summary>
             <div>
                 <h3>ヒットツイート非表示</h3>
-                <div class="sw_1">
+                <div class="sw_1" title="阻止対象のツイートを画面上から消し去る事ができます">
                     <input class="sw_1_input" type="checkbox" id="hit_tweet_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
             <div>
                 <h3>無効ドメイン阻止</h3>
-                <div class="sw_1">
+                <div class="sw_1" title="活動が停止されているドメインも阻止の対象にします。">
                     <input class="sw_1_input" type="checkbox" id="disable_url_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
             <div>
                 <h3>Amazonリンク阻止</h3>
-                <div class="sw_1">
+                <div class="sw_1" title="amazon.co.jp等のリンクを阻止の対象にします">
                     <input class="sw_1_input" type="checkbox" id="amz_aff_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
             <div>
                 <h3>常に最新のリストを使用</h3>
-                <div class="sw_1">
+                <div class="sw_1" title="開発者本人が更新・配信している最新の定義リストを使用します(推奨)">
                     <input class="sw_1_input" type="checkbox" id="filter_latest_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
           </details>
     </section>
+    <section>
+        <details open>
+            <summary title="収益化を目的とした悪質なユーザーのリプライを可能な範囲で排除する事ができます">悪質リプライ非表示</summary>
+            <div class="blue_block">
+                <h3>悪質リプライ非表示</h3>
+                <div class="sw_1 new_mode_sw" title="収益化を目的とした悪質ユーザー等のリプを画面上から消し去ります(Blue加入ユーザーは自爆注意)">
+                    <input class="sw_1_input" type="checkbox" id="blue_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>非表示対象文字数</h3>
+                <div class="sw_1" title="設定値以下の文字数のリプライを非表示の対象にします。絵文字は0文字として認識されます">
+                    <input id="blue_block_val_num" class="setting_input_num" type="number" min="0" value="0">
+                </div>
+            </div>
+            <div>
+                <h3>非表示モード</h3>
+                <select id="blue_block_opt" title="非表示モードを切り替えます">
+                    <option value="0" title="Blueマーク付きユーザーのリプを設定された文字数で非表示にします">Blueマーク付を文字数で非表示</option>
+                    <option value="1" title="Blueマークの有無に関係なく全ユーザーのリプを設定された文字数で非表示にします">全ユーザーを文字数で非表示</option>
+                    <option value="2" title="Blueマーク付きユーザーのリプを全て非表示にします">Blueマーク付を全て非表示</option>
+                </select>
+            </div>
+        </details>
+    </section>
     <section id="dev_menu">
         <details class="dev">
-            <summary>解析・調査・開発用</summary>
+            <summary title="スパム調査・解析、拡張機能の開発向け機能です">解析・調査・開発用</summary>
             <div id="hiturl_menu">
                 <h3>ヒットURLコピー</h3>
-                <div class="sw_1">
+                <div class="sw_1" title="阻止されたツイートのURLをコピーします">
                     <input class="sw_1_input" type="checkbox" id="hiturl_copy_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
                 <div>
-                    <select id="hiturl_copy_opt">
-                        <option value="0">ブロックURL</option>
-                        <option value="1">t.co</option>
-                        <option value="2">ブロックURL+t.co</option>
+                    <h3>ヒットURLコピーオプション</h3>
+                    <select id="hiturl_copy_opt" title="URLコピーのオプションを選択します">
+                        <option value="0" title="ブロックURLをコピーします">ブロックURL</option>
+                        <option value="1" title="Twitter側が短縮しているURLをコピーします">t.co</option>
+                        <option value="2" title="上記項目をカンマ切りでコピーします。">ブロックURL+t.co</option>
                     </select>
+                </div>
+                <div>
+                    <h3>ヒットURL解析</h3>
+                    <div class="sw_1" title="ヒットURLを解析して、より精度の高いURLをカンマ切りでコピーします。ヒットURLコピーオプションは無視されます">
+                        <input class="sw_1_input" type="checkbox" id="hiturl_copy_adv_sw"> 
+                        <label for="sw_1" class="sw_1_label"></label>
+                    </div>
+                </div>
+                <div>
+                    <h3>解析 出力フィルタ</h3>
+                    <div class="sw_1" title="解析されたURL(拡張子の付いたURL等)をフィルタリングして綺麗な状態でコピーします">
+                        <input class="sw_1_input" type="checkbox" id="hiturl_copy_adv_filter_sw"> 
+                        <label for="sw_1" class="sw_1_label"></label>
+                    </div>
+                </div>
+                <div>
+                    <h3>ステルスBlue確認</h3>
+                    <div class="sw_1" title="Blueマーク非表示のアカウントを確認します。ユーザーのページで確認できます">
+                        <input class="sw_1_input" type="checkbox" id="stealth_blue_sw"> 
+                        <label for="sw_1" class="sw_1_label"></label>
+                    </div>
                 </div>
             </div>
             <div>
-                <button id="settings_reset_sw">設定を初期化</button>
+                <button id="settings_reset_sw" title="設定を初期化して再構築を行います">設定を初期化</button>
             </div>
           </details>
     </section>
     <section>
         <details class="about">
-            <summary>CSLTについて</summary>
+            <summary title="この拡張機能の情報を表示します">CSLTについて</summary>
             <div>
                 <div><h3>拡張機能Ver</h3><span id="extt_ver"></span></div>
                 <div><h3>定義リスト参考元</h3><span id="filter_list"></span></div>
