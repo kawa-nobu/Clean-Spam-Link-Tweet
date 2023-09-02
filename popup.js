@@ -30,6 +30,14 @@ window.addEventListener("load", function(){
             document.getElementById("extt_ver").innerText = cslp_settings.version;
             document.getElementById("hiturl_copy_sw").checked = cslp_settings.hit_url_copy;
             document.getElementById("hiturl_copy_opt").value = cslp_settings.hit_url_copy_mode;
+
+            document.getElementById("hiturl_copy_adv_sw").checked = cslp_settings.hit_url_copy_advanced;
+            document.getElementById("hiturl_copy_adv_filter_sw").checked = cslp_settings.hit_url_copy_advanced_filter;
+            document.getElementById("stealth_blue_sw").checked = cslp_settings.stealth_blue_view;
+            document.getElementById("blue_block_sw").checked = cslp_settings.blue_block;
+            document.getElementById("blue_block_val_num").value = cslp_settings.blue_block_value_num;
+            document.getElementById("blue_block_opt").value = cslp_settings.blue_block_mode;
+
             document.getElementById("filter_list").innerHTML = `<a href="${cslp_settings.filter_link}" target="_blank" rel="noopener noreferrer">フィルタリスト</a>`;
             document.getElementById("filter_thanks").innerText = cslp_settings.filter_thanks+" 様";
         }
@@ -99,6 +107,55 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
+    //
+    document.getElementById("hiturl_copy_adv_sw").addEventListener("change", function(){
+        cslp_settings.hit_url_copy_advanced = document.getElementById("hiturl_copy_adv_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("hiturl_copy_adv_filter_sw").addEventListener("change", function(){
+        cslp_settings.hit_url_copy_advanced_filter = document.getElementById("hiturl_copy_adv_filter_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("stealth_blue_sw").addEventListener("change", function(){
+        cslp_settings.stealth_blue_view = document.getElementById("stealth_blue_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    //
+    document.getElementById("blue_block_sw").addEventListener("change", function(){
+        cslp_settings.blue_block = document.getElementById("blue_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("blue_block_val_num").addEventListener("change", function(){
+        cslp_settings.blue_block_value_num = document.getElementById("blue_block_val_num").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("blue_block_opt").addEventListener("change", function(){
+        cslp_settings.blue_block_mode = document.getElementById("blue_block_opt").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        if(document.getElementById("blue_block_opt").value == "1"){
+            append_alert("<p>このモードはリプしているユーザーを全て解析する為、<br>環境によっては動作が不安定になる可能性があります。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }else{
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }
+    })
+//
     document.getElementById("settings_reset_sw").addEventListener("click", function(){
         chrome.storage.local.remove("cslp_settings", function(value){
             append_alert("<p>設定を初期化しました。<br>Twitterを再読み込みしてください。</p>");

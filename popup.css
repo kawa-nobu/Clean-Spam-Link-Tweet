@@ -2,6 +2,12 @@ body{
     width: 200px;
     height: auto;
 }
+summary{
+  cursor: pointer;
+}
+details{
+  margin-bottom: 5px;
+}
 .main{
     display: flex;
     flex-direction: column;
@@ -12,6 +18,24 @@ body{
 }
 .dev{
   position: relative;
+}
+.new_mode_sw{
+  right: 16px !important;
+}
+.setting_input_num{
+  position: relative;
+  width: 80px;
+  height: 25px;
+  right: 30px;
+}
+.blue_block{
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+#blue_block_opt{
+  width: 100%;
 }
 h1{
     font-size: 1rem;
@@ -97,7 +121,7 @@ input:checked + label:after {
   margin: 5px;
 }
 .append_alert{
-  position: absolute;
+  position: fixed;
   z-index: 1000;
   width: 100%;
   height: 100%;
@@ -147,6 +171,7 @@ input:checked + label:after {
   }
   details{
     font-size: 1rem;
+    margin-bottom: 5px;
   }
   .about h3{
     margin-bottom: 0;
@@ -222,7 +247,7 @@ input:checked + label:after {
     margin: 5px;
   }
   .append_alert{
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     width: 120%;
     height: 120vh;
