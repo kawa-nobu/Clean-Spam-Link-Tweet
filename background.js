@@ -10,7 +10,7 @@ async function check_main(request){
         case "advanced_check":
             console.log(request.message.message)
             return new Promise((resolve)=>{
-                fetch(request.message.target).then(response => {
+                fetch(request.message.target, {credentials: "omit"}).then(response => {
                     if (!response.ok) {
                       console.error('t.co load error!');
                       console.log("error");
@@ -29,7 +29,7 @@ async function check_main(request){
                         console.log(text.match(/(https?:\/\/[^<"]*)/g));
                         let target_url = text.match(/(https?:\/\/[^<"]*)/g);
                         if(target_url.length <= 10){
-                            fetch(target_url[0]).then(response => {
+                            fetch(target_url[0], {credentials: "omit"}).then(response => {
                                 if (!response.ok) {
                                     console.error('load error!');
                                     resolve({type:"load_err", url:response.url, base_url:target_url[0]});
@@ -62,62 +62,33 @@ async function check_main(request){
                 return new Promise((resolve)=>{
                     chrome.storage.local.get("cslp_settings", function(value){
                         let guest_token = null;
-                    console.log(value)
-                    const now_date = new Date().getTime();
-                    const now_date_unix = Math.floor(now_date/1000);
-                    if(now_date_unix - JSON.parse(value.cslp_settings).tw_guest_token_date >= 1800){//30分でゲストトークン更新
-                        console.log(now_date_unix - JSON.parse(value.cslp_settings).tw_guest_token_date)
-                        let save_data = JSON.parse(value.cslp_settings);
-                        //gust_token取得保存
-                        get_gtoken().then((resp)=>{
-                            console.log(resp)
-                            guest_token = resp;
-                            save_data.tw_guest_token = guest_token;
-                            save_data.tw_guest_token_date = now_date_unix;
-                            chrome.storage.local.set({'cslp_settings': JSON.stringify(save_data)}, function () {
-                            console.log("guest_token_save");
-                            console.log(guest_token)
-                            resolve(blue_check(guest_token, request.message.target));
-                        });
+                        console.log(value);
+                        const now_date = new Date().getTime();
+                        const now_date_unix = Math.floor(now_date/1000);
+                        if(now_date_unix - JSON.parse(value.cslp_settings).tw_guest_token_date >= 1800){//30分でゲストトークン更新
+                            console.log(now_date_unix - JSON.parse(value.cslp_settings).tw_guest_token_date)
+                            let save_data = JSON.parse(value.cslp_settings);
+                            //gust_token取得保存
+                            get_gtoken().then((resp)=>{
+                                console.log(resp)
+                                guest_token = resp;
+                                save_data.tw_guest_token = guest_token;
+                                save_data.tw_guest_token_date = now_date_unix;
+                                chrome.storage.local.set({'cslp_settings': JSON.stringify(save_data)}, function () {
+                                    console.log("guest_token_save");
+                                    console.log(guest_token);
+                                    resolve(blue_check(guest_token, request.message.target));
+                                });
+                            });
+                        }else{
+                            console.log("guest_token_ok");
+                            guest_token = JSON.parse(value.cslp_settings).tw_guest_token;
+                            console.log(guest_token);
+                            resolve(blue_check(guest_token, request.message.target))
+                        }
                     });
-                    }else{
-                        console.log("guest_token_ok");
-                        guest_token = JSON.parse(value.cslp_settings).tw_guest_token;
-                        console.log(guest_token)
-                        resolve(blue_check(guest_token, request.message.target))
-                    }
-                    })
-                })
-            }
-            /*let qq = chrome.storage.local.get("cslp_settings").then((value)=>{
-                return new Promise((resolve)=>{
-                    let guest_token = null;
-                    console.log(value)
-                    const now_date = new Date().getTime();
-                    const now_date_unix = Math.floor(now_date/1000);
-                    if(now_date_unix - JSON.parse(value.cslp_settings).tw_guest_token_date >= 1800){//30分でゲストトークン更新
-                        console.log(now_date_unix - JSON.parse(value.cslp_settings).tw_guest_token_date)
-                        let save_data = JSON.parse(value.cslp_settings);
-                        //gust_token取得保存
-                        get_gtoken().then((resp)=>{
-                            console.log(resp)
-                            guest_token = resp;
-                            save_data.tw_guest_token = guest_token;
-                            save_data.tw_guest_token_date = now_date_unix;
-                            chrome.storage.local.set({'cslp_settings': JSON.stringify(save_data)}, function () {
-                            console.log("guest_token_save");
-                            console.log(guest_token)
-                            resolve(blue_check(guest_token, request.message.target));
-                        });
-                    });
-                    }else{
-                        console.log("guest_token_ok");
-                        guest_token = JSON.parse(value.cslp_settings).tw_guest_token;
-                        console.log(guest_token)
-                        resolve(blue_check(guest_token, request.message.target))
-                    }
                 });
-            });*/
+            }
             return await resp();
         default:
             break;
