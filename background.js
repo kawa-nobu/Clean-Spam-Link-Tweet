@@ -10,7 +10,7 @@ async function check_main(request){
         case "advanced_check":
             console.log(request.message.message)
             return new Promise((resolve)=>{
-                fetch(request.message.target).then(response => {
+                fetch(request.message.target, {credentials: "omit"}).then(response => {
                     if (!response.ok) {
                       console.error('t.co load error!');
                       console.log("error");
@@ -29,7 +29,7 @@ async function check_main(request){
                         console.log(text.match(/(https?:\/\/[^<"]*)/g));
                         let target_url = text.match(/(https?:\/\/[^<"]*)/g);
                         if(target_url.length <= 10){
-                            fetch(target_url[0]).then(response => {
+                            fetch(target_url[0], {credentials: "omit"}).then(response => {
                                 if (!response.ok) {
                                     console.error('load error!');
                                     resolve({type:"load_err", url:response.url, base_url:target_url[0]});
