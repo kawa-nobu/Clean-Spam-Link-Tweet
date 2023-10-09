@@ -30,6 +30,7 @@ window.addEventListener("load", function(){
             document.getElementById("extt_ver").innerText = cslp_settings.version;
             document.getElementById("hiturl_copy_sw").checked = cslp_settings.hit_url_copy;
             document.getElementById("hiturl_copy_opt").value = cslp_settings.hit_url_copy_mode;
+            document.getElementById("hitur_copy_text").value = cslp_settings.hit_url_copy_user_text;
 
             document.getElementById("hiturl_copy_adv_sw").checked = cslp_settings.hit_url_copy_advanced;
             document.getElementById("hiturl_copy_adv_filter_sw").checked = cslp_settings.hit_url_copy_advanced_filter;
@@ -37,6 +38,8 @@ window.addEventListener("load", function(){
             document.getElementById("blue_block_sw").checked = cslp_settings.blue_block;
             document.getElementById("blue_block_val_num").value = cslp_settings.blue_block_value_num;
             document.getElementById("blue_block_opt").value = cslp_settings.blue_block_mode;
+
+            document.getElementById("arabic_block_sw").checked = cslp_settings.arabic_reply_block;
 
             document.getElementById("filter_list").innerHTML = `<a href="${cslp_settings.filter_link}" target="_blank" rel="noopener noreferrer">フィルタリスト</a>`;
             document.getElementById("filter_thanks").innerText = cslp_settings.filter_thanks+" 様";
@@ -108,6 +111,15 @@ window.addEventListener("load", function(){
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
     //
+    document.getElementById("hitur_copy_text").addEventListener("change", function(){
+        cslp_settings.hit_url_copy_user_text = document.getElementById("hitur_copy_text").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        let preview_text = document.getElementById("hitur_copy_text").value.replaceAll("%t_co%", "t.coアドレス").replaceAll("%bl_url%", "ブロックURL").replaceAll("%adv_addr%", "解析URL").replaceAll("%tw_id%", "ツイートID").replaceAll("%tw_date%", "ツイート日時");
+        append_alert(`<p>出力プレビュー<br><span class="text_bold">${preview_text}</span><br><br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>`);
+    })
+    //
     document.getElementById("hiturl_copy_adv_sw").addEventListener("change", function(){
         cslp_settings.hit_url_copy_advanced = document.getElementById("hiturl_copy_adv_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
@@ -154,6 +166,14 @@ window.addEventListener("load", function(){
         }else{
             append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
         }
+    })
+
+    document.getElementById("arabic_block_sw").addEventListener("change", function(){
+        cslp_settings.arabic_reply_block = document.getElementById("arabic_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
 //
     document.getElementById("settings_reset_sw").addEventListener("click", function(){

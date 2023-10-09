@@ -57,6 +57,7 @@ async function check_main(request){
                 });
             });
         case "blue_check":
+            dnr_update();
             const settings = chrome.storage.local.get("cslp_settings", async function(value){});
             let resp = async function(){
                 return new Promise((resolve)=>{
@@ -133,3 +134,8 @@ async function get_gtoken(){
         });
     });
 };
+
+async function dnr_update() {
+    await chrome.declarativeNetRequest.updateEnabledRulesets(({disableRulesetIds: ["ruleset_1"]}));
+    await chrome.declarativeNetRequest.updateEnabledRulesets(({enableRulesetIds: ["ruleset_1"]}));
+}

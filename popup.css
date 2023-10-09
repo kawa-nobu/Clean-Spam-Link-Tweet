@@ -9,9 +9,9 @@ details{
   margin-bottom: 5px;
 }
 .main{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .settings{
   position: relative;
@@ -38,36 +38,39 @@ details{
   width: 100%;
 }
 h1{
-    font-size: 1rem;
-    text-align: center;
+  font-size: 1rem;
+  text-align: center;
 }
 h3{
-    font-size: 0.6rem;
+  font-size: 0.6rem;
+}
+.text_bold{
+  font-weight: bold;
 }
 .about h3{
   margin-bottom: 0;
   font-size: 0.6rem;
 }
 .settings div{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 .about div{
   display: flex;
   flex-direction: column;
 }
 .dev div{
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 details div .sw_1{
-    position: absolute;
-    right: 5px;
+  position: absolute;
+  right: 5px;
 }
 .main_func{
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .sw_1 {
