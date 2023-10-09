@@ -1,5 +1,6 @@
 let block_list;
 let block_regexp;
+const arabic_regexp = new RegExp("[\u0600-\u060f\u0610-\u061f\u0620-\u062f\u0630-\u063f\u0640-\u064f\u0650-\u065f\u0660-\u066f\u0670-\u067f\u0680-\u068f\u0690-\u069f\u06a0-\u06af\u06b0-\u06bf\u06c0-\u06cf\u06d0-\u06df\u06e0-\u06ef\u06f0-\u06ff]");
 let advanced_regexp;
 let s_key_down = null;
 let debug_block_num_text = Math.random().toString(32).substring(2);
@@ -58,12 +59,14 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 filter_latest:true,
                 hit_url_copy:false,
                 hit_url_copy_mode:"0",
+                hit_url_copy_user_text:"%t_co%,%bl_url%,%adv_addr%,%tw_id%,%tw_date%",
                 hit_url_copy_advanced:false,
                 hit_url_copy_advanced_filter:false,
                 stealth_blue_view:false,
                 blue_block:false,
                 blue_block_value_num:"10",
                 blue_block_mode:"0",
+                arabic_reply_block:false,
                 version:chrome.runtime.getManifest().version,
                 filter_update:json[0].developer_update,
                 filter_link:json[0].thanks_link,
@@ -199,6 +202,17 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                             break;
                     }
                 }
+                //アラビア文字が含まれた返信
+                if(cslp_settings.arabic_reply_block == true){
+                   //console.log("arabicdelete") 
+                    for (let index = 0; index < document.querySelectorAll('[data-testid="tweetText"]').length; index++) {
+                        if(arabic_regexp.test(document.querySelectorAll('[data-testid="tweetText"]')[index].innerText)){
+                            let target = document.querySelectorAll('[data-testid="tweetText"]')[index];
+                            target.closest('[data-testid="cellInnerDiv"]').textContent = "";
+                        }
+                    }
+                    
+                }
                 //TwitterCardではないスパムの場合
                 for(let index = 0; index < document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]').length; index++){
                     debug_block_num_text = Math.random().toString(32).substring(2);
@@ -257,6 +271,13 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
             }
             //URLコピー関数
             function copy_url(index, debug_block_num, tw_mode) {
+                //コピー変数
+                let copy_tw_id = null;
+                let copy_tw_date = null;
+                let copy_t_co_addr = null;
+                let copy_base_addr = null
+                let copy_adv_resp_addr = null;
+                //
                 if (cslp_settings.hit_url_copy == true) {
                     let debug_ins_html = `<div id="cslt_filter${debug_block_num}" class="cslt_copy_filter" style="width: 100%;height: 100%;position: absolute;z-index: 100;display: flex;align-items: center;text-align: center;justify-content: center;font-weight:bold;background-color: rgba(0,0,0,0.75);color: #fff;outline:solid 5px #ffab11;outline-offset:-5px;cursor:copy;visibility:hidden;">クリックでURLをコピー</div>`;
                     switch (tw_mode) {
@@ -270,6 +291,12 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     //console.log(`cslt_filter${debug_block_num}`)
                     document.getElementById(`cslt_filter${debug_block_num}`).addEventListener("click", function () {
                     //console.log(this)
+                    //ツイート情報取得
+                    const get_tw_id_url = new URL(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"] a[dir="ltr"]').href);
+                    const get_tw_date = new Date(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"] a[dir="ltr"] time').getAttribute("datetime"));                    
+                    copy_tw_id = get_tw_id_url.pathname.match("/status/(\\d+)")[1];
+                    copy_tw_date = `${get_tw_date.getFullYear()}_${(get_tw_date.getMonth()+1).toString().padStart(2, '0')}_${get_tw_date.getDate().toString().padStart(2, '0')}_${get_tw_date.getHours()}_${get_tw_date.getMinutes()}_${get_tw_date.getSeconds()}`;
+                    //アドバンスドURL解析
                     if(cslp_settings.hit_url_copy_advanced == true){
                         let target_element_a = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a');
                         let target_url = null;
@@ -300,59 +327,124 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                             let tco_addr = target_url;
                             //console.log(target_url)
                             chrome.runtime.sendMessage({message: {mode:"advanced_check", target:tco_addr}}, (response) => {
-                                //console.log(response);
-                                console.log(response.url);
-                                if(Array.isArray(response.url) == true){
-                                    let filtered_array = new Array();
-                                    if(cslp_settings.hit_url_copy_advanced_filter == true){
-                                        for (let index = 0; index < response.url.length; index++) {
-                                            if(response.url[index].match(response.base_url+"|"+advanced_regexp) == null){
-                                                //console.log(response.url[index]);
-                                                filtered_array.push(response.url[index]);
+                                if(cslp_settings.hit_url_copy_mode != "3"){
+                                    //console.log(response);
+                                    console.log(response.url);
+                                    if(Array.isArray(response.url) == true){
+                                        let filtered_array = new Array();
+                                        if(cslp_settings.hit_url_copy_advanced_filter == true){
+                                            for (let index = 0; index < response.url.length; index++) {
+                                                if(response.url[index].match(response.base_url+"|"+advanced_regexp) == null){
+                                                    //console.log(response.url[index]);
+                                                    filtered_array.push(response.url[index]);
+                                                }
                                             }
+                                            let filtered_array_concat = response.base_url+","+filtered_array.join(",");
+                                            navigator.clipboard.writeText(filtered_array_concat).then(()=>{
+                                                hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト不可型・フィルタ済)\r\n他の拡張機能との競合や広告である可能性があります。\r\nCopy->${filtered_array_concat}`);
+                                            });
+                                        }else{
+                                            let array_concat = response.base_url+","+response.url.join(",");
+                                            navigator.clipboard.writeText(array_concat).then(()=>{
+                                                hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト不可型)\r\n他の拡張機能との競合や広告である可能性があります。\r\nCopy->${array_concat}`);
+                                            });
                                         }
-                                        let filtered_array_concat = response.base_url+","+filtered_array.join(",");
-                                        navigator.clipboard.writeText(filtered_array_concat);
-                                        hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト不可型・フィルタ済)\r\n他の拡張機能との競合や広告である可能性があります。\r\nCopy->${filtered_array_concat}`);
                                     }else{
-                                        let array_concat = response.base_url+","+response.url.join(",");
-                                        navigator.clipboard.writeText(array_concat);
-                                        hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト不可型)\r\n他の拡張機能との競合や広告である可能性があります。\r\nCopy->${array_concat}`);
+                                        let concat_urls = response.base_url+","+response.url;
+                                        navigator.clipboard.writeText(concat_urls).then(()=>{
+                                            hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト型)\r\n他の拡張機能との競合や広告である可能性があります。\r\nnCopy->${concat_urls}`);
+                                        });
                                     }
                                 }else{
-                                    let concat_urls = response.base_url+","+response.url;
-                                    navigator.clipboard.writeText(concat_urls);
-                                    hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト型)\r\n他の拡張機能との競合や広告である可能性があります。\r\nnCopy->${concat_urls}`);
+                                    if(Array.isArray(response.url) == true){
+                                        let filtered_array = new Array();
+                                        if(cslp_settings.hit_url_copy_advanced_filter == true){
+                                            for (let index = 0; index < response.url.length; index++) {
+                                                if(response.url[index].match(response.base_url+"|"+advanced_regexp) == null){
+                                                    //console.log(response.url[index]);
+                                                    filtered_array.push(response.url[index]);
+                                                }
+                                            }
+                                            copy_t_co_addr = target_url;
+                                            copy_base_addr  = response.base_url;
+                                            copy_adv_resp_addr = filtered_array.join(",");
+                                        }else{
+                                            copy_t_co_addr = target_url;
+                                            copy_base_addr  = response.base_url;
+                                            copy_adv_resp_addr = response.url.join(",");
+                                        }
+                                    }else{
+                                        copy_t_co_addr = target_url;
+                                        copy_base_addr  = response.base_url;
+                                        copy_adv_resp_addr = response.url;
+                                    }
+                                    const copy_text = cslp_settings.hit_url_copy_user_text.replaceAll("%t_co%", copy_t_co_addr).replaceAll("%bl_url%", copy_base_addr).replaceAll("%adv_addr%", copy_adv_resp_addr).replaceAll("%tw_id%", copy_tw_id).replaceAll("%tw_date%", copy_tw_date);
+                                    navigator.clipboard.writeText(copy_text).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\n${copy_text}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。`);
+                                    });
                                 }
                             });
                         }else{
                             let tco_addr = target_url;
                             //console.log(tco_addr)
                             chrome.runtime.sendMessage({message: {mode:"advanced_check", target:tco_addr}}, (response) => {
-                                //console.log(response);
-                                //console.log(response.url);
-                                if(Array.isArray(response.url) == true){
-                                    let filtered_array = new Array();
-                                    if(cslp_settings.hit_url_copy_advanced_filter == true){
-                                        //console.log(advanced_regexp)
-                                        for (let index = 0; index < response.url.length; index++) {
-                                            if(response.url[index].match(response.base_url+"|"+advanced_regexp) == null){
-                                                //console.log(response.url[index]);
-                                                filtered_array.push(response.url[index]);
+                                if(cslp_settings.hit_url_copy_mode != "3"){
+                                    //console.log(response);
+                                    //console.log(response.url);
+                                    if(Array.isArray(response.url) == true){
+                                        let filtered_array = new Array();
+                                        if(cslp_settings.hit_url_copy_advanced_filter == true){
+                                            //console.log(advanced_regexp)
+                                            for (let index = 0; index < response.url.length; index++) {
+                                                if(response.url[index].match(response.base_url+"|"+advanced_regexp) == null){
+                                                    //console.log(response.url[index]);
+                                                    filtered_array.push(response.url[index]);
+                                                }
                                             }
+                                            let filtered_array_concat = response.base_url+","+filtered_array.join(",");
+                                            navigator.clipboard.writeText(filtered_array_concat).then(()=>{
+                                                hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト不可型・フィルタ済)\r\nCopy->${filtered_array_concat}`);
+                                            });
+                                        }else{
+                                            let array_concat = response.base_url+","+response.url.join(",");
+                                            navigator.clipboard.writeText(array_concat).then(()=>{
+                                                hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト不可型)\r\nCopy->${array_concat}`);
+                                            });
                                         }
-                                        let filtered_array_concat = response.base_url+","+filtered_array.join(",");
-                                        navigator.clipboard.writeText(filtered_array_concat);
-                                        hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト不可型・フィルタ済)\r\nCopy->${filtered_array_concat}`);
                                     }else{
-                                        let array_concat = response.base_url+","+response.url.join(",");
-                                        navigator.clipboard.writeText(array_concat);
-                                        hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト不可型)\r\nCopy->${array_concat}`);
+                                        let concat_urls = response.base_url+","+response.url;
+                                        navigator.clipboard.writeText(concat_urls).then(()=>{
+                                            hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト型)\r\nCopy->${concat_urls}`);
+                                        });
                                     }
                                 }else{
-                                    let concat_urls = response.base_url+","+response.url;
-                                    navigator.clipboard.writeText(concat_urls);
-                                    hide_cp_msg(`クリップボードにURLをコピーしました!(リダイレクト型)\r\nCopy->${concat_urls}`);
+                                    if(Array.isArray(response.url) == true){
+                                        let filtered_array = new Array();
+                                        if(cslp_settings.hit_url_copy_advanced_filter == true){
+                                            //console.log(advanced_regexp)
+                                            for (let index = 0; index < response.url.length; index++) {
+                                                if(response.url[index].match(response.base_url+"|"+advanced_regexp) == null){
+                                                    //console.log(response.url[index]);
+                                                    filtered_array.push(response.url[index]);
+                                                }
+                                            }
+                                            copy_t_co_addr = target_url;
+                                            copy_base_addr = response.base_url;
+                                            copy_adv_resp_addr = filtered_array.join(",");
+                                        }else{
+                                            copy_t_co_addr = target_url;
+                                            copy_base_addr = response.base_url;
+                                            copy_adv_resp_addr = response.url.join(",");
+                                        }
+                                    }else{
+                                        copy_t_co_addr = target_url;
+                                        copy_base_addr = response.base_url;
+                                        copy_adv_resp_addr = response.url;
+                                    }
+                                    const copy_text = cslp_settings.hit_url_copy_user_text.replaceAll("%t_co%", copy_t_co_addr).replaceAll("%bl_url%", copy_base_addr).replaceAll("%adv_addr%", copy_adv_resp_addr).replaceAll("%tw_id%", copy_tw_id).replaceAll("%tw_date%", copy_tw_date);
+                                    navigator.clipboard.writeText(copy_text).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\n${copy_text}`);
+                                    });
                                 }
                             });
                         }
@@ -379,41 +471,73 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                             return get_url;
                           }
                           switch (cslp_settings.hit_url_copy_mode) {
-                          case "0":
-                            if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
-                              navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href);
-                              hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href}\r\n他の拡張機能との競合や広告をコピーした可能性があります。`);
-                            } else {
-                              get_blockurl(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href).then(function (url) {
-                                navigator.clipboard.writeText(url);
-                                hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${url}`);
-                              });
-                            }
-                            break;
-                          case "1":
-                            if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
-                              navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href);
-                              hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスでコピーできませんでした。`);
-                            } else {
-                              navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href);
-                              hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href}`);
-                            }
-                            break;
-                          case "2":
-                            if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
-                              let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
-                              navigator.clipboard.writeText(`${tco_addr},${tco_addr}`);
-                              hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${tco_addr},${tco_addr}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。`);
-                            } else {
-                              let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
-                              get_blockurl(tco_addr).then(function (url) {
-                                let cl_text = `${url},${tco_addr}`;
-                                //console.log(cl_text);
-                                navigator.clipboard.writeText(cl_text);
-                                hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${cl_text}`);
-                              })
-                            }
-                            break;
+                            case "0":
+                                if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
+                                navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href);
+                                hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href}\r\n他の拡張機能との競合や広告をコピーした可能性があります。\r\n解析モードをオンにする事で解決できる可能性があります。`);
+                                } else {
+                                get_blockurl(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href).then(function (url) {
+                                    navigator.clipboard.writeText(url).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${url}`);
+                                    });
+                                });
+                                }
+                                break;
+                            case "1":
+                                if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
+                                    navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスでコピーできませんでした。\r\n解析モードをオンにする事で解決できる可能性があります。`);
+                                    });
+                                } else {
+                                    navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href}`);
+                                    });
+                                }
+                                break;
+                            case "2":
+                                if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
+                                    let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
+                                    navigator.clipboard.writeText(`${tco_addr},${tco_addr}`).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${tco_addr},${tco_addr}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。\r\n解析モードをオンにする事で解決できる可能性があります。`);
+                                    });
+                                } else {
+                                    let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
+                                    get_blockurl(tco_addr).then(function (url) {
+                                        let cl_text = `${url},${tco_addr}`;
+                                        //console.log(cl_text);
+                                        navigator.clipboard.writeText(cl_text).then(()=>{
+                                            hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${cl_text}`);
+                                        });
+                                    })
+                                }
+                                break;
+                            case "3":
+                                if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
+                                    let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
+                                    //navigator.clipboard.writeText(`${tco_addr},${tco_addr}`);
+                                    //hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${tco_addr},${tco_addr}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。`);
+                                    copy_t_co_addr = tco_addr;
+                                    copy_base_addr = tco_addr;
+                                    const copy_text = cslp_settings.hit_url_copy_user_text.replaceAll("%t_co%", copy_t_co_addr).replaceAll("%bl_url%", copy_base_addr).replaceAll("%adv_addr%", copy_adv_resp_addr).replaceAll("%tw_id%", copy_tw_id).replaceAll("%tw_date%", copy_tw_date);
+                                    navigator.clipboard.writeText(copy_text).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\n${copy_text}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。\r\n解析モードをオンにする事で解決できる可能性があります。`);
+                                    });
+                                } else {
+                                    let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
+                                    get_blockurl(tco_addr).then(function (url) {
+                                        let cl_text = `${url},${tco_addr}`;
+                                        //console.log(cl_text);
+                                        //navigator.clipboard.writeText(cl_text);
+                                        //hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${cl_text}`);
+                                        copy_t_co_addr = tco_addr;
+                                        copy_base_addr = url;
+                                        const copy_text = cslp_settings.hit_url_copy_user_text.replaceAll("%t_co%", copy_t_co_addr).replaceAll("%bl_url%", copy_base_addr).replaceAll("%adv_addr%", copy_adv_resp_addr).replaceAll("%tw_id%", copy_tw_id).replaceAll("%tw_date%", copy_tw_date);
+                                        navigator.clipboard.writeText(copy_text).then(()=>{
+                                            hide_cp_msg(`クリップボードにURLをコピーしました!\r\n${copy_text}`);
+                                        });
+                                    })
+                                }
+                                break;
                           }
                         }
                         function hide_cp_msg(message){

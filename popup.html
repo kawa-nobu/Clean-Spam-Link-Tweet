@@ -75,6 +75,13 @@
                     <option value="2" title="Blueマーク付きユーザーのリプを全て非表示にします">Blueマーク付を全て非表示</option>
                 </select>
             </div>
+            <div class="blue_block">
+                <h3>アラビア文字リプ非表示</h3>
+                <div class="sw_1 new_mode_sw" title="アラビア文字が含まれたリプを非表示にします。">
+                    <input class="sw_1_input" type="checkbox" id="arabic_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
         </details>
     </section>
     <section id="dev_menu">
@@ -89,10 +96,15 @@
                 <div>
                     <h3>ヒットURLコピーオプション</h3>
                     <select id="hiturl_copy_opt" title="URLコピーのオプションを選択します">
-                        <option value="0" title="ブロックURLをコピーします">ブロックURL</option>
-                        <option value="1" title="Twitter側が短縮しているURLをコピーします">t.co</option>
-                        <option value="2" title="上記項目をカンマ切りでコピーします。">ブロックURL+t.co</option>
+                        <option value="0" title="ブロックURLをコピーします">ブロックURL(解析非対応)</option>
+                        <option value="1" title="Twitter側が短縮しているURLをコピーします">t.co(解析非対応)</option>
+                        <option value="2" title="上記項目をカンマ切りでコピーします。">ブロックURL+t.co(解析非対応)</option>
+                        <option value="3" title="専用の変数を組み替えて好きな形式でコピーできます">組み替え</option>
                     </select>
+                </div>
+                <div>
+                    <h3>コピー項目組み替え</h3>
+                    <input id="hitur_copy_text" type="text" title="上記項目で「組み替え」を選択した場合のコピーパターンを設定できます。">
                 </div>
                 <div>
                     <h3>ヒットURL解析</h3>
@@ -129,6 +141,7 @@
                 <div><h3>定義リスト参考元</h3><span id="filter_list"></span></div>
                 <div><h3>定義リスト協力</h3><span id="filter_thanks"></span></div>
                 <div><h3>拡張機能リポジトリ</h3><a href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+                <div><h3>拡張機能ヘルプ</h3><a href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet#clean-spam-link-tweetcslt" target="_blank" rel="noopener noreferrer">GitHub</a></div>
             </div>
           </details>
     </section>
