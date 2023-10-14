@@ -1,6 +1,6 @@
 {
   "name": "Clean-Spam-Link-Tweet",
-  "version": "1.8",
+  "version": "1.8.1",
   "manifest_version": 3,
   "description": "ツイート(返信)からスパム系ツイートを可視化してアフィ系スパムリンクを踏む事を阻止します。",
   "icons" : {
