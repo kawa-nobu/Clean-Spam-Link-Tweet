@@ -204,14 +204,15 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 }
                 //アラビア文字が含まれた返信
                 if(cslp_settings.arabic_reply_block == true){
-                   //console.log("arabicdelete") 
-                    for (let index = 0; index < document.querySelectorAll('[data-testid="tweetText"]').length; index++) {
-                        if(arabic_regexp.test(document.querySelectorAll('[data-testid="tweetText"]')[index].innerText)){
-                            let target = document.querySelectorAll('[data-testid="tweetText"]')[index];
-                            target.closest('[data-testid="cellInnerDiv"]').textContent = "";
+                    if(window.location.pathname.match("\/status\/")?.length == 1){
+                        for (let index = 0; index < document.querySelectorAll('[data-testid="tweetText"]').length; index++) {
+                            if(arabic_regexp.test(document.querySelectorAll('[data-testid="tweetText"]')[index].innerText)){
+                                //console.log("arabicdelete") 
+                                let target = document.querySelectorAll('[data-testid="tweetText"]')[index];
+                                target.closest('[data-testid="cellInnerDiv"]').textContent = "";
+                            }
                         }
                     }
-                    
                 }
                 //TwitterCardではないスパムの場合
                 for(let index = 0; index < document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]').length; index++){
@@ -292,8 +293,8 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     document.getElementById(`cslt_filter${debug_block_num}`).addEventListener("click", function () {
                     //console.log(this)
                     //ツイート情報取得
-                    const get_tw_id_url = new URL(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"] a[dir="ltr"]').href);
-                    const get_tw_date = new Date(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"] a[dir="ltr"] time').getAttribute("datetime"));                    
+                    const get_tw_id_url = new URL(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"]  a[dir="ltr"], div[dir="ltr"] [aria-describedby][role="link"]').href);
+                    const get_tw_date = new Date(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"] a[dir="ltr"] time, div[dir="ltr"] [aria-describedby][role="link"] time').getAttribute("datetime"));                    
                     copy_tw_id = get_tw_id_url.pathname.match("/status/(\\d+)")[1];
                     copy_tw_date = `${get_tw_date.getFullYear()}_${(get_tw_date.getMonth()+1).toString().padStart(2, '0')}_${get_tw_date.getDate().toString().padStart(2, '0')}_${get_tw_date.getHours()}_${get_tw_date.getMinutes()}_${get_tw_date.getSeconds()}`;
                     //アドバンスドURL解析
@@ -469,14 +470,43 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                               }
                             });
                             return get_url;
-                          }
+                        }
+                        //アドバンスド解析ベースモードからのt.coリンク取得部分移植
+                        function get_tco_new(input_element){
+                            let target_element_a = input_element.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a');
+                            let target_url = null;
+                            if(input_element.parentElement.querySelectorAll('[data-testid="tweetText"] a').length != 0){
+                                target_element_a = input_element.parentElement.querySelectorAll('[data-testid="tweetText"] a');
+                            }
+                            if(input_element.parentElement.querySelectorAll('[data-testid="card.wrapper"] a').length != 0){
+                                target_element_a = input_element.parentElement.querySelectorAll('[data-testid="card.wrapper"] a');
+                            }
+                            //console.log(target_element_a)
+                            for (let index = 0; index < target_element_a.length; index++) {
+                                if(target_element_a[index].href.match("twitter.com") == null){
+                                    if(target_element_a[index].href.match("t.co") != null){
+                                        //console.log(target_element_a[index].href);
+                                        target_url = target_element_a[index].href;
+                                        break;
+                                    }else{
+                                        //console.log(target_element_a[index].href);
+                                        target_url = target_element_a[index].href;
+                                        break;
+                                    }
+                                }
+                            }
+                            return target_url;
+                        }
+                        //console.log(get_tco_new(this));
+                        //
+                        let adv_tco_addr = get_tco_new(this)
                           switch (cslp_settings.hit_url_copy_mode) {
                             case "0":
-                                if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
-                                navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href);
-                                hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href}\r\n他の拡張機能との競合や広告をコピーした可能性があります。\r\n解析モードをオンにする事で解決できる可能性があります。`);
+                                if (adv_tco_addr.match(/([^\/]+)/g)[1] != "t.co") {
+                                navigator.clipboard.writeText(adv_tco_addr);
+                                hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${adv_tco_addr}\r\n他の拡張機能との競合や広告をコピーした可能性があります。\r\n解析モードをオンにする事で解決できる可能性があります。`);
                                 } else {
-                                get_blockurl(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href).then(function (url) {
+                                get_blockurl(adv_tco_addr).then(function (url) {
                                     navigator.clipboard.writeText(url).then(()=>{
                                         hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${url}`);
                                     });
@@ -484,26 +514,24 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 }
                                 break;
                             case "1":
-                                if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
-                                    navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href).then(()=>{
-                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスでコピーできませんでした。\r\n解析モードをオンにする事で解決できる可能性があります。`);
+                                if (adv_tco_addr.match(/([^\/]+)/g)[1] != "t.co") {
+                                    navigator.clipboard.writeText(adv_tco_addr).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${adv_tco_addr}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスでコピーできませんでした。\r\n解析モードをオンにする事で解決できる可能性があります。`);
                                     });
                                 } else {
-                                    navigator.clipboard.writeText(this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href).then(()=>{
-                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href}`);
+                                    navigator.clipboard.writeText(adv_tco_addr).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${adv_tco_addr}`);
                                     });
                                 }
                                 break;
                             case "2":
-                                if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
-                                    let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
-                                    navigator.clipboard.writeText(`${tco_addr},${tco_addr}`).then(()=>{
-                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${tco_addr},${tco_addr}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。\r\n解析モードをオンにする事で解決できる可能性があります。`);
+                                if (adv_tco_addr.match(/([^\/]+)/g)[1] != "t.co") {
+                                    navigator.clipboard.writeText(`${adv_tco_addr},${adv_tco_addr}`).then(()=>{
+                                        hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${adv_tco_addr},${adv_tco_addr}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。\r\n解析モードをオンにする事で解決できる可能性があります。`);
                                     });
                                 } else {
-                                    let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
-                                    get_blockurl(tco_addr).then(function (url) {
-                                        let cl_text = `${url},${tco_addr}`;
+                                    get_blockurl(adv_tco_addr).then(function (url) {
+                                        let cl_text = `${url},${adv_tco_addr}`;
                                         //console.log(cl_text);
                                         navigator.clipboard.writeText(cl_text).then(()=>{
                                             hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${cl_text}`);
@@ -512,24 +540,22 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 }
                                 break;
                             case "3":
-                                if (this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href.match(/([^\/]+)/g)[1] != "t.co") {
-                                    let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
+                                if (adv_tco_addr.match(/([^\/]+)/g)[1] != "t.co") {
                                     //navigator.clipboard.writeText(`${tco_addr},${tco_addr}`);
                                     //hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${tco_addr},${tco_addr}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。`);
-                                    copy_t_co_addr = tco_addr;
-                                    copy_base_addr = tco_addr;
+                                    copy_t_co_addr = adv_tco_addr;
+                                    copy_base_addr = adv_tco_addr;
                                     const copy_text = cslp_settings.hit_url_copy_user_text.replaceAll("%t_co%", copy_t_co_addr).replaceAll("%bl_url%", copy_base_addr).replaceAll("%adv_addr%", copy_adv_resp_addr).replaceAll("%tw_id%", copy_tw_id).replaceAll("%tw_date%", copy_tw_date);
                                     navigator.clipboard.writeText(copy_text).then(()=>{
                                         hide_cp_msg(`クリップボードにURLをコピーしました!\r\n${copy_text}\r\n他の拡張機能との競合や広告であるため\r\nt.coのアドレスがコピーできませんでした。\r\n解析モードをオンにする事で解決できる可能性があります。`);
                                     });
                                 } else {
-                                    let tco_addr = this.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a')[0].href;
-                                    get_blockurl(tco_addr).then(function (url) {
-                                        let cl_text = `${url},${tco_addr}`;
+                                    get_blockurl(adv_tco_addr).then(function (url) {
+                                        //let cl_text = `${url},${adv_tco_addr}`;
                                         //console.log(cl_text);
                                         //navigator.clipboard.writeText(cl_text);
                                         //hide_cp_msg(`クリップボードにURLをコピーしました!\r\nCopy->${cl_text}`);
-                                        copy_t_co_addr = tco_addr;
+                                        copy_t_co_addr = adv_tco_addr;
                                         copy_base_addr = url;
                                         const copy_text = cslp_settings.hit_url_copy_user_text.replaceAll("%t_co%", copy_t_co_addr).replaceAll("%bl_url%", copy_base_addr).replaceAll("%adv_addr%", copy_adv_resp_addr).replaceAll("%tw_id%", copy_tw_id).replaceAll("%tw_date%", copy_tw_date);
                                         navigator.clipboard.writeText(copy_text).then(()=>{
