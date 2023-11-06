@@ -64,6 +64,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 hit_url_copy_advanced_filter:false,
                 stealth_blue_view:false,
                 blue_block:false,
+                root_tweetuser_block:true,
                 blue_block_value_num:"10",
                 blue_block_mode:"0",
                 arabic_reply_block:false,
@@ -152,6 +153,19 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 if(window.location.pathname.split("/")[2] == 'status' && cslp_settings.blue_block == true){
                     let blue_target_elem = document.querySelectorAll('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] svg[data-testid="icon-verified"]');
                     let all_rep = document.querySelectorAll('[data-testid="cellInnerDiv"] article[data-testid="tweet"]');
+                    if(cslp_settings.root_tweetuser_block == true){
+                        if(document.querySelector('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] a')?.href != null){
+                            let root_user = document.querySelector('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] a').href;
+                            for (let index = 0; index < all_rep.length; index++) {
+                                if(all_rep[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_flag") != "blue_ok" && typeof all_rep[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]') != "null"){
+                                    if(root_user == all_rep[index].querySelector('div[data-testid="User-Name"] a').href){
+                                        all_rep[index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_flag", "blue_ok")
+                                        console.log(all_rep[index])
+                                    }
+                                }
+                            }
+                        }
+                    }
                     switch (cslp_settings.blue_block_mode) {
                         //Blueマーク付を文字数で非表示
                         case "0":
