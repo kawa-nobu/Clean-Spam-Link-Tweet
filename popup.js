@@ -36,6 +36,7 @@ window.addEventListener("load", function(){
             document.getElementById("hiturl_copy_adv_filter_sw").checked = cslp_settings.hit_url_copy_advanced_filter;
             document.getElementById("stealth_blue_sw").checked = cslp_settings.stealth_blue_view;
             document.getElementById("blue_block_sw").checked = cslp_settings.blue_block;
+            document.getElementById("root_blue_block_sw").checked = cslp_settings.root_tweetuser_block;
             document.getElementById("blue_block_val_num").value = cslp_settings.blue_block_value_num;
             document.getElementById("blue_block_opt").value = cslp_settings.blue_block_mode;
 
@@ -149,6 +150,15 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
+    //
+    document.getElementById("root_blue_block_sw").addEventListener("change", function(){
+        cslp_settings.root_tweetuser_block = document.getElementById("root_blue_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    //
     document.getElementById("blue_block_val_num").addEventListener("change", function(){
         cslp_settings.blue_block_value_num = document.getElementById("blue_block_val_num").value;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
