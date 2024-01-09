@@ -41,6 +41,12 @@ window.addEventListener("load", function(){
             document.getElementById("blue_block_opt").value = cslp_settings.blue_block_mode;
 
             document.getElementById("arabic_block_sw").checked = cslp_settings.arabic_reply_block;
+            document.getElementById("arabic_user_block_sw").checked = cslp_settings.arabic_user_reply_block;
+
+            document.getElementById("click_report_sw").checked = cslp_settings.oneclick_report;
+            document.getElementById("click_mute_block_opt").value = cslp_settings.oneclick_report_after_mode;
+            document.getElementById("click_report_opt").value = cslp_settings.oneclick_report_option;
+
 
             document.getElementById("filter_list").innerHTML = `<a href="${cslp_settings.filter_link}" target="_blank" rel="noopener noreferrer">フィルタリスト</a>`;
             document.getElementById("filter_thanks").innerText = cslp_settings.filter_thanks+" 様";
@@ -180,6 +186,36 @@ window.addEventListener("load", function(){
 
     document.getElementById("arabic_block_sw").addEventListener("change", function(){
         cslp_settings.arabic_reply_block = document.getElementById("arabic_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    //
+    document.getElementById("arabic_user_block_sw").addEventListener("change", function(){
+        cslp_settings.arabic_user_reply_block = document.getElementById("arabic_user_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>この設定は「アラビア文字リプ非表示」がオンになっている場合のみ動作します。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+//
+    document.getElementById("click_report_sw").addEventListener("change", function(){
+        cslp_settings.oneclick_report = document.getElementById("click_report_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>このモードではワンクリックで報告ができます。<br>スパム報告用途以外での使用は避けてください。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("click_mute_block_opt").addEventListener("change", function(){
+        cslp_settings.oneclick_report_after_mode = document.getElementById("click_mute_block_opt").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("click_report_opt").addEventListener("change", function(){
+        cslp_settings.oneclick_report_option = document.getElementById("click_report_opt").value;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });

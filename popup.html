@@ -52,7 +52,7 @@
           </details>
     </section>
     <section>
-        <details open>
+        <details>
             <summary title="収益化を目的とした悪質なユーザーのリプライを可能な範囲で排除する事ができます">悪質リプライ非表示</summary>
             <div class="blue_block">
                 <h3>悪質リプライ非表示</h3>
@@ -88,6 +88,50 @@
                     <input class="sw_1_input" type="checkbox" id="arabic_block_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
+            </div>
+            <div class="blue_block">
+                <h3>アラビア文字ユーザー対象</h3>
+                <div class="sw_1 new_mode_sw" title="アラビア文字が含まれたユーザー名のリプも追加で非表示にします。">
+                    <input class="sw_1_input" type="checkbox" id="arabic_user_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+        </details>
+    </section>
+    <section>
+        <details>
+            <summary title="報告とブロック・ミュートを一発でできます">報告・ブロックorミュート</summary>
+            <div class="blue_block">
+                <h3>報告</h3>
+                <div class="sw_1 new_mode_sw" title="ワンクリックで報告できます">
+                    <input class="sw_1_input" type="checkbox" id="click_report_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div>
+                <h3>ミュートorブロック</h3>
+                <select id="click_mute_block_opt" title="報告後の挙動や報告がオフの場合の制御をします">
+                    <option value="0" title="報告のみします">何もしない</option>
+                    <option value="1" title="報告後、ミュートします">ミュート</option>
+                    <option value="2" title="報告後、ブロックします">ブロック</option>
+                    <option value="3" title="報告ボタンをミュートに割り当てます">ワンクリックミュート</option>
+                    <option value="4" title="報告ボタンをブロックに割り当てます">ワンクリックブロック</option>
+                </select>
+            </div>
+            <div>
+                <h3>報告モード</h3>
+                <select id="click_report_opt" title="非表示モードを切り替えます">
+                    <option value="0" title="中傷や差別発言として報告">ヘイト</option>
+                    <option value="1" title="侮辱的発言や特定の人物への嫌がらせとして報告">攻撃的行為・嫌がらせ</option>
+                    <option value="2" title="身体的脅迫や暴力への賛美、扇動として報告">暴力的発言</option>
+                    <option value="3" title="児童の性的搾取や虐待として報告">チャイルドセーフティ</option>
+                    <option value="4" title="個人情報共有や合意のない私的な情報として報告">プライバシー</option>
+                    <option value="5" title="悪意のあるリンクや返信として報告">スパム</option>
+                    <option value="6" title="自殺・自傷行為の助長・指示として報告">自殺や自傷行為</option>
+                    <option value="7" title="センシティブ・不安にさせる内容として報告">センシティブなメディア</option>
+                    <option value="8" title="なりすましとして報告">虚偽のアイデンティティ</option>
+                    <option value="9" title="過激的主義・団体への関与">暴力的行為やヘイト行為の主体</option>
+                </select>
             </div>
         </details>
     </section>
