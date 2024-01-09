@@ -8,6 +8,9 @@ summary{
 details{
   margin-bottom: 5px;
 }
+select{
+  width: 15em;
+}
 .main{
   display: flex;
   flex-direction: column;
@@ -15,6 +18,9 @@ details{
 }
 .settings{
   position: relative;
+}
+.settings div{
+  margin-bottom: 5px;
 }
 .dev{
   position: relative;
@@ -42,7 +48,7 @@ h1{
   text-align: center;
 }
 h3{
-  font-size: 0.6rem;
+  font-size: 0.55rem;
 }
 .text_bold{
   font-weight: bold;

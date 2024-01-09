@@ -6,6 +6,18 @@ let s_key_down = null;
 let debug_block_num_text = Math.random().toString(32).substring(2);
 let debug_block_num = Math.random().toString(32).substring(2);
 let shift_key_status = 0;
+//CSS挿入
+document.head.insertAdjacentHTML("beforeend", `
+<style cslt_css>
+.cslt_report_icon:hover{
+    filter: invert(13%) sepia(89%) saturate(6665%) hue-rotate(343deg) brightness(95%) contrast(106%);
+}
+.cslt_report_complete{
+    filter: invert(76%) sepia(20%) saturate(2691%) hue-rotate(66deg) brightness(102%) contrast(97%);
+}
+</style>
+`);
+//
 chrome.storage.local.get("cslp_settings", function(value){
     if(value.cslp_settings != undefined){
         if(JSON.parse(value.cslp_settings).filter_latest == true){
@@ -68,12 +80,16 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 blue_block_value_num:"10",
                 blue_block_mode:"0",
                 arabic_reply_block:false,
+                arabic_user_reply_block:false,
                 version:chrome.runtime.getManifest().version,
                 filter_update:json[0].developer_update,
                 filter_link:json[0].thanks_link,
                 filter_thanks:json[0].thanks_name,
                 tw_guest_token:null,
-                tw_guest_token_date:null
+                tw_guest_token_date:null,
+                oneclick_report:false,
+                oneclick_report_after_mode:"0",
+                oneclick_report_option:"5"
             };
             chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
                 console.log(`init coplete!:${cslp_settings}`);
@@ -160,7 +176,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 if(all_rep[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_flag") != "blue_ok" && typeof all_rep[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]') != "null"){
                                     if(root_user == all_rep[index].querySelector('div[data-testid="User-Name"] a').href){
                                         all_rep[index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_flag", "blue_ok")
-                                        console.log(all_rep[index])
+                                        //console.log(all_rep[index])
                                     }
                                 }
                             }
@@ -220,12 +236,60 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 if(cslp_settings.arabic_reply_block == true){
                     if(window.location.pathname.match("\/status\/")?.length == 1){
                         for (let index = 0; index < document.querySelectorAll('[data-testid="tweetText"]').length; index++) {
-                            if(arabic_regexp.test(document.querySelectorAll('[data-testid="tweetText"]')[index].innerText)){
-                                //console.log("arabicdelete") 
+                            if(cslp_settings.arabic_user_reply_block == true){
+                                if(arabic_regexp.test(document.querySelectorAll('[data-testid="tweetText"]')[index].closest('article').querySelector('[data-testid="User-Name"] a').textContent)){
+                                    //console.log("arabic_user_delete-"+document.querySelectorAll('[data-testid="tweetText"]')[index].closest('article').querySelector('[data-testid="User-Name"] a').textContent)
+                                    let target = document.querySelectorAll('[data-testid="tweetText"]')[index];
+                                    target.closest('[data-testid="cellInnerDiv"]').textContent = "";
+                                }
+                            }
+                            if(document.querySelectorAll('[data-testid="tweetText"]')[index]?.innerText != undefined && arabic_regexp.test(document.querySelectorAll('[data-testid="tweetText"]')[index].innerText)){
+                                //console.log("arabicdelete-"+document.querySelectorAll('[data-testid="tweetText"]')[index].innerText) 
                                 let target = document.querySelectorAll('[data-testid="tweetText"]')[index];
                                 target.closest('[data-testid="cellInnerDiv"]').textContent = "";
                             }
                         }
+                    }
+                }
+                //報告・ブロック
+                if(cslp_settings.oneclick_report == true || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4'){
+                    const reply_elem = document.querySelectorAll('article[tabindex="0"] div[role="group"]:not([cslt_flag="report_ok"])');
+                    for (let index = 0; index < reply_elem.length; index++) {
+                        //<img src="${chrome.runtime.getURL("report_icon.svg")}" style="width: 20px;margin-left: 5px;">
+                        const random_id = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "");
+                        reply_elem[index].insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" style="background:url(${chrome.runtime.getURL("report_icon.svg")});width: 20px;margin-left: 5px;" title="報告"></a>`);
+                        reply_elem[index].setAttribute("cslt_flag", "report_ok");
+                        document.querySelector(`#${random_id}`).addEventListener("click", function(){
+                            //console.log(random_id);
+                            const target_element = this.closest('[data-testid="cellInnerDiv"]');
+                            target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
+                            if(document.querySelector('[role="menu"] [role="menuitem"][data-testid="analytics"]') == null || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4'){
+                                if(cslp_settings.oneclick_report == true){
+                                    if(Number(cslp_settings.oneclick_report_after_mode) <= 2){
+                                        report_tweet(cslp_settings.oneclick_report_option);
+                                        this.classList.add("cslt_report_complete");
+                                        if(cslp_settings.oneclick_report_after_mode == "1"){
+                                            target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
+                                            mute_reply_user();
+                                        }
+                                        if(cslp_settings.oneclick_report_after_mode == "2"){
+                                            target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
+                                            block_reply_user();
+                                        }
+                                    }
+                                    
+                                }
+                                if(cslp_settings.oneclick_report_after_mode == '3'){
+                                    mute_reply_user();
+                                }
+                                if(cslp_settings.oneclick_report_after_mode == '4'){
+                                    block_reply_user();
+                                }
+                            }else{
+                                alert("自身のツイートにこの操作はできません");
+                            }
+                            
+                        })
                     }
                 }
                 //TwitterCardではないスパムの場合
@@ -634,4 +698,52 @@ function stealth_blue_append(user_name, status){
                 console.log(`@${user_name} is displayed Blue!`);
             }
         }
+}
+
+//報告関数
+function report_tweet(report_mode){
+    //report_target_elem.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
+    const report_mode_conv = Number(report_mode);
+    if(document.querySelector('[role="menu"] [role="menuitem"][data-testid="report"]') != null){
+        document.querySelector('[role="menu"] [role="menuitem"][data-testid="report"]').click();
+        const obs = new MutationObserver(function(){
+            if(document.querySelector('[aria-labelledby="modal-header"]') != null){
+                console.log("load!");
+                if(document.querySelector('[aria-labelledby="modal-header"] label') != null){
+                    obs.disconnect();
+                    document.querySelectorAll('[aria-labelledby="modal-header"] label')[report_mode_conv].click();
+                    document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ChoiceSelectionNextButton"]').click();
+                    let complete_timer = function(){
+                        if(document.querySelector('[role="progressbar"]').getAttribute("aria-valuenow") == '100'){
+                            clearTimeout(complete_timer);
+                            document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ocfSettingsListNextButton"]').click();
+                            return "report_ok";
+                        }
+                    }
+                    setTimeout(complete_timer, 500);
+                }
+            }
+        });
+        const change_elem = document.querySelector('#react-root');
+        obs.observe(change_elem, {subtree:true, childList:true});
+    }
+}
+//ブロック関数
+function block_reply_user(){
+    document.querySelector('[role="menu"] [role="menuitem"][data-testid="block"]').click();
+    document.querySelector('[data-testid="confirmationSheetConfirm"]').click();
+}
+//ミュート関数
+function mute_reply_user(){
+    if(document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="presentation"] a[role="tab"]')[0].getAttribute('aria-selected') != 'true'){
+        document.querySelectorAll('[role="menu"] [role="menuitem"]')[2].click();
+    }else{
+        if(document.querySelectorAll('[role="menu"] [role="menuitem"]').length > 7){
+            document.querySelectorAll('[role="menu"] [role="menuitem"]')[3].click();
+        }else{
+            document.querySelectorAll('[role="menu"] [role="menuitem"]')[2].click();
+        }
+        
+    }
+    
 }
