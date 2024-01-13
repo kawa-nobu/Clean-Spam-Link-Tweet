@@ -16,7 +16,8 @@
             </div>
             <span>有効</span>
         </div>
-        <div>定義リストVer:<span id="filter_ver">xxxxxxxx</span></div>
+        <div>Main Filter Ver:<span id="filter_ver">xxxxxxxx</span></div>
+        <div>IMP Filter Ver:<span id="imp_filter_ver">xxxxxxxx</span></div>
     </section>
     <section>
         <details class="settings" open>
@@ -58,6 +59,13 @@
                 <h3>悪質リプライ非表示</h3>
                 <div class="sw_1 new_mode_sw" title="収益化を目的とした悪質ユーザー等のリプを画面上から消し去ります(Blue加入ユーザーは自爆注意)">
                     <input class="sw_1_input" type="checkbox" id="blue_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>インプ稼ぎアカウント非表示</h3>
+                <div class="sw_1 new_mode_sw" title="インプ稼ぎアカウントリストを使用して非表示にします">
+                    <input class="sw_1_input" type="checkbox" id="imp_blocker_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
@@ -108,6 +116,13 @@
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
+            <div class="blue_block">
+                <h3>開発者へ情報提供</h3>
+                <div class="sw_1 new_mode_sw" title="ワンクリックで報告できます">
+                    <input class="sw_1_input" type="checkbox" id="click_developer_report_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
             <div>
                 <h3>ミュートorブロック</h3>
                 <select id="click_mute_block_opt" title="報告後の挙動や報告がオフの場合の制御をします">
@@ -116,6 +131,7 @@
                     <option value="2" title="報告後、ブロックします">ブロック</option>
                     <option value="3" title="報告ボタンをミュートに割り当てます">ワンクリックミュート</option>
                     <option value="4" title="報告ボタンをブロックに割り当てます">ワンクリックブロック</option>
+                    <option value="5" title="報告ボタンを開発者への情報提供用に割り当てます">開発者へ情報提供のみ</option>
                 </select>
             </div>
             <div>
@@ -139,10 +155,12 @@
         <details class="dev">
             <summary title="スパム調査・解析、拡張機能の開発向け機能です">解析・調査・開発用</summary>
             <div id="hiturl_menu">
-                <h3>ヒットURLコピー</h3>
-                <div class="sw_1" title="阻止されたツイートのURLをコピーします">
-                    <input class="sw_1_input" type="checkbox" id="hiturl_copy_sw"> 
-                    <label for="sw_1" class="sw_1_label"></label>
+                <div>
+                    <h3>ヒットURLコピー</h3>
+                    <div class="sw_1" title="阻止されたツイートのURLをコピーします">
+                        <input class="sw_1_input" type="checkbox" id="hiturl_copy_sw"> 
+                        <label for="sw_1" class="sw_1_label"></label>
+                    </div>
                 </div>
                 <div>
                     <h3>ヒットURLコピーオプション</h3>
@@ -178,6 +196,10 @@
                         <label for="sw_1" class="sw_1_label"></label>
                     </div>
                 </div>
+            </div>
+            <div>
+                <h3>報告用サーバーURL</h3>
+                <input id="developer_report_srv" type="text" title="インプ稼ぎアカウント情報提供用サーバーのURLを設定します">
             </div>
             <div>
                 <button id="settings_reset_sw" title="設定を初期化して再構築を行います">設定を初期化</button>

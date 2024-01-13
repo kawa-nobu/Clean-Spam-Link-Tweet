@@ -1,5 +1,7 @@
+//let imp_account = new Array();
 let block_list;
 let block_regexp;
+let imp_user_block_list_regexp;
 const arabic_regexp = new RegExp("[\u0600-\u060f\u0610-\u061f\u0620-\u062f\u0630-\u063f\u0640-\u064f\u0650-\u065f\u0660-\u066f\u0670-\u067f\u0680-\u068f\u0690-\u069f\u06a0-\u06af\u06b0-\u06bf\u06c0-\u06cf\u06d0-\u06df\u06e0-\u06ef\u06f0-\u06ff]");
 let advanced_regexp;
 let s_key_down = null;
@@ -21,15 +23,15 @@ document.head.insertAdjacentHTML("beforeend", `
 chrome.storage.local.get("cslp_settings", function(value){
     if(value.cslp_settings != undefined){
         if(JSON.parse(value.cslp_settings).filter_latest == true){
-            main("https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Filter@main/filter.json");
+            main("https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Filter@main/filter.json", "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Filter@main/imp_filter.json");
         }else{
-            main(chrome.runtime.getURL("filter.json"));
+            main(chrome.runtime.getURL("filter.json"), chrome.runtime.getURL("imp_filter.json"));
         }
     }else{
-        main(chrome.runtime.getURL("filter.json"));
+        main(chrome.runtime.getURL("filter.json"), chrome.runtime.getURL("imp_filter.json"));
     }
 });
-function main(filter_url){
+function main(filter_url, imp_filter_url){
 console.log("Clean-Spam-Link-Tweet is Working!");
 if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Filter@main/filter.json"){
     console.log(`Use Official Online List:${filter_url}`);
@@ -49,6 +51,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
     console.log(`List Load!\r\nList update:${json[0].developer_update}\r\nList provider:${json[0].thanks_link}\r\nThanks '${json[0].thanks_name}' !`);
     let reg_exp = json[1].concat_regex;
     block_list = json;
+    
     //設定
     let cslp_settings = null;
     chrome.storage.local.get("cslp_settings", function(value){
@@ -76,6 +79,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 hit_url_copy_advanced_filter:false,
                 stealth_blue_view:false,
                 blue_block:false,
+                imp_user_block:false,
                 root_tweetuser_block:true,
                 blue_block_value_num:"10",
                 blue_block_mode:"0",
@@ -89,7 +93,10 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 tw_guest_token_date:null,
                 oneclick_report:false,
                 oneclick_report_after_mode:"0",
-                oneclick_report_option:"5"
+                oneclick_report_option:"5",
+                oneclick_developer_report:false,
+                oneclick_developer_reportsrv_url:"kwdev-sys.com/api/cslt/imp_report_sys/pub_reporter/",
+                imp_filter_update:"No loading",
             };
             chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
                 console.log(`init coplete!:${cslp_settings}`);
@@ -119,6 +126,29 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
             }
             block_regexp = new RegExp(reg_exp);
             advanced_regexp = json[1].hit_url_adv_filter;
+
+            //インプ稼ぎフィルタ読み込み
+            if(cslp_settings.imp_user_block == true){
+                console.log("Use impression list mode");
+                fetch(imp_filter_url, {
+                    method: "GET",
+                    cache: "no-store"
+                }).then(response => {
+                    if (!response.ok) {
+                        console.error('IMP List load error!');
+                        alert("インプ稼ぎフィルタの読み込みに失敗しました。「常に最新のリストを使用」を無効にしてください。")
+                    }
+                    return response.json();
+                }).then(imp_json => {
+                    imp_user_block_list_regexp = new RegExp(imp_json[1].concat_regex);
+                    //console.log(imp_user_block_list_regexp)
+                    cslp_settings.imp_filter_update = imp_json[0].developer_update;
+                    chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                        console.log("IMP Filter Version Write OK");
+                    });
+                });
+            }
+
             //コピー用divキーダウン有効
             if(cslp_settings.hit_url_copy == true){
                 document.addEventListener("keydown", function(key){
@@ -146,6 +176,29 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
             let old_user_name = null;
             //メイン動作関数
             function run(){
+                //インプ稼ぎ非表示
+                if(cslp_settings.imp_user_block == true && window.location.pathname.match("\/status\/")?.length == 1){
+                    const tweet_elem = document.querySelectorAll('article[data-testid="tweet"][tabindex="0"]');
+                    for (let index = 0; index < tweet_elem.length; index++) {
+                        debug_block_num = Math.random().toString(32).substring(2);
+                        //リストと照合&非表示
+                        if(tweet_elem[index].querySelector('[data-testid="User-Name"]  a')?.href.replace("https://twitter.com/", "") != null){
+                            let tweet_user_id = tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", "");
+                        //console.log(tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", ""))
+                        //console.log(imp_user_block_list_regexp)
+                        //console.log(tweet_elem[index])
+                        //console.log(tweet_elem[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_flag"))
+                        //tweet_elem[index].setAttribute("cslt_flag", "imp_ok");
+                        if(imp_user_block_list_regexp.test(tweet_user_id) && tweet_elem[index].getAttribute("cslt_flag") != "imp_ok"){
+                            console.log("found!");
+                            tweet_elem[index].setAttribute("cslt_flag", "imp_ok");
+                            //tweet_elem[index].style.background = "#ffecb4";
+                            tweet_elem[index].textContent = "";
+                        }
+                        }
+                    }
+                }
+                //Blueブロック
                 if(cslp_settings.stealth_blue_view == true){
                     if(old_user_name != document.querySelector('div[data-testid="UserName"] [tabindex="-1"]')?.innerText.replace("@", "")){
                         if(document?.querySelector('[cslt_flag="stealth_blue_icon"]') != null){
@@ -252,7 +305,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     }
                 }
                 //報告・ブロック
-                if(cslp_settings.oneclick_report == true || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4'){
+                if(cslp_settings.oneclick_report == true || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4' || cslp_settings.oneclick_report_after_mode == '5' && cslp_settings.oneclick_developer_report == true){
                     const reply_elem = document.querySelectorAll('article[tabindex="0"] div[role="group"]:not([cslt_flag="report_ok"])');
                     for (let index = 0; index < reply_elem.length; index++) {
                         //<img src="${chrome.runtime.getURL("report_icon.svg")}" style="width: 20px;margin-left: 5px;">
@@ -260,10 +313,13 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                         reply_elem[index].insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" style="background:url(${chrome.runtime.getURL("report_icon.svg")});width: 20px;margin-left: 5px;" title="報告"></a>`);
                         reply_elem[index].setAttribute("cslt_flag", "report_ok");
                         document.querySelector(`#${random_id}`).addEventListener("click", function(){
+                            const report_srvurl = cslp_settings.oneclick_developer_reportsrv_url;
                             //console.log(random_id);
                             const target_element = this.closest('[data-testid="cellInnerDiv"]');
-                            target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
-                            if(document.querySelector('[role="menu"] [role="menuitem"][data-testid="analytics"]') == null || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4'){
+                            if(cslp_settings.oneclick_report_after_mode != '5'){
+                                target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
+                            }
+                            if(document.querySelector('[role="menu"] [role="menuitem"][data-testid="analytics"]') == null || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4' || cslp_settings.oneclick_report_after_mode == '5'){
                                 if(cslp_settings.oneclick_report == true){
                                     if(Number(cslp_settings.oneclick_report_after_mode) <= 2){
                                         report_tweet(cslp_settings.oneclick_report_option);
@@ -276,6 +332,10 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                             target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
                                             block_reply_user();
                                         }
+                                        if(cslp_settings.oneclick_developer_report == true){
+                                            //開発者情報提供
+                                            developer_spam_user_share(report_srvurl, target_element);
+                                        }
                                     }
                                     
                                 }
@@ -284,6 +344,14 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 }
                                 if(cslp_settings.oneclick_report_after_mode == '4'){
                                     block_reply_user();
+                                }
+                                if(cslp_settings.oneclick_developer_report == true && cslp_settings.oneclick_report_after_mode == '5'){
+                                    //開発者情報提供
+                                    //アカウント蓄積
+                                    //console.log(imp_account.push(target_element.querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", "")));
+                                    //console.log(JSON.stringify(imp_account))
+                                    developer_spam_user_share(report_srvurl, target_element);
+                                    this.classList.add("cslt_report_complete");
                                 }
                             }else{
                                 alert("自身のツイートにこの操作はできません");
@@ -746,4 +814,17 @@ function mute_reply_user(){
         
     }
     
+}
+//開発者提供用関数
+function developer_spam_user_share(report_srv, spam_element){
+    let tweet_user_id = null;
+    let tweet_uesr_name = null;
+    let tweet_text = null;
+    let tweet_text_length = null;
+    tweet_user_id = spam_element.querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", "");
+    tweet_uesr_name = spam_element.querySelector('article [data-testid="User-Name"] a').textContent;
+    tweet_text = `${spam_element.querySelector('article[data-testid="tweet"] [aria-labelledby]')?.innerText}%and%${spam_element.querySelector('[aria-labelledby] div[data-testid="tweetText"]')?.innerText}`;
+    tweet_text_length = tweet_text.length;
+    //console.log({tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length})
+    chrome.runtime.sendMessage({message: {mode:"developer_report_share", target:{report_srv_url:report_srv, tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length}}}, (response) => {});
 }
