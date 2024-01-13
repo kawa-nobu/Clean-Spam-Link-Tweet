@@ -27,6 +27,7 @@ window.addEventListener("load", function(){
             document.getElementById("amz_aff_sw").checked = cslp_settings.amazon_hit;
             document.getElementById("filter_latest_sw").checked = cslp_settings.filter_latest;
             document.getElementById("filter_ver").innerText = cslp_settings.filter_update;
+            document.getElementById("imp_filter_ver").innerText = cslp_settings.imp_filter_update;
             document.getElementById("extt_ver").innerText = cslp_settings.version;
             document.getElementById("hiturl_copy_sw").checked = cslp_settings.hit_url_copy;
             document.getElementById("hiturl_copy_opt").value = cslp_settings.hit_url_copy_mode;
@@ -39,6 +40,7 @@ window.addEventListener("load", function(){
             document.getElementById("root_blue_block_sw").checked = cslp_settings.root_tweetuser_block;
             document.getElementById("blue_block_val_num").value = cslp_settings.blue_block_value_num;
             document.getElementById("blue_block_opt").value = cslp_settings.blue_block_mode;
+            document.getElementById("imp_blocker_sw").checked = cslp_settings.imp_user_block;
 
             document.getElementById("arabic_block_sw").checked = cslp_settings.arabic_reply_block;
             document.getElementById("arabic_user_block_sw").checked = cslp_settings.arabic_user_reply_block;
@@ -46,6 +48,9 @@ window.addEventListener("load", function(){
             document.getElementById("click_report_sw").checked = cslp_settings.oneclick_report;
             document.getElementById("click_mute_block_opt").value = cslp_settings.oneclick_report_after_mode;
             document.getElementById("click_report_opt").value = cslp_settings.oneclick_report_option;
+            document.getElementById("click_developer_report_sw").checked = cslp_settings.oneclick_developer_report;
+
+            document.getElementById("developer_report_srv").value = cslp_settings.oneclick_developer_reportsrv_url;
 
 
             document.getElementById("filter_list").innerHTML = `<a href="${cslp_settings.filter_link}" target="_blank" rel="noopener noreferrer">フィルタリスト</a>`;
@@ -82,6 +87,15 @@ window.addEventListener("load", function(){
         }
         
     })
+    //
+    document.getElementById("imp_blocker_sw").addEventListener("change", function(){
+        cslp_settings.imp_user_block = document.getElementById("imp_blocker_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    //
     document.getElementById("disable_url_sw").addEventListener("change", function(){
         cslp_settings.disable_hit = document.getElementById("disable_url_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
@@ -220,6 +234,20 @@ window.addEventListener("load", function(){
             console.log(cslp_settings);
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("click_developer_report_sw").addEventListener("change", function(){
+        cslp_settings.oneclick_developer_report = document.getElementById("click_developer_report_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>情報提供へのご協力、感謝いたします。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("developer_report_srv").addEventListener("change", function(){
+        cslp_settings.oneclick_developer_reportsrv_url = document.getElementById("developer_report_srv").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>ご協力頂きありがとうございます。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
 //
     document.getElementById("settings_reset_sw").addEventListener("click", function(){
