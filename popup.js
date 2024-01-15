@@ -41,6 +41,7 @@ window.addEventListener("load", function(){
             document.getElementById("blue_block_val_num").value = cslp_settings.blue_block_value_num;
             document.getElementById("blue_block_opt").value = cslp_settings.blue_block_mode;
             document.getElementById("imp_blocker_sw").checked = cslp_settings.imp_user_block;
+            document.getElementById("imp_blocker_all_sw").checked = cslp_settings.imp_filter_block_all_area;
 
             document.getElementById("arabic_block_sw").checked = cslp_settings.arabic_reply_block;
             document.getElementById("arabic_user_block_sw").checked = cslp_settings.arabic_user_reply_block;
@@ -55,6 +56,26 @@ window.addEventListener("load", function(){
 
             document.getElementById("filter_list").innerHTML = `<a href="${cslp_settings.filter_link}" target="_blank" rel="noopener noreferrer">フィルタリスト</a>`;
             document.getElementById("filter_thanks").innerText = cslp_settings.filter_thanks+" 様";
+            //報告選択できる項目
+            if(cslp_settings.oneclick_report != true){
+                document.querySelector('#click_mute_block_opt option[value="1"]').disabled = true;
+                document.querySelector('#click_mute_block_opt option[value="2"]').disabled = true;
+                document.querySelector('#click_mute_block_opt option[value="3"]').disabled = false;
+                document.querySelector('#click_mute_block_opt option[value="4"]').disabled = false;
+                document.querySelector("#click_report_opt").disabled = true;
+            }else{
+                document.querySelector('#click_mute_block_opt option[value="1"]').disabled = false;
+                document.querySelector('#click_mute_block_opt option[value="2"]').disabled = false;
+                document.querySelector('#click_mute_block_opt option[value="3"]').disabled = true;
+                document.querySelector('#click_mute_block_opt option[value="4"]').disabled = true;
+                document.querySelector("#click_report_opt").disabled = false;
+            }
+            
+            if(cslp_settings.oneclick_developer_report != true){
+                document.querySelector('#click_mute_block_opt option[value="5"]').disabled = true;
+            }else{
+                document.querySelector('#click_mute_block_opt option[value="5"]').disabled = false;
+            }
         }
         if(window.navigator.userAgent.toLowerCase().indexOf("firefox") != -1 ){
             document.getElementById("extt_ver").innerText = `${cslp_settings.version}(FireFox)`;
@@ -163,6 +184,14 @@ window.addEventListener("load", function(){
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
     //
+    document.getElementById("imp_blocker_all_sw").addEventListener("change", function(){
+        cslp_settings.imp_filter_block_all_area = document.getElementById("imp_blocker_all_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>お使いの端末スペックによっては動作が遅くなる可能性がります。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    //
     document.getElementById("blue_block_sw").addEventListener("change", function(){
         cslp_settings.blue_block = document.getElementById("blue_block_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
@@ -220,6 +249,19 @@ window.addEventListener("load", function(){
             console.log(cslp_settings);
         });
         append_alert("<p>このモードではワンクリックで報告ができます。<br>スパム報告用途以外での使用は避けてください。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        if(cslp_settings.oneclick_report != true){
+            document.querySelector('#click_mute_block_opt option[value="1"]').disabled = true;
+            document.querySelector('#click_mute_block_opt option[value="2"]').disabled = true;
+            document.querySelector('#click_mute_block_opt option[value="3"]').disabled = false;
+            document.querySelector('#click_mute_block_opt option[value="4"]').disabled = false;
+            document.querySelector("#click_report_opt").disabled = true;
+        }else{
+            document.querySelector('#click_mute_block_opt option[value="1"]').disabled = false;
+            document.querySelector('#click_mute_block_opt option[value="2"]').disabled = false;
+            document.querySelector('#click_mute_block_opt option[value="3"]').disabled = true;
+            document.querySelector('#click_mute_block_opt option[value="4"]').disabled = true;
+            document.querySelector("#click_report_opt").disabled = false;
+        }
     })
     document.getElementById("click_mute_block_opt").addEventListener("change", function(){
         cslp_settings.oneclick_report_after_mode = document.getElementById("click_mute_block_opt").value;
@@ -241,6 +283,11 @@ window.addEventListener("load", function(){
             console.log(cslp_settings);
         });
         append_alert("<p>情報提供へのご協力、感謝いたします。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        if(cslp_settings.oneclick_developer_report != true){
+            document.querySelector('#click_mute_block_opt option[value="5"]').disabled = true;
+        }else{
+            document.querySelector('#click_mute_block_opt option[value="5"]').disabled = false;
+        }
     })
     document.getElementById("developer_report_srv").addEventListener("change", function(){
         cslp_settings.oneclick_developer_reportsrv_url = document.getElementById("developer_report_srv").value;

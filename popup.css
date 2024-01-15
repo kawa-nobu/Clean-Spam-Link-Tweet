@@ -1,6 +1,9 @@
+html{
+  scrollbar-width: thin;
+}
 body{
-    width: 200px;
-    height: auto;
+  width: 240px;
+  height: auto;
 }
 summary{
   cursor: pointer;
@@ -26,11 +29,11 @@ select{
   position: relative;
 }
 .new_mode_sw{
-  right: 16px !important;
+  right: 0px !important;
 }
 .setting_input_num{
   position: relative;
-  width: 80px;
+  width: 90px;
   height: 25px;
   right: 30px;
 }
@@ -157,7 +160,7 @@ input:checked + label:after {
   height: 40px;
 }
 
-@media screen and (min-width: 270px) {
+@media screen and (min-width: 300px) {
   body{
     width: 100%;
     height: 100%;
