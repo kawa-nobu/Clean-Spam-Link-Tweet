@@ -16,36 +16,36 @@
             </div>
             <span>有効</span>
         </div>
-        <div>Main Filter Ver:<span id="filter_ver">xxxxxxxx</span></div>
-        <div>IMP Filter Ver:<span id="imp_filter_ver">xxxxxxxx</span></div>
+        <div title="ナイト系等の悪意のあるリンクに効果があるフィルタです">Main Filter Ver:<span id="filter_ver">xxxxxxxx</span></div>
+        <div title="インプレ稼ぎアカウント非表示に効果のあるフィルタです">IMP Filter Ver:<span id="imp_filter_ver">xxxxxxxx</span></div>
     </section>
     <section>
         <details class="settings" open>
             <summary title="動作の設定を行います">設定</summary>
             <div>
                 <h3>ヒットツイート非表示</h3>
-                <div class="sw_1" title="阻止対象のツイートを画面上から消し去る事ができます">
+                <div class="sw_1 new_mode_sw" title="阻止対象のツイートを画面上から消し去る事ができます">
                     <input class="sw_1_input" type="checkbox" id="hit_tweet_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
             <div>
                 <h3>無効ドメイン阻止</h3>
-                <div class="sw_1" title="活動が停止されているドメインも阻止の対象にします。">
+                <div class="sw_1 new_mode_sw" title="活動が停止されているドメインも阻止の対象にします。">
                     <input class="sw_1_input" type="checkbox" id="disable_url_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
             <div>
                 <h3>Amazonリンク阻止</h3>
-                <div class="sw_1" title="amazon.co.jp等のリンクを阻止の対象にします">
+                <div class="sw_1 new_mode_sw" title="amazon.co.jp等のリンクを阻止の対象にします">
                     <input class="sw_1_input" type="checkbox" id="amz_aff_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
             <div>
                 <h3>常に最新のリストを使用</h3>
-                <div class="sw_1" title="開発者本人が更新・配信している最新の定義リストを使用します(推奨)">
+                <div class="sw_1 new_mode_sw" title="開発者本人が更新・配信している最新の定義リストを使用します(推奨)">
                     <input class="sw_1_input" type="checkbox" id="filter_latest_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
@@ -63,9 +63,16 @@
                 </div>
             </div>
             <div class="blue_block">
-                <h3>インプ稼ぎアカウント非表示</h3>
-                <div class="sw_1 new_mode_sw" title="インプ稼ぎアカウントリストを使用して非表示にします">
+                <h3>インプレ稼ぎアカウント非表示</h3>
+                <div class="sw_1 new_mode_sw" title="インプレ稼ぎアカウントリストを使用して悪質なリプを非表示にします">
                     <input class="sw_1_input" type="checkbox" id="imp_blocker_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>インプレ稼ぎ非表示全範囲</h3>
+                <div class="sw_1 new_mode_sw" title="インプレ稼ぎアカウント非表示機能を返信欄以外にも適用します">
+                    <input class="sw_1_input" type="checkbox" id="imp_blocker_all_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
@@ -78,7 +85,7 @@
             </div>
             <div class="blue_block">
                 <h3>非表示対象文字数</h3>
-                <div class="sw_1" title="設定値以下の文字数のリプライを非表示の対象にします。絵文字は0文字として認識されます">
+                <div class="sw_1 new_mode_sw" title="設定値以下の文字数のリプライを非表示の対象にします。絵文字は0文字として認識されます">
                     <input id="blue_block_val_num" class="setting_input_num" type="number" min="0" value="0">
                 </div>
             </div>
@@ -118,15 +125,15 @@
             </div>
             <div class="blue_block">
                 <h3>開発者へ情報提供</h3>
-                <div class="sw_1 new_mode_sw" title="ワンクリックで報告できます">
+                <div class="sw_1 new_mode_sw" title="インプレフィルタ精度向上のために開発者へ情報提供します。">
                     <input class="sw_1_input" type="checkbox" id="click_developer_report_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
             <div>
-                <h3>ミュートorブロック</h3>
+                <h3>報告後の動作・報告ボタンの機能割り当て</h3>
                 <select id="click_mute_block_opt" title="報告後の挙動や報告がオフの場合の制御をします">
-                    <option value="0" title="報告のみします">何もしない</option>
+                    <option value="0" title="報告のみします。">何もしない</option>
                     <option value="1" title="報告後、ミュートします">ミュート</option>
                     <option value="2" title="報告後、ブロックします">ブロック</option>
                     <option value="3" title="報告ボタンをミュートに割り当てます">ワンクリックミュート</option>
@@ -157,7 +164,7 @@
             <div id="hiturl_menu">
                 <div>
                     <h3>ヒットURLコピー</h3>
-                    <div class="sw_1" title="阻止されたツイートのURLをコピーします">
+                    <div class="sw_1 new_mode_sw" title="阻止されたツイートのURLをコピーします">
                         <input class="sw_1_input" type="checkbox" id="hiturl_copy_sw"> 
                         <label for="sw_1" class="sw_1_label"></label>
                     </div>
@@ -177,21 +184,21 @@
                 </div>
                 <div>
                     <h3>ヒットURL解析</h3>
-                    <div class="sw_1" title="ヒットURLを解析して、より精度の高いURLをカンマ切りでコピーします。ヒットURLコピーオプションは無視されます">
+                    <div class="sw_1 new_mode_sw" title="ヒットURLを解析して、より精度の高いURLをカンマ切りでコピーします。ヒットURLコピーオプションは無視されます">
                         <input class="sw_1_input" type="checkbox" id="hiturl_copy_adv_sw"> 
                         <label for="sw_1" class="sw_1_label"></label>
                     </div>
                 </div>
                 <div>
                     <h3>解析 出力フィルタ</h3>
-                    <div class="sw_1" title="解析されたURL(拡張子の付いたURL等)をフィルタリングして綺麗な状態でコピーします">
+                    <div class="sw_1 new_mode_sw" title="解析されたURL(拡張子の付いたURL等)をフィルタリングして綺麗な状態でコピーします">
                         <input class="sw_1_input" type="checkbox" id="hiturl_copy_adv_filter_sw"> 
                         <label for="sw_1" class="sw_1_label"></label>
                     </div>
                 </div>
                 <div>
                     <h3>ステルスBlue確認</h3>
-                    <div class="sw_1" title="Blueマーク非表示のアカウントを確認します。ユーザーのページで確認できます">
+                    <div class="sw_1 new_mode_sw" title="Blueマーク非表示のアカウントを確認します。ユーザーのページで確認できます">
                         <input class="sw_1_input" type="checkbox" id="stealth_blue_sw"> 
                         <label for="sw_1" class="sw_1_label"></label>
                     </div>
