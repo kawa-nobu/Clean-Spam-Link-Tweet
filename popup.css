@@ -2,7 +2,7 @@ html{
   scrollbar-width: thin;
 }
 body{
-  width: 240px;
+  width: 250px;
   height: auto;
 }
 summary{
@@ -129,9 +129,6 @@ input:checked + label:after {
 #settings_reset_sw {
   margin: 5px;
 }
-#hiturl_copy_opt {
-  margin: 5px;
-}
 .append_alert{
   position: fixed;
   z-index: 1000;
@@ -141,6 +138,7 @@ input:checked + label:after {
   top: 0;
   right: 0;
   display: flex;
+  justify-content: center;
   align-items: center;
 }
 .append_alert_message{
@@ -148,7 +146,6 @@ input:checked + label:after {
   max-height: 280px;
   background: white;
   text-align: center;
-  margin: 8px;
   border-radius: 10px;
 }
 .append_alert_message div{
@@ -158,6 +155,22 @@ input:checked + label:after {
 #append_alert_okbtn{
   width: 60px;
   height: 40px;
+}
+.mode_selector{
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 5px;
+}
+.mode_selector select, input{
+  width: 100%;
+  max-width: 250px;
+}
+.reset_sw_center{
+  display: flex;
+  justify-content: center;
+}
+#settings_reset_sw {
+  width: 50%;
 }
 
 @media screen and (min-width: 300px) {
@@ -169,30 +182,40 @@ input:checked + label:after {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 1.5rem;
+    font-size: 2.5rem;
   }
   .settings{
     position: relative;
   }
   h1{
-    font-size: 2rem;
+    font-size: 3rem;
     text-align: center;
   }
   h3{
-    font-size: 1rem;
+    font-size: 2rem;
   }
   details{
-    font-size: 1rem;
+    font-size: 3rem;
     margin-bottom: 5px;
+  }
+  .blue_block{
+    margin-bottom: 30px;
   }
   .about h3{
     margin-bottom: 0;
-    font-size: 1rem;
+    font-size: 2rem;
+  }
+  .about_text{
+    font-size: 1.8rem;
   }
   .settings div{
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-bottom: 30px;
+  }
+  .new_mode_sw{
+    margin-bottom: 0 !important;
   }
   .about div{
     display: flex;
@@ -206,24 +229,47 @@ input:checked + label:after {
     display: flex;
     align-items: center;
   }
-
+  .setting_input_num {
+    width: 100%;
+    height: 100%;
+    right: 0;
+    font-size: 2rem;
+  }
+  #blue_block_opt {
+    /*width: 50%;*/
+    height: 6rem;
+    font-size: 2rem;
+  }
+  .mg_btm {
+    margin-bottom: 30px;
+  }
+  .mode_selector{
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 20px;
+  }
+  .mode_selector select, input{
+    width: 100%;
+    height: 6rem;
+    font-size: 2rem;
+  }
   .sw_1 {
-    width: 100px;
-    height: 50px;
-    padding: 5px;
+    width: 170px;
+    height: 100px;
+    padding: 20px;
   }
   div .sw_1_input {
     position: absolute;
     z-index: 10;
     opacity: 0;
     width: 140px;
-    height: 60px;
+    height: 100px;
     margin: 0;
     cursor: pointer;
   }
   div .sw_1_label {
-    width: 100px;
-    height: 50px;
+    width: 100%;
+    height: 90px;
     background: #ccc;
     position: relative;
     display: inline-block;
@@ -237,8 +283,8 @@ input:checked + label:after {
   label:after {
     content: '';
     position: absolute;
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     border-radius: 100%;
     left: 0;
     top: 0;
@@ -247,13 +293,20 @@ input:checked + label:after {
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
     transition: 0.5s;
     cursor: pointer;
+    top: -5px;
   }
   input:checked + label:after {
-    left: 50px;
+    left: 75px;
+    top: -5px;
+  }
+  .reset_sw_center{
+    display: flex;
+    justify-content: center;
   }
   #settings_reset_sw {
-    margin: 5px;
+    margin-top: 30px;
     font-size: 3rem;
+    width: 50%;
   }
   #hiturl_copy_opt {
     margin: 5px;
@@ -261,7 +314,7 @@ input:checked + label:after {
   .append_alert{
     position: fixed;
     z-index: 1000;
-    width: 120%;
+    width: 101vw;
     height: 120vh;
     background: rgba(0, 0, 0, 0.45);
     top: 0;
@@ -271,7 +324,7 @@ input:checked + label:after {
     justify-content: center;
   }
   .append_alert_message{
-    width: 90%;
+    width: 85%;
     max-height: 500px;
     background: white;
     text-align: center;

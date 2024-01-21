@@ -47,6 +47,10 @@ window.addEventListener("load", function(){
             document.getElementById("arabic_user_block_sw").checked = cslp_settings.arabic_user_reply_block;
 
             document.getElementById("click_report_sw").checked = cslp_settings.oneclick_report;
+            document.getElementById("click_report_btn_tl_disable_sw").checked = cslp_settings.oneclick_report_timeline_disable;
+
+            document.getElementById("click_report_btn_confirm_sw").checked = cslp_settings.oneclick_report_confirm;
+
             document.getElementById("click_mute_block_opt").value = cslp_settings.oneclick_report_after_mode;
             document.getElementById("click_report_opt").value = cslp_settings.oneclick_report_option;
             document.getElementById("click_developer_report_sw").checked = cslp_settings.oneclick_developer_report;
@@ -243,6 +247,22 @@ window.addEventListener("load", function(){
         append_alert("<p>この設定は「アラビア文字リプ非表示」がオンになっている場合のみ動作します。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
 //
+    document.getElementById("click_report_btn_tl_disable_sw").addEventListener("change", function(){
+        cslp_settings.oneclick_report_timeline_disable = document.getElementById("click_report_btn_tl_disable_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+
+    document.getElementById("click_report_btn_confirm_sw").addEventListener("change", function(){
+        cslp_settings.oneclick_report_confirm = document.getElementById("click_report_btn_confirm_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+
     document.getElementById("click_report_sw").addEventListener("change", function(){
         cslp_settings.oneclick_report = document.getElementById("click_report_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {

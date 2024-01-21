@@ -54,14 +54,7 @@
     </section>
     <section>
         <details>
-            <summary title="収益化を目的とした悪質なユーザーのリプライを可能な範囲で排除する事ができます">悪質リプライ非表示</summary>
-            <div class="blue_block">
-                <h3>悪質リプライ非表示</h3>
-                <div class="sw_1 new_mode_sw" title="収益化を目的とした悪質ユーザー等のリプを画面上から消し去ります(Blue加入ユーザーは自爆注意)">
-                    <input class="sw_1_input" type="checkbox" id="blue_block_sw"> 
-                    <label for="sw_1" class="sw_1_label"></label>
-                </div>
-            </div>
+            <summary title="収益化を目的とした悪質なユーザーのリプライを可能な範囲で排除する事ができます">インプレ稼ぎ非表示</summary>
             <div class="blue_block">
                 <h3>インプレ稼ぎアカウント非表示</h3>
                 <div class="sw_1 new_mode_sw" title="インプレ稼ぎアカウントリストを使用して悪質なリプを非表示にします">
@@ -77,29 +70,8 @@
                 </div>
             </div>
             <div class="blue_block">
-                <h3>元ツイアカウント除外</h3>
-                <div class="sw_1 new_mode_sw" title="元ツイートのユーザーの返信を除外します">
-                    <input class="sw_1_input" type="checkbox" id="root_blue_block_sw"> 
-                    <label for="sw_1" class="sw_1_label"></label>
-                </div>
-            </div>
-            <div class="blue_block">
-                <h3>非表示対象文字数</h3>
-                <div class="sw_1 new_mode_sw" title="設定値以下の文字数のリプライを非表示の対象にします。絵文字は0文字として認識されます">
-                    <input id="blue_block_val_num" class="setting_input_num" type="number" min="0" value="0">
-                </div>
-            </div>
-            <div>
-                <h3>非表示モード</h3>
-                <select id="blue_block_opt" title="非表示モードを切り替えます">
-                    <option value="0" title="Blueマーク付きユーザーのリプを設定された文字数で非表示にします">Blueマーク付を文字数で非表示</option>
-                    <option value="1" title="Blueマークの有無に関係なく全ユーザーのリプを設定された文字数で非表示にします">全ユーザーを文字数で非表示</option>
-                    <option value="2" title="Blueマーク付きユーザーのリプを全て非表示にします">Blueマーク付を全て非表示</option>
-                </select>
-            </div>
-            <div class="blue_block">
                 <h3>アラビア文字リプ非表示</h3>
-                <div class="sw_1 new_mode_sw" title="アラビア文字が含まれたリプを非表示にします。">
+                <div class="sw_1 new_mode_sw" title="アラビア文字やデーヴァーナーガリー文字が含まれたリプを非表示にします。">
                     <input class="sw_1_input" type="checkbox" id="arabic_block_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
@@ -115,11 +87,60 @@
     </section>
     <section>
         <details>
+            <summary title="収益化を目的としたBlueユーザーのリプライを可能な範囲で排除する事ができます">Blue悪質リプライ非表示</summary>
+            <div class="blue_block">
+                <h3>Blue悪質リプライ非表示</h3>
+                <div class="sw_1 new_mode_sw" title="収益化を目的とした悪質ユーザー等のリプを画面上から消し去ります(Blue加入ユーザーは自爆注意)">
+                    <input class="sw_1_input" type="checkbox" id="blue_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>元ツイBlueアカウント除外</h3>
+                <div class="sw_1 new_mode_sw" title="元ツイートのユーザーがBlue加入者の場合の返信を非表示対象から除外します">
+                    <input class="sw_1_input" type="checkbox" id="root_blue_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>Blue非表示対象文字数</h3>
+                <div class="sw_1 new_mode_sw" title="設定値以下の文字数のリプライを非表示の対象にします。絵文字は0文字として認識されます">
+                    <input id="blue_block_val_num" class="setting_input_num" type="number" min="0" value="0">
+                </div>
+            </div>
+            <div>
+                <h3>Blue非表示モード</h3>
+                <div class="mode_selector">
+                    <select id="blue_block_opt" title="非表示モードを切り替えます">
+                        <option value="0" title="Blueマーク付きユーザーのリプを設定された文字数で非表示にします">Blueマーク付を文字数で非表示</option>
+                        <option value="1" title="Blueマークの有無に関係なく全ユーザーのリプを設定された文字数で非表示にします">全ユーザーを文字数で非表示</option>
+                        <option value="2" title="Blueマーク付きユーザーのリプを全て非表示にします">Blueマーク付を全て非表示</option>
+                    </select>
+                </div>
+            </div>
+        </details>
+    </section>
+    <section>
+        <details>
             <summary title="報告とブロック・ミュートを一発でできます">報告・ブロックorミュート</summary>
             <div class="blue_block">
                 <h3>報告</h3>
                 <div class="sw_1 new_mode_sw" title="ワンクリックで報告できます">
                     <input class="sw_1_input" type="checkbox" id="click_report_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>TL(フォロー中)報告ボタン非表示</h3>
+                <div class="sw_1 new_mode_sw" title="タイムライン(フォロー中)では報告ボタンを非表示にします">
+                    <input class="sw_1_input" type="checkbox" id="click_report_btn_tl_disable_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>報告実行前の確認</h3>
+                <div class="sw_1 new_mode_sw" title="報告ボタン押下後に確認メッセージを出します">
+                    <input class="sw_1_input" type="checkbox" id="click_report_btn_confirm_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
@@ -132,37 +153,41 @@
             </div>
             <div>
                 <h3>報告後の動作・報告ボタンの機能割り当て</h3>
-                <select id="click_mute_block_opt" title="報告後の挙動や報告がオフの場合の制御をします">
-                    <option value="0" title="報告のみします。">何もしない</option>
-                    <option value="1" title="報告後、ミュートします">ミュート</option>
-                    <option value="2" title="報告後、ブロックします">ブロック</option>
-                    <option value="3" title="報告ボタンをミュートに割り当てます">ワンクリックミュート</option>
-                    <option value="4" title="報告ボタンをブロックに割り当てます">ワンクリックブロック</option>
-                    <option value="5" title="報告ボタンを開発者への情報提供用に割り当てます">開発者へ情報提供のみ</option>
-                </select>
+                <div class="mode_selector">
+                    <select id="click_mute_block_opt" title="報告後の挙動や報告がオフの場合の制御をします">
+                        <option value="0" title="報告のみします。">何もしない</option>
+                        <option value="1" title="報告後、ミュートします">ミュート</option>
+                        <option value="2" title="報告後、ブロックします">ブロック</option>
+                        <option value="3" title="報告ボタンをミュートに割り当てます">ワンクリックミュート</option>
+                        <option value="4" title="報告ボタンをブロックに割り当てます">ワンクリックブロック</option>
+                        <option value="5" title="報告ボタンを開発者への情報提供用に割り当てます">開発者へ情報提供のみ</option>
+                    </select>
+                </div>
             </div>
             <div>
                 <h3>報告モード</h3>
-                <select id="click_report_opt" title="非表示モードを切り替えます">
-                    <option value="0" title="中傷や差別発言として報告">ヘイト</option>
-                    <option value="1" title="侮辱的発言や特定の人物への嫌がらせとして報告">攻撃的行為・嫌がらせ</option>
-                    <option value="2" title="身体的脅迫や暴力への賛美、扇動として報告">暴力的発言</option>
-                    <option value="3" title="児童の性的搾取や虐待として報告">チャイルドセーフティ</option>
-                    <option value="4" title="個人情報共有や合意のない私的な情報として報告">プライバシー</option>
-                    <option value="5" title="悪意のあるリンクや返信として報告">スパム</option>
-                    <option value="6" title="自殺・自傷行為の助長・指示として報告">自殺や自傷行為</option>
-                    <option value="7" title="センシティブ・不安にさせる内容として報告">センシティブなメディア</option>
-                    <option value="8" title="なりすましとして報告">虚偽のアイデンティティ</option>
-                    <option value="9" title="過激的主義・団体への関与">暴力的行為やヘイト行為の主体</option>
-                </select>
+                <div class="mode_selector">
+                    <select id="click_report_opt" title="非表示モードを切り替えます">
+                        <option value="0" title="中傷や差別発言として報告">ヘイト</option>
+                        <option value="1" title="侮辱的発言や特定の人物への嫌がらせとして報告">攻撃的行為・嫌がらせ</option>
+                        <option value="2" title="身体的脅迫や暴力への賛美、扇動として報告">暴力的発言</option>
+                        <option value="3" title="児童の性的搾取や虐待として報告">チャイルドセーフティ</option>
+                        <option value="4" title="個人情報共有や合意のない私的な情報として報告">プライバシー</option>
+                        <option value="5" title="悪意のあるリンクや返信として報告">スパム</option>
+                        <option value="6" title="自殺・自傷行為の助長・指示として報告">自殺や自傷行為</option>
+                        <option value="7" title="センシティブ・不安にさせる内容として報告">センシティブなメディア</option>
+                        <option value="8" title="なりすましとして報告">虚偽のアイデンティティ</option>
+                        <option value="9" title="過激的主義・団体への関与">暴力的行為やヘイト行為の主体</option>
+                    </select>
+                </div>
             </div>
         </details>
     </section>
     <section id="dev_menu">
-        <details class="dev">
+        <details>
             <summary title="スパム調査・解析、拡張機能の開発向け機能です">解析・調査・開発用</summary>
-            <div id="hiturl_menu">
-                <div>
+            <div>
+                <div class="blue_block">
                     <h3>ヒットURLコピー</h3>
                     <div class="sw_1 new_mode_sw" title="阻止されたツイートのURLをコピーします">
                         <input class="sw_1_input" type="checkbox" id="hiturl_copy_sw"> 
@@ -171,32 +196,36 @@
                 </div>
                 <div>
                     <h3>ヒットURLコピーオプション</h3>
-                    <select id="hiturl_copy_opt" title="URLコピーのオプションを選択します">
-                        <option value="0" title="ブロックURLをコピーします">ブロックURL(解析非対応)</option>
-                        <option value="1" title="Twitter側が短縮しているURLをコピーします">t.co(解析非対応)</option>
-                        <option value="2" title="上記項目をカンマ切りでコピーします。">ブロックURL+t.co(解析非対応)</option>
-                        <option value="3" title="専用の変数を組み替えて好きな形式でコピーできます">組み替え</option>
-                    </select>
+                    <div class="mode_selector">
+                        <select id="hiturl_copy_opt" title="URLコピーのオプションを選択します">
+                            <option value="0" title="ブロックURLをコピーします">ブロックURL(解析非対応)</option>
+                            <option value="1" title="Twitter側が短縮しているURLをコピーします">t.co(解析非対応)</option>
+                            <option value="2" title="上記項目をカンマ切りでコピーします。">ブロックURL+t.co(解析非対応)</option>
+                            <option value="3" title="専用の変数を組み替えて好きな形式でコピーできます">組み替え</option>
+                        </select>
+                    </div>
                 </div>
-                <div>
+                <div class="mg_btm">
                     <h3>コピー項目組み替え</h3>
-                    <input id="hitur_copy_text" type="text" title="上記項目で「組み替え」を選択した場合のコピーパターンを設定できます。">
+                    <div class="mode_selector">
+                        <input id="hitur_copy_text" type="text" title="上記項目で「組み替え」を選択した場合のコピーパターンを設定できます。">
+                    </div>
                 </div>
-                <div>
+                <div class="blue_block">
                     <h3>ヒットURL解析</h3>
                     <div class="sw_1 new_mode_sw" title="ヒットURLを解析して、より精度の高いURLをカンマ切りでコピーします。ヒットURLコピーオプションは無視されます">
                         <input class="sw_1_input" type="checkbox" id="hiturl_copy_adv_sw"> 
                         <label for="sw_1" class="sw_1_label"></label>
                     </div>
                 </div>
-                <div>
+                <div class="blue_block">
                     <h3>解析 出力フィルタ</h3>
                     <div class="sw_1 new_mode_sw" title="解析されたURL(拡張子の付いたURL等)をフィルタリングして綺麗な状態でコピーします">
                         <input class="sw_1_input" type="checkbox" id="hiturl_copy_adv_filter_sw"> 
                         <label for="sw_1" class="sw_1_label"></label>
                     </div>
                 </div>
-                <div>
+                <div class="blue_block">
                     <h3>ステルスBlue確認</h3>
                     <div class="sw_1 new_mode_sw" title="Blueマーク非表示のアカウントを確認します。ユーザーのページで確認できます">
                         <input class="sw_1_input" type="checkbox" id="stealth_blue_sw"> 
@@ -206,9 +235,12 @@
             </div>
             <div>
                 <h3>報告用サーバーURL</h3>
-                <input id="developer_report_srv" type="text" title="インプ稼ぎアカウント情報提供用サーバーのURLを設定します">
+                <div class="mode_selector">
+                    <input id="developer_report_srv" type="text" title="インプ稼ぎアカウント情報提供用サーバーのURLを設定します">
+                </div>
+                
             </div>
-            <div>
+            <div class="reset_sw_center">
                 <button id="settings_reset_sw" title="設定を初期化して再構築を行います">設定を初期化</button>
             </div>
           </details>
@@ -217,11 +249,11 @@
         <details class="about">
             <summary title="この拡張機能の情報を表示します">CSLTについて</summary>
             <div>
-                <div><h3>拡張機能Ver</h3><span id="extt_ver"></span></div>
-                <div><h3>定義リスト参考元</h3><span id="filter_list"></span></div>
-                <div><h3>定義リスト協力</h3><span id="filter_thanks"></span></div>
-                <div><h3>拡張機能リポジトリ</h3><a href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet" target="_blank" rel="noopener noreferrer">GitHub</a></div>
-                <div><h3>拡張機能ヘルプ</h3><a href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet#clean-spam-link-tweetcslt" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+                <div><h3>拡張機能Ver</h3><span class="about_text" id="extt_ver"></span></div>
+                <div><h3>定義リスト参考元</h3><span class="about_text" id="filter_list"></span></div>
+                <div><h3>定義リスト協力</h3><span class="about_text" id="filter_thanks"></span></div>
+                <div><h3>拡張機能リポジトリ</h3><a class="about_text" href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+                <div><h3>拡張機能ヘルプ</h3><a class="about_text" href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet#clean-spam-link-tweetcslt" target="_blank" rel="noopener noreferrer">GitHub</a></div>
             </div>
           </details>
     </section>
