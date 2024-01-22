@@ -263,7 +263,8 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                             let root_user = document.querySelector('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] a').href;
                             for (let index = 0; index < all_rep.length; index++) {
                                 if(all_rep[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag") != "blue_ok" && typeof all_rep[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]') != "null"){
-                                    if(root_user == all_rep[index].querySelector('div[data-testid="User-Name"] a').href){
+                                    //console.log(all_rep[index])
+                                    if(root_user == all_rep[index].querySelector('div[data-testid="User-Name"] a')?.href){
                                         all_rep[index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_blue_flag", "blue_ok")
                                         //console.log(all_rep[index])
                                     }
@@ -278,8 +279,8 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                             for(let index = 1; index <= blue_target_elem.length; index++) {
                                 if(typeof blue_target_elem[index]?.closest('[data-testid="cellInnerDiv"]')?.getAttribute("cslt_blue_flag") != "undefined"){
                                     if(blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag")!= "blue_ok" && typeof blue_target_elem[index]?.closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]') != "null"){
-                                        const tweet_text = blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]').innerText;
-                                        if(tweet_text.length <= Number(cslp_settings.blue_block_value_num)){
+                                        const tweet_text = blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]')?.innerText;
+                                        if(tweet_text?.length <= Number(cslp_settings.blue_block_value_num)){
                                             //console.log(blue_target_elem[index].closest('[data-testid="cellInnerDiv"]'));
                                             blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_blue_flag", "blue_ok");
                                             blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').textContent = ``;
@@ -295,8 +296,8 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 //console.log(all_rep[index].closest('[data-testid="cellInnerDiv"]'))
                                 if(typeof all_rep[index]?.closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag") != "undefined"){
                                     if(all_rep[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag") != "blue_ok" && typeof all_rep[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]') != "null"){
-                                        const tweet_text = all_rep[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]').innerText;
-                                        if(tweet_text.length <= Number(cslp_settings.blue_block_value_num)){
+                                        const tweet_text = all_rep[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]')?.innerText;
+                                        if(tweet_text?.length <= Number(cslp_settings.blue_block_value_num)){
                                             //console.log(all_rep[index].closest('[data-testid="cellInnerDiv"]'));
                                             all_rep[index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_blue_flag", "blue_ok");
                                             all_rep[index].closest('[data-testid="cellInnerDiv"]').textContent = ``;
