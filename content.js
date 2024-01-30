@@ -7,8 +7,8 @@ let imp_user_block_list_regexp;
 const arabic_regexp = new RegExp("[\u0600-\u06ff\u0900-\u097f]");
 let advanced_regexp;
 let s_key_down = null;
-let debug_block_num_text = Math.random().toString(32).substring(2);
-let debug_block_num = Math.random().toString(32).substring(2);
+let debug_block_num_text = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
+let debug_block_num = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
 let shift_key_status = 0;
 //CSS挿入
 document.head.insertAdjacentHTML("beforeend", `
@@ -216,7 +216,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 if(cslp_settings.imp_user_block == true && window.location.pathname.match("\/status\/")?.length == 1 || cslp_settings.imp_filter_block_all_area == true &&cslp_settings.imp_user_block == true){
                     const tweet_elem = document.querySelectorAll('article[data-testid="tweet"][tabindex="0"]');
                     for (let index = 0; index < tweet_elem.length; index++) {
-                        debug_block_num = Math.random().toString(32).substring(2);
+                        debug_block_num = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
                         //リストと照合&非表示
                         if(tweet_elem[index].querySelector('[data-testid="User-Name"]  a')?.href.replace("https://twitter.com/", "") != null){
                             let tweet_user_id = tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", "");
@@ -256,9 +256,16 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     }
                 }
                 if(window.location.pathname.split("/")[2] == 'status' && cslp_settings.blue_block == true){
-                    let blue_target_elem = document.querySelectorAll('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] svg[data-testid="icon-verified"]');
+                    //~1.8.8-target_elem '[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] svg[data-testid="icon-verified"]'
+                    let blue_target_elem = null;
+                    if(window.location.pathname.split("/")[4] == 'quotes'){
+                        blue_target_elem = document.querySelectorAll('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"][id] svg[data-testid="icon-verified"]');
+                    }else{
+                        blue_target_elem = document.querySelectorAll('[data-testid="cellInnerDiv"] article[data-testid="tweet"][tabindex="0"] div[data-testid="User-Name"] svg[data-testid="icon-verified"]');
+                    }
+                    console.log(blue_target_elem)
                     let all_rep = document.querySelectorAll('[data-testid="cellInnerDiv"] article[data-testid="tweet"]');
-                    if(cslp_settings.root_tweetuser_block == true){
+                    if(cslp_settings.root_tweetuser_block == true && window.location.pathname.split("/")[4] != 'quotes'){
                         if(document.querySelector('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] a')?.href != null){
                             let root_user = document.querySelector('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] a').href;
                             for (let index = 0; index < all_rep.length; index++) {
@@ -272,11 +279,12 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                             }
                         }
                     }
+                    console.log(blue_target_elem)
                     switch (cslp_settings.blue_block_mode) {
                         //Blueマーク付を文字数で非表示
                         case "0":
                             //console.log(Number(cslp_settings.blue_block_value_num));
-                            for(let index = 1; index <= blue_target_elem.length; index++) {
+                            for(let index = 0; index <= blue_target_elem.length; index++) {
                                 if(typeof blue_target_elem[index]?.closest('[data-testid="cellInnerDiv"]')?.getAttribute("cslt_blue_flag") != "undefined"){
                                     if(blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag")!= "blue_ok" && typeof blue_target_elem[index]?.closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]') != "null"){
                                         const tweet_text = blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]')?.innerText;
@@ -292,7 +300,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                         //全ユーザーを文字数で非表示
                         case "1":
                             //console.log(Number(cslp_settings.blue_block_value_num));
-                            for(let index = 1; index <= all_rep.length; index++) {
+                            for(let index = 0; index <= all_rep.length; index++) {
                                 //console.log(all_rep[index].closest('[data-testid="cellInnerDiv"]'))
                                 if(typeof all_rep[index]?.closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag") != "undefined"){
                                     if(all_rep[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag") != "blue_ok" && typeof all_rep[index].closest('[data-testid="cellInnerDiv"]').querySelector('div[data-testid="tweetText"]') != "null"){
@@ -308,10 +316,12 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                             break;
                         //Blueマーク付を全て非表示
                         case "2":
-                            for(let index = 1; index < blue_target_elem.length; index++) {
+                            
+                            for(let index = 0; index < blue_target_elem.length; index++) {
                                 if(typeof blue_target_elem[index]?.closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag") != "undefined"){
                                     if(blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag")!= "blue_ok"){
                                         //console.log(blue_target_elem[index].closest('[data-testid="cellInnerDiv"]'));
+                                        console.log(blue_target_elem[index])
                                         blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_blue_flag", "blue_ok");
                                         blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').textContent = ``;
                                     }
@@ -350,11 +360,11 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     }
                 }
                 const is_timeline_report_btn = is_timeline_follow_report();
-                if(cslp_settings.oneclick_report == true && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4' || cslp_settings.oneclick_report_after_mode == '5' && cslp_settings.oneclick_developer_report == true){
+                if(cslp_settings.oneclick_report == true && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '3' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '4' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '5' && cslp_settings.oneclick_developer_report == true && is_timeline_report_btn != true){
                     const reply_elem = document.querySelectorAll('article[tabindex="0"] div[role="group"]:not([cslt_flag="report_ok"])');
                     for (let index = 0; index < reply_elem.length; index++) {
                         //<img src="${chrome.runtime.getURL("report_icon.svg")}" style="width: 20px;margin-left: 5px;">
-                        const random_id = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "");
+                        const random_id = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
                         reply_elem[index].insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" style="background:url(${chrome.runtime.getURL("report_icon.svg")});width: 20px;margin-left: 5px;" title="報告"></a>`);
                         reply_elem[index].setAttribute("cslt_flag", "report_ok");
                         document.querySelector(`#${random_id}`).addEventListener("click", function(){
@@ -440,7 +450,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 }
                 //TwitterCardではないスパムの場合
                 for(let index = 0; index < document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]').length; index++){
-                    debug_block_num_text = Math.random().toString(32).substring(2);
+                    debug_block_num_text = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
                     //ツイート内にリンク(要素全体)を検出
                     if(document.querySelectorAll('[data-testid="tweetText"] a[target="_blank"]')[index] != undefined){
                         //ヒットツイート削除設定無効で、リスト内に該当のURLが存在かつ阻止済フラグがあるかどうか->阻止
@@ -464,7 +474,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 }
                 //TwitterCardの場合(bnc.ltなど)
                 for (let index = 0; index < document.querySelectorAll('[data-testid="card.wrapper"]').length; index++) {
-                    debug_block_num = Math.random().toString(32).substring(2);
+                    debug_block_num = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
                     //TwitterCard内にリンク(要素全体)を検出
                     //document.querySelectorAll('[data-testid="card.wrapper"]')[index].querySelectorAll('[dir="ltr"], [dir="auto"]')[0]
                     if(document.querySelectorAll('[data-testid="card.wrapper"] + a')[index] != undefined){
@@ -907,3 +917,10 @@ function developer_spam_user_share(report_srv, spam_element){
     //console.log({tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length})
     chrome.runtime.sendMessage({message: {mode:"developer_report_share", target:{report_srv_url:report_srv, tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length}}}, (response) => {});
 }
+//内部ユーザー情報取得用関数
+/*function get_tw_userdata(input_element){
+    const input_pr_array = Object.getOwnPropertyNames(input_element);
+    const props_pr_name = input_pr_array.find((input)=>input.includes('__reactProps$'));
+    const props_data = input_element[props_pr_name];
+    return props_data?.children?.props?.children[0][3]?.props.user;
+}*/
