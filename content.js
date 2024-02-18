@@ -44,14 +44,34 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
     method: "GET",
     cache: "no-store"
 }).then(response => {
+    //console.log(response)
     if (!response.ok) {
         console.error('List load error!');
-        alert("Clean-Spam-Link-Tweetのフィルタ読み込みに失敗しました。「常に最新のリストを使用」を無効にしてください。")
     }
     return response.json();
+}).catch(error =>{
+    console.log("Network Error");
+    alert("ネットワークエラーにより最新フィルタの読み込みに失敗しました。\r\n内臓のフィルタを使用します");
+    //
+    const internal_list = fetch(chrome.runtime.getURL("filter.json"), {
+        method: "GET",
+        cache: "no-store"
+    }).then(response => {
+        if (!response.ok) {
+            console.error('internal list load error!');
+        }
+        console.log("Internal List Load");
+        return response.json();
+    }).catch(error =>{
+        console.log("Internal list load error");
+        alert("内臓フィルタリストの自動読み込みに失敗しました");
+    })
+    return internal_list;
+    //
 }).then(json => {
     console.log(`List Load!\r\nList update:${json[0].developer_update}\r\nList provider:${json[0].thanks_link}\r\nThanks '${json[0].thanks_name}' !`);
     let reg_exp = json[1].concat_regex;
+    const disable_short_url_regexp = new RegExp(json[1].short_url_regex, 'g');
     block_list = json;
     
     //設定
@@ -77,6 +97,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 amazon_hit:false,
                 filter_latest:true,
                 hit_url_copy:false,
+                short_url_hit_disable:false,
                 hit_url_copy_mode:"0",
                 hit_url_copy_user_text:"%t_co%,%bl_url%,%adv_addr%,%tw_id%,%tw_date%",
                 hit_url_copy_advanced:false,
@@ -84,6 +105,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 stealth_blue_view:false,
                 blue_block:false,
                 imp_user_block:false,
+                follow_list_imp_find_user:false,
                 root_tweetuser_block:true,
                 blue_block_value_num:"10",
                 blue_block_mode:"0",
@@ -96,6 +118,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 tw_guest_token:null,
                 tw_guest_token_date:null,
                 oneclick_report:false,
+                oneclick_report_follow_list:true,
                 oneclick_report_confirm:false,
                 oneclick_report_timeline_disable:false,
                 oneclick_report_after_mode:"0",
@@ -160,6 +183,9 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
             if(cslp_settings.amazon_hit == true){
                 reg_exp += "|(amazon.co.jp)";
             }
+            if(cslp_settings.short_url_hit_disable == true){
+                reg_exp  =  reg_exp.replaceAll(disable_short_url_regexp, "cslt_disable_url");
+            }
             block_regexp = new RegExp(reg_exp);
             advanced_regexp = json[1].hit_url_adv_filter;
 
@@ -172,9 +198,27 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 }).then(response => {
                     if (!response.ok) {
                         console.error('IMP List load error!');
-                        alert("インプ稼ぎフィルタの読み込みに失敗しました。「常に最新のリストを使用」を無効にしてください。")
                     }
                     return response.json();
+                }).catch(error =>{
+                    console.log("Network Error");
+                    alert("ネットワークエラーにより最新インプレフィルタの読み込みに失敗しました。\r\n内臓のフィルタを使用します");
+                    //
+                    const internal_imp_list = fetch(chrome.runtime.getURL("imp_filter.json"), {
+                        method: "GET",
+                        cache: "no-store"
+                    }).then(response => {
+                        if (!response.ok) {
+                            console.error('internal List load error!');
+                        }
+                        console.log("Internal List Load");
+                        return response.json();
+                    }).catch(error =>{
+                        console.log("Internal list load error");
+                        alert("内臓インプレフィルタリストの自動読み込みに失敗しました");
+                    })
+                    return internal_imp_list;
+                    //
                 }).then(imp_json => {
                     imp_user_block_list_regexp = new RegExp(imp_json[1].concat_regex);
                     //console.log(imp_user_block_list_regexp)
@@ -263,8 +307,8 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     }else{
                         blue_target_elem = document.querySelectorAll('[data-testid="cellInnerDiv"] article[data-testid="tweet"][tabindex="0"] div[data-testid="User-Name"] svg[data-testid="icon-verified"]');
                     }
-                    console.log(blue_target_elem)
-                    let all_rep = document.querySelectorAll('[data-testid="cellInnerDiv"] article[data-testid="tweet"]');
+                    //console.log(blue_target_elem)
+                    let all_rep = document.querySelectorAll('[data-testid="cellInnerDiv"] article[data-testid="tweet"][tabindex="0"]');
                     if(cslp_settings.root_tweetuser_block == true && window.location.pathname.split("/")[4] != 'quotes'){
                         if(document.querySelector('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] a')?.href != null){
                             let root_user = document.querySelector('[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[data-testid="User-Name"] a').href;
@@ -279,7 +323,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                             }
                         }
                     }
-                    console.log(blue_target_elem)
+                    //console.log(blue_target_elem)
                     switch (cslp_settings.blue_block_mode) {
                         //Blueマーク付を文字数で非表示
                         case "0":
@@ -361,13 +405,42 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 }
                 const is_timeline_report_btn = is_timeline_follow_report();
                 if(cslp_settings.oneclick_report == true && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '3' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '4' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '5' && cslp_settings.oneclick_developer_report == true && is_timeline_report_btn != true){
-                    const reply_elem = document.querySelectorAll('article[tabindex="0"] div[role="group"]:not([cslt_flag="report_ok"])');
+                    let reply_elem = null;
+                    let is_follow_page = false;
+                    if(window.location.pathname.match(/(\/followers)/g)?.length == 1){
+                        is_follow_page = true;
+                    }
+                    let login_userid = null;
+                    if(document.querySelector('a[data-testid="AppTabBar_Profile_Link"]')?.href != null){
+                        login_userid = new URL(document.querySelector('a[data-testid="AppTabBar_Profile_Link"]')?.href)?.pathname.replace("/", "");
+                    }
+                    if(cslp_settings.oneclick_report_follow_list == true && is_follow_page == true && window.location.pathname.match(`\/${login_userid}\/`)?.length == 1){
+                        reply_elem = document.querySelectorAll('div[data-testid="cellInnerDiv"]:not([cslt_flag="report_ok"])');
+                    }else{
+                        reply_elem = document.querySelectorAll('article[tabindex="0"] div[role="group"]:not([cslt_flag="report_ok"])');
+                    }
+                    
                     for (let index = 0; index < reply_elem.length; index++) {
                         //<img src="${chrome.runtime.getURL("report_icon.svg")}" style="width: 20px;margin-left: 5px;">
                         const random_id = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
-                        reply_elem[index].insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" style="background:url(${chrome.runtime.getURL("report_icon.svg")});width: 20px;margin-left: 5px;" title="報告"></a>`);
+                        if(is_follow_page == true && cslp_settings.oneclick_report_follow_list == true){
+                            if(cslp_settings.imp_user_block == true && cslp_settings.follow_list_imp_find_user == true){
+                                const follower_user_id = reply_elem[index].querySelector('[data-testid="UserCell"] a[role="link"]')?.href.replace("https://twitter.com/", "");
+                                if(imp_user_block_list_regexp.test(follower_user_id) && reply_elem[index].querySelector('[data-testid="UserCell"]').getAttribute("cslt_flag") != "follower_imp_ok"){
+                                    reply_elem[index].querySelector('[data-testid="UserCell"]').setAttribute("cslt_flag", "follower_imp_ok");
+                                    reply_elem[index].querySelector('[data-testid="UserCell"] div[data-testid="userFollowIndicator"]').style.backgroundColor = "#ffb9ad";
+                                    reply_elem[index].querySelector('[data-testid="UserCell"] div[data-testid="userFollowIndicator"]').title = "CSLTのインプレフィルターによりスパムとしてマークされています";
+                                }else{
+                                    reply_elem[index].querySelector('[data-testid="UserCell"]')?.setAttribute("cslt_flag", "follower_imp_ok");
+                                }
+                                
+                            }
+                            reply_elem[index].querySelector('[data-testid="UserCell"]')?.insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon cslt_report_icon" style="background:url(${chrome.runtime.getURL("report_icon.svg")});height: 20px;width: 20px;margin-left: 0;" title="報告"></a>`);
+                        }else{
+                            reply_elem[index].insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" style="background:url(${chrome.runtime.getURL("report_icon.svg")});width: 20px;margin-left: 5px;" title="報告"></a>`);
+                        }
                         reply_elem[index].setAttribute("cslt_flag", "report_ok");
-                        document.querySelector(`#${random_id}`).addEventListener("click", function(){
+                        document.querySelector(`#${random_id}`)?.addEventListener("click", function(){
                             let report_confirm = false;
                             if(cslp_settings.oneclick_report_confirm == true){
                                 if(confirm("操作を実行しますか?")){
@@ -381,7 +454,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 //console.log(random_id);
                                 const target_element = this.closest('[data-testid="cellInnerDiv"]');
                                 if(cslp_settings.oneclick_report_after_mode != '5'){
-                                    target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
+                                    target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"], [aria-haspopup="menu"][role="button"]').click();
                                 }
                                 if(document.querySelector('[role="menu"] [role="menuitem"][data-testid="analytics"]') == null || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4' || cslp_settings.oneclick_report_after_mode == '5'){
                                     if(cslp_settings.oneclick_report == true){
@@ -389,16 +462,18 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                             report_tweet(cslp_settings.oneclick_report_option);
                                             this.classList.add("cslt_report_complete");
                                             if(cslp_settings.oneclick_report_after_mode == "1"){
-                                                target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
-                                                mute_reply_user();
+                                                target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"], [aria-haspopup="menu"][role="button"]').click();
+                                                mute_reply_user(is_follow_page);
                                             }
                                             if(cslp_settings.oneclick_report_after_mode == "2"){
-                                                target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
+                                                target_element.querySelector('[aria-haspopup="menu"][data-testid="caret"], [aria-haspopup="menu"][role="button"]').click();
                                                 block_reply_user();
                                             }
                                             if(cslp_settings.oneclick_developer_report == true){
                                                 //開発者情報提供
-                                                developer_spam_user_share(report_srvurl, target_element);
+                                                if(is_follow_page == false){
+                                                    developer_spam_user_share(report_srvurl, target_element);
+                                                }
                                             }
                                         }
                                     
@@ -407,9 +482,11 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                         if(document.querySelector('[role="menu"] [role="menuitem"][data-testid="analytics"]') == null){
                                             if(cslp_settings.oneclick_developer_report == true){
                                                 //開発者情報提供
-                                                developer_spam_user_share(report_srvurl, target_element);
+                                                if(is_follow_page == false){
+                                                    developer_spam_user_share(report_srvurl, target_element);
+                                                }
                                             }
-                                            mute_reply_user();
+                                            mute_reply_user(is_follow_page);
                                         }else{
                                             document.querySelector('[id="layers"] div[role="group"] div div')?.click();
                                             alert("自身のツイートにこの操作はできません");
@@ -419,7 +496,9 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                         if(document.querySelector('[role="menu"] [role="menuitem"][data-testid="analytics"]') == null){
                                             if(cslp_settings.oneclick_developer_report == true){
                                                 //開発者情報提供
-                                                developer_spam_user_share(report_srvurl, target_element);
+                                                if(is_follow_page == false){
+                                                    developer_spam_user_share(report_srvurl, target_element);
+                                                }
                                             }
                                             block_reply_user();
                                         }else{
@@ -433,7 +512,9 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                             //アカウント蓄積
                                             //console.log(imp_account.push(target_element.querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", "")));
                                             //console.log(JSON.stringify(imp_account))
-                                            developer_spam_user_share(report_srvurl, target_element);
+                                            if(is_follow_page == false){
+                                                developer_spam_user_share(report_srvurl, target_element);
+                                            }
                                             this.classList.add("cslt_report_complete");
                                         }else{
                                             document.querySelector('[id="layers"] div[role="group"] div div')?.click();
@@ -863,16 +944,17 @@ function report_tweet(report_mode){
     if(document.querySelector('[role="menu"] [role="menuitem"][data-testid="report"]') != null){
         document.querySelector('[role="menu"] [role="menuitem"][data-testid="report"]').click();
         const obs = new MutationObserver(function(){
-            if(document.querySelector('[aria-labelledby="modal-header"]') != null){
+            if(document.querySelector('[aria-labelledby="modal-header"], div[role="radiogroup"]') != null){
                 console.log("load!");
-                if(document.querySelector('[aria-labelledby="modal-header"] label') != null){
+                if(document.querySelector('[aria-labelledby="modal-header"] label, div[role="radiogroup"] label') != null){
                     obs.disconnect();
-                    document.querySelectorAll('[aria-labelledby="modal-header"] label')[report_mode_conv].click();
-                    document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ChoiceSelectionNextButton"]').click();
+                    console.log("click")
+                    document.querySelectorAll('[aria-labelledby="modal-header"] label, div[role="radiogroup"] label')[report_mode_conv].click();
+                    document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ChoiceSelectionNextButton"], div[data-testid="controlView"] [role="button"][data-testid="ChoiceSelectionNextButton"]').click();
                     let complete_timer = function(){
                         if(document.querySelector('[role="progressbar"]').getAttribute("aria-valuenow") == '100'){
                             clearTimeout(complete_timer);
-                            document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ocfSettingsListNextButton"]').click();
+                            document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ocfSettingsListNextButton"], div[data-testid="controlView"] [role="button"][data-testid="ocfSettingsListNextButton"]').click();
                             return "report_ok";
                         }
                     }
@@ -886,23 +968,27 @@ function report_tweet(report_mode){
 }
 //ブロック関数
 function block_reply_user(){
+    console.log("block!")
     document.querySelector('[role="menu"] [role="menuitem"][data-testid="block"]').click();
     document.querySelector('[data-testid="confirmationSheetConfirm"]').click();
 }
 //ミュート関数
-function mute_reply_user(){
-    if(document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="presentation"] a[role="tab"]')[0]?.getAttribute('aria-selected') != 'true'){
-        document.querySelectorAll('[role="menu"] [role="menuitem"]')[2].click();
-    }else{
-        if(document.querySelectorAll('[role="menu"] [role="menuitem"]').length > 7){
-            //検索の話題ツイートの「役に立ちませんでした」対策
-            document.querySelectorAll('[role="menu"] [role="menuitem"]')[3].click();
-        }else{
+function mute_reply_user(is_follow_page){
+    if(is_follow_page != true){
+        if(document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="presentation"] a[role="tab"]')[0]?.getAttribute('aria-selected') != 'true'){
             document.querySelectorAll('[role="menu"] [role="menuitem"]')[2].click();
+        }else{
+            if(document.querySelectorAll('[role="menu"] [role="menuitem"]').length > 7){
+                //検索の話題ツイートの「役に立ちませんでした」対策
+                document.querySelectorAll('[role="menu"] [role="menuitem"]')[3].click();
+            }else{
+                document.querySelectorAll('[role="menu"] [role="menuitem"]')[2].click();
+            }
+            
         }
-        
+    }else{
+        document.querySelector('[role="menu"] [role="menuitem"][data-testid="mute"]').click();
     }
-    
 }
 //開発者提供用関数
 function developer_spam_user_share(report_srv, spam_element){
@@ -917,10 +1003,17 @@ function developer_spam_user_share(report_srv, spam_element){
     //console.log({tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length})
     chrome.runtime.sendMessage({message: {mode:"developer_report_share", target:{report_srv_url:report_srv, tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length}}}, (response) => {});
 }
-//内部ユーザー情報取得用関数
-/*function get_tw_userdata(input_element){
+//内部ユーザー情報取得用関数(Work PS)
+/*function get_tw_userdata(input_element, mode){
     const input_pr_array = Object.getOwnPropertyNames(input_element);
     const props_pr_name = input_pr_array.find((input)=>input.includes('__reactProps$'));
     const props_data = input_element[props_pr_name];
-    return props_data?.children?.props?.children[0][3]?.props.user;
+    switch(mode){
+        case "user_page":
+            return props_data?.children?.props?.children[0][3]?.props.user;
+        case "reply":
+            console.log(input_pr_array)
+            return props_data?.children?.props?.children[1]?.props?.user;
+    }
+    
 }*/

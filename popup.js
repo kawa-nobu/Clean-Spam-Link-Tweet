@@ -32,6 +32,7 @@ window.addEventListener("load", function(){
             document.getElementById("hiturl_copy_sw").checked = cslp_settings.hit_url_copy;
             document.getElementById("hiturl_copy_opt").value = cslp_settings.hit_url_copy_mode;
             document.getElementById("hitur_copy_text").value = cslp_settings.hit_url_copy_user_text;
+            document.getElementById("disable_shorturl_sw").checked = cslp_settings.short_url_hit_disable;
 
             document.getElementById("hiturl_copy_adv_sw").checked = cslp_settings.hit_url_copy_advanced;
             document.getElementById("hiturl_copy_adv_filter_sw").checked = cslp_settings.hit_url_copy_advanced_filter;
@@ -42,11 +43,13 @@ window.addEventListener("load", function(){
             document.getElementById("blue_block_opt").value = cslp_settings.blue_block_mode;
             document.getElementById("imp_blocker_sw").checked = cslp_settings.imp_user_block;
             document.getElementById("imp_blocker_all_sw").checked = cslp_settings.imp_filter_block_all_area;
+            document.getElementById("follow_list_find_impuser_sw").checked = cslp_settings.follow_list_imp_find_user;
 
             document.getElementById("arabic_block_sw").checked = cslp_settings.arabic_reply_block;
             document.getElementById("arabic_user_block_sw").checked = cslp_settings.arabic_user_reply_block;
 
             document.getElementById("click_report_sw").checked = cslp_settings.oneclick_report;
+            document.getElementById("click_report_follow_list_sw").checked = cslp_settings.oneclick_report_follow_list;
             document.getElementById("click_report_btn_tl_disable_sw").checked = cslp_settings.oneclick_report_timeline_disable;
 
             document.getElementById("click_report_btn_confirm_sw").checked = cslp_settings.oneclick_report_confirm;
@@ -111,6 +114,14 @@ window.addEventListener("load", function(){
             append_alert("<p>設定を適用するにはTwitterを再読み込みを行ってください。</p>");
         }
         
+    })
+    //
+    document.getElementById("disable_shorturl_sw").addEventListener("change", function(){
+        cslp_settings.short_url_hit_disable = document.getElementById("disable_shorturl_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>悪用が確認されている短縮URLを阻止の対象外とします。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
     //
     document.getElementById("imp_blocker_sw").addEventListener("change", function(){
@@ -194,6 +205,14 @@ window.addEventListener("load", function(){
             console.log(cslp_settings);
         });
         append_alert("<p>お使いの端末スペックによっては動作が遅くなる可能性がります。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    //
+    document.getElementById("follow_list_find_impuser_sw").addEventListener("change", function(){
+        cslp_settings.follow_list_imp_find_user = document.getElementById("follow_list_find_impuser_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>「インプレ稼ぎアカウント非表示」が有効になっている事を確認してください。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
     //
     document.getElementById("blue_block_sw").addEventListener("change", function(){
@@ -283,6 +302,15 @@ window.addEventListener("load", function(){
             document.querySelector("#click_report_opt").disabled = false;
         }
     })
+
+    document.getElementById("click_report_follow_list_sw").addEventListener("change", function(){
+        cslp_settings.oneclick_report_follow_list = document.getElementById("click_report_follow_list_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+
     document.getElementById("click_mute_block_opt").addEventListener("change", function(){
         cslp_settings.oneclick_report_after_mode = document.getElementById("click_mute_block_opt").value;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
