@@ -20,45 +20,45 @@
         <div title="インプレ稼ぎアカウント非表示に効果のあるフィルタです">IMP Filter Ver:<span id="imp_filter_ver">xxxxxxxx</span></div>
     </section>
     <section>
-        <details class="settings" open>
-            <summary title="動作の設定を行います">設定</summary>
-            <div>
+        <details open>
+            <summary title="ナイト系スパム対策の設定をします">ナイト系スパム対策</summary>
+            <div class="blue_block">
                 <h3>ヒットツイート非表示</h3>
                 <div class="sw_1 new_mode_sw" title="阻止対象のツイートを画面上から消し去る事ができます">
                     <input class="sw_1_input" type="checkbox" id="hit_tweet_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
-            <div>
+            <div class="blue_block">
+                <h3>短縮URL除外</h3>
+                <div class="sw_1 new_mode_sw" title="悪用が確認されている短縮URLのサービスの阻止を除外します">
+                    <input class="sw_1_input" type="checkbox" id="disable_shorturl_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
                 <h3>無効ドメイン阻止</h3>
                 <div class="sw_1 new_mode_sw" title="活動が停止されているドメインも阻止の対象にします。">
                     <input class="sw_1_input" type="checkbox" id="disable_url_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
-            <div>
-                <h3>Amazonリンク阻止</h3>
-                <div class="sw_1 new_mode_sw" title="amazon.co.jp等のリンクを阻止の対象にします">
-                    <input class="sw_1_input" type="checkbox" id="amz_aff_sw"> 
-                    <label for="sw_1" class="sw_1_label"></label>
-                </div>
-            </div>
-            <div>
-                <h3>常に最新のリストを使用</h3>
-                <div class="sw_1 new_mode_sw" title="開発者本人が更新・配信している最新の定義リストを使用します(推奨)">
-                    <input class="sw_1_input" type="checkbox" id="filter_latest_sw"> 
-                    <label for="sw_1" class="sw_1_label"></label>
-                </div>
-            </div>
-          </details>
+        </details>
     </section>
     <section>
-        <details>
-            <summary title="収益化を目的とした悪質なユーザーのリプライを可能な範囲で排除する事ができます">インプレ稼ぎ非表示</summary>
+        <details open>
+            <summary title="収益化を目的とした悪質なユーザーのリプライを可能な範囲で排除する事ができます">インプレ稼ぎ対策</summary>
             <div class="blue_block">
                 <h3>インプレ稼ぎアカウント非表示</h3>
                 <div class="sw_1 new_mode_sw" title="インプレ稼ぎアカウントリストを使用して悪質なリプを非表示にします">
                     <input class="sw_1_input" type="checkbox" id="imp_blocker_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>フォロワー欄フィルタ入りユーザー可視化</h3>
+                <div class="sw_1 new_mode_sw" title="自身のフォロワー欄にインプレフィルタ入りしているユーザーを可視化します">
+                    <input class="sw_1_input" type="checkbox" id="follow_list_find_impuser_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
@@ -87,7 +87,7 @@
     </section>
     <section>
         <details>
-            <summary title="収益化を目的としたBlueユーザーのリプライを可能な範囲で排除する事ができます">Blue悪質リプライ非表示</summary>
+            <summary title="収益化を目的としたBlueユーザーのリプライを可能な範囲で排除する事ができます">Blue悪質リプライ対策</summary>
             <div class="blue_block">
                 <h3>Blue悪質リプライ非表示</h3>
                 <div class="sw_1 new_mode_sw" title="収益化を目的とした悪質ユーザー等のリプを画面上から消し去ります(Blue加入ユーザーは自爆注意)">
@@ -122,11 +122,30 @@
     </section>
     <section>
         <details>
+            <summary title="その他のスパムへの対策を設定します">その他のスパム対策</summary>
+            <div class="blue_block">
+                <h3>Amazonリンク阻止</h3>
+                <div class="sw_1 new_mode_sw" title="amazon.co.jp等のリンクを阻止の対象にします">
+                    <input class="sw_1_input" type="checkbox" id="amz_aff_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+        </details>
+    </section>
+    <section>
+        <details>
             <summary title="報告とブロック・ミュートを一発でできます">報告・ブロックorミュート</summary>
             <div class="blue_block">
                 <h3>報告</h3>
                 <div class="sw_1 new_mode_sw" title="ワンクリックで報告できます">
                     <input class="sw_1_input" type="checkbox" id="click_report_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>フォロワー欄 報告ボタン表示</h3>
+                <div class="sw_1 new_mode_sw" title="自身のフォロー欄からもワンクリックで報告できます">
+                    <input class="sw_1_input" type="checkbox" id="click_report_follow_list_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
@@ -244,6 +263,18 @@
                 <button id="settings_reset_sw" title="設定を初期化して再構築を行います">設定を初期化</button>
             </div>
           </details>
+    </section>
+    <section>
+        <details>
+            <summary title="拡張機能のシステム動作設定を行います">システム設定</summary>
+            <div class="blue_block">
+                <h3>常に最新のリストを使用</h3>
+                <div class="sw_1 new_mode_sw" title="開発者本人が更新・配信している最新の定義リストを使用します(推奨)">
+                    <input class="sw_1_input" type="checkbox" id="filter_latest_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+        </details>
     </section>
     <section>
         <details class="about">
