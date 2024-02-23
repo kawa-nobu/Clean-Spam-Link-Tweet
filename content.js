@@ -945,20 +945,41 @@ function report_tweet(report_mode){
         document.querySelector('[role="menu"] [role="menuitem"][data-testid="report"]').click();
         const obs = new MutationObserver(function(){
             if(document.querySelector('[aria-labelledby="modal-header"], div[role="radiogroup"]') != null){
-                console.log("load!");
+                //console.log("load!");
                 if(document.querySelector('[aria-labelledby="modal-header"] label, div[role="radiogroup"] label') != null){
                     obs.disconnect();
-                    console.log("click")
-                    document.querySelectorAll('[aria-labelledby="modal-header"] label, div[role="radiogroup"] label')[report_mode_conv].click();
-                    document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ChoiceSelectionNextButton"], div[data-testid="controlView"] [role="button"][data-testid="ChoiceSelectionNextButton"]').click();
-                    let complete_timer = function(){
-                        if(document.querySelector('[role="progressbar"]').getAttribute("aria-valuenow") == '100'){
-                            clearTimeout(complete_timer);
-                            document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ocfSettingsListNextButton"], div[data-testid="controlView"] [role="button"][data-testid="ocfSettingsListNextButton"]').click();
-                            return "report_ok";
+                    //console.log("click")
+                    let report_selector_timer_retry = 0;
+                    let report_complete_timer_retry = 0;
+                    let report_selector_timer = setInterval(function(){
+                        const next_button = document.querySelectorAll('[aria-labelledby="modal-header"] label, div[role="radiogroup"] label')[report_mode_conv];
+                        if(next_button != null){
+                            if(report_selector_timer_retry < 10){
+                                document.querySelectorAll('[aria-labelledby="modal-header"] label, div[role="radiogroup"] label')[report_mode_conv].click();
+                                clearInterval(report_selector_timer);
+                                document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ChoiceSelectionNextButton"], div[data-testid="controlView"] [role="button"][data-testid="ChoiceSelectionNextButton"]').click();
+                            }else{
+                                clearInterval(complete_timer);
+                            }
+                        }else{
+                            report_selector_timer_retry += 1;
                         }
-                    }
-                    setTimeout(complete_timer, 500);
+                    }, 300);
+                    let complete_timer = setInterval(function(){
+                        //console.log("complete")
+                        const complete_button = document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ocfSettingsListNextButton"], div[data-testid="controlView"] [role="button"][data-testid="ocfSettingsListNextButton"]');
+                        if(document.querySelector('[role="progressbar"]').getAttribute("aria-valuenow") == '100' && complete_button != null){
+                            if(report_complete_timer_retry < 10){
+                                clearInterval(complete_timer);
+                                complete_button.click();
+                                return "report_ok";
+                            }else{
+                                clearInterval(complete_timer);
+                            }
+                        }else{
+                            report_complete_timer_retry += 1;
+                        }
+                    }, 300);
                 }
             }
         });
