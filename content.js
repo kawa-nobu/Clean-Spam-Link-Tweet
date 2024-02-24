@@ -946,18 +946,18 @@ function report_tweet(report_mode){
         const obs = new MutationObserver(function(){
             if(document.querySelector('[aria-labelledby="modal-header"], div[role="radiogroup"]') != null){
                 //console.log("load!");
-                if(document.querySelector('[aria-labelledby="modal-header"] label, div[role="radiogroup"] label') != null){
+                if(document.querySelector('[aria-labelledby="modal-header"] label, div[role="group"] div[data-viewportview="true"] div[role="radiogroup"] label') != null){
                     obs.disconnect();
                     //console.log("click")
                     let report_selector_timer_retry = 0;
                     let report_complete_timer_retry = 0;
                     let report_selector_timer = setInterval(function(){
-                        const next_button = document.querySelectorAll('[aria-labelledby="modal-header"] label, div[role="radiogroup"] label')[report_mode_conv];
+                        const next_button = document.querySelectorAll('[aria-labelledby="modal-header"] label, div[role="group"] div[data-viewportview="true"] div[role="radiogroup"] label')[report_mode_conv];
                         if(next_button != null){
                             if(report_selector_timer_retry < 10){
-                                document.querySelectorAll('[aria-labelledby="modal-header"] label, div[role="radiogroup"] label')[report_mode_conv].click();
-                                clearInterval(report_selector_timer);
+                                document.querySelectorAll('[aria-labelledby="modal-header"] label, div[role="group"] div[data-viewportview="true"] div[role="radiogroup"] label')[report_mode_conv].click();
                                 document.querySelector('[aria-labelledby="modal-header"][role="dialog"] [role="button"][data-testid="ChoiceSelectionNextButton"], div[data-testid="controlView"] [role="button"][data-testid="ChoiceSelectionNextButton"]').click();
+                                clearInterval(report_selector_timer);
                             }else{
                                 clearInterval(complete_timer);
                             }
