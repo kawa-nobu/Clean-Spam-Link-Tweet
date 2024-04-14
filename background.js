@@ -71,20 +71,20 @@ async function check_main(request){
                             let save_data = JSON.parse(value.cslp_settings);
                             //gust_token取得保存
                             get_gtoken().then((resp)=>{
-                                console.log(resp)
+                                //console.log(resp)
                                 guest_token = resp;
                                 save_data.tw_guest_token = guest_token;
                                 save_data.tw_guest_token_date = now_date_unix;
                                 chrome.storage.local.set({'cslp_settings': JSON.stringify(save_data)}, function () {
-                                    console.log("guest_token_save");
-                                    console.log(guest_token);
+                                    //console.log("guest_token_save");
+                                    //console.log(guest_token);
                                     resolve(blue_check(guest_token, request.message.target));
                                 });
                             });
                         }else{
                             console.log("guest_token_ok");
                             guest_token = JSON.parse(value.cslp_settings).tw_guest_token;
-                            console.log(guest_token);
+                            //console.log(guest_token);
                             resolve(blue_check(guest_token, request.message.target))
                         }
                     });
@@ -103,6 +103,18 @@ async function check_main(request){
                 console.warn('情報共有サーバーとの通信に失敗しました。', error);
               });
             break;
+        case "ct0_token_get":
+            return new Promise((resolve)=>{
+                chrome.cookies.get({url:'https://twitter.com/', name:'ct0'}, function(cookies){
+                    resolve(cookies.value);
+                });
+            });
+        case "login_userid_get":
+            return new Promise((resolve)=>{
+                chrome.cookies.get({url:'https://twitter.com/', name:'twid'}, function(cookies){
+                    resolve(cookies.value);
+                });
+            });
         default:
             break;
     }
@@ -141,7 +153,7 @@ async function get_gtoken(){
         fetch('https://twitter.com/undefined').then((res)=>{
             return(res.text());
         }).then((text)=>{
-            console.log(text.match(/gt=[^;]*/)[0].replace(/gt=/, ""));
+            //console.log(text.match(/gt=[^;]*/)[0].replace(/gt=/, ""));
             resolve(text.match(/gt=[^;]*/)[0].replace(/gt=/, ""));
         });
     });
