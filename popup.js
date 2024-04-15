@@ -158,7 +158,7 @@ window.addEventListener("load", function(){
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
-        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p><p>URLをコピーするには、[Ctrl]キーを押してブラックアウトされたツイートをクリックしてください。</p>");
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p><p>URLをコピーするには[Ctrl]キーを、ツイート情報は[L]キー押してブラックアウトされたツイートをクリックしてください。</p>");
     })
     document.getElementById("hiturl_copy_opt").addEventListener("change", function(){
         cslp_settings.hit_url_copy_mode = document.getElementById("hiturl_copy_opt").value;

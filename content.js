@@ -104,7 +104,12 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
     let reg_exp = json[1].concat_regex;
     const disable_short_url_regexp = new RegExp(json[1].short_url_regex, 'g');
     block_list = json;
-    
+    //ブロック・ミュートツイートID格納
+    let block_mute_user_ids = [];
+    let block_mute_user_ids_regex = null;
+    //報告ツイートID格納
+    let report_tweet_status_ids = [];
+    let report_tweet_status_ids_regex = null;
     //設定
     let cslp_settings = null;
     
@@ -337,6 +342,30 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                         }
                     }
                 }
+                //報告・ブロック・ミュート機能で追加されたアカウントを非表示
+                if(cslp_settings.oneclick_report == true || cslp_settings.oneclick_report_after_mode == '1' || cslp_settings.oneclick_report_after_mode == '2' || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4'){
+                    const csltinfo_complete_tweet_all = document.querySelectorAll('div[data-testid="cellInnerDiv"][cslt_tweet_info]:not([cslt_temp_hide_flag="complete"])');
+                    
+                    for (let index = 0; index < csltinfo_complete_tweet_all.length; index++) {
+                        const analyze_tweet_info = JSON.parse(csltinfo_complete_tweet_all[index].getAttribute("cslt_tweet_info"));
+                        //ユーザーID
+                        if(block_mute_user_ids_regex != null){
+                            //console.log(block_mute_user_ids_regex)
+                            if(block_mute_user_ids_regex.test(analyze_tweet_info.user_data.user_id)){
+                                csltinfo_complete_tweet_all[index].setAttribute("cslt_temp_hide_flag", "complete");
+                                csltinfo_complete_tweet_all[index].textContent = "";
+                            }
+                        }
+                        //ツイートのみ
+                        if(report_tweet_status_ids_regex != null){
+                            //console.log(report_tweet_status_ids_regex)
+                            if(report_tweet_status_ids_regex.test(analyze_tweet_info.tweet_id)){
+                                csltinfo_complete_tweet_all[index].setAttribute("cslt_temp_hide_flag", "complete");
+                                csltinfo_complete_tweet_all[index].textContent = "";
+                            }
+                        }
+                    }
+                }
                 //Blueブロック
                 if(cslp_settings.stealth_blue_view == true){
                     if(old_user_name != document.querySelector('div[data-testid="UserName"] [tabindex="-1"]')?.innerText.replace("@", "")){
@@ -535,15 +564,30 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                     if(cslp_settings.oneclick_report == true){
                                         if(Number(cslp_settings.oneclick_report_after_mode) <= 2){
                                             report_tweet(cslp_settings.oneclick_report_option, target_element);
+                                            //報告完了IDを保存
+                                            report_tweet_status_ids.push(tweet_info.tweet_id);
+                                            report_tweet_status_ids_regex = new RegExp(report_tweet_status_ids.join('|'), 'g');
+                                            //console.log(report_tweet_status_ids_regex);
+                                            //
                                             if(cslp_settings.oneclick_report_after_mode == "1"){
                                                 //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
                                                 //console.log(target_element.getAttribute("cslt_tweet_info"));
                                                 mute_user(tweet_info.user_data.user_id);
+                                                //ミュート済ユーザーIDを保存
+                                                block_mute_user_ids.push(tweet_info.user_data.user_id);
+                                                block_mute_user_ids_regex = new RegExp(block_mute_user_ids.join('|'), 'g');
+                                                //console.log(block_mute_user_ids_regex);
+                                                //
                                             }
                                             if(cslp_settings.oneclick_report_after_mode == "2"){
                                                 //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
                                                 //console.log(target_element.getAttribute("cslt_tweet_info"));
                                                 block_user(tweet_info.user_data.user_id);
+                                                //ブロック済ユーザーIDを保存
+                                                block_mute_user_ids.push(tweet_info.user_data.user_id);
+                                                block_mute_user_ids_regex = new RegExp(block_mute_user_ids.join('|'), 'g');
+                                                //console.log(block_mute_user_ids_regex);
+                                                //
                                             }
                                             if(cslp_settings.oneclick_developer_report == true){
                                                 //開発者情報提供
@@ -563,8 +607,13 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                                 }
                                             }
                                             //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
-                                            console.log(target_element.getAttribute("cslt_tweet_info"));
+                                            //console.log(target_element.getAttribute("cslt_tweet_info"));
                                             mute_user(tweet_info.user_data.user_id);
+                                            //ミュート済ユーザーIDを保存
+                                            block_mute_user_ids.push(tweet_info.user_data.user_id);
+                                            block_mute_user_ids_regex = new RegExp(block_mute_user_ids.join('|'), 'g');
+                                            //console.log(block_mute_user_ids_regex);
+                                            //
                                         }else{
                                             document.querySelector('[id="layers"] div[role="group"] div div')?.click();
                                             cslt_message_display("自身のツイートにこの操作はできません", "error");
@@ -579,8 +628,13 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                                 }
                                             }
                                             //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
-                                            console.log(target_element.getAttribute("cslt_tweet_info"));
+                                            //console.log(target_element.getAttribute("cslt_tweet_info"));
                                             block_user(tweet_info.user_data.user_id);
+                                            //ブロック済ユーザーIDを保存
+                                            block_mute_user_ids.push(tweet_info.user_data.user_id);
+                                            block_mute_user_ids_regex = new RegExp(block_mute_user_ids.join('|'), 'g');
+                                            //console.log(block_mute_user_ids_regex);
+                                            //
                                         }else{
                                             document.querySelector('[id="layers"] div[role="group"] div div')?.click();
                                             cslt_message_display("自身のツイートにこの操作はできません", "error");
@@ -599,6 +653,14 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                         }else{
                                             document.querySelector('[id="layers"] div[role="group"] div div')?.click();
                                             cslt_message_display("自身のツイートにこの操作はできません", "error");
+                                        }
+                                    }
+                                    //処理後にツイート非表示
+                                    if(cslp_settings.oneclick_report == true || cslp_settings.oneclick_report_after_mode == '1' || cslp_settings.oneclick_report_after_mode == '2' || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4'){
+                                        if(cslp_settings.oneclick_report == true && cslp_settings.oneclick_report_after_mode == '0'){
+                                            tweet_area_clear(target_element, "report_only");
+                                        }else{
+                                            tweet_area_clear(target_element, "mute_block");
                                         }
                                     }
                                 }else{
@@ -1253,6 +1315,31 @@ function cslt_message_display(message, mode){
     setTimeout(function(){
         document.querySelector(".cslt_message_wrap").style.display = "none";
     }, 5000);
+}
+function tweet_area_clear(target_element, mode){
+    const target_tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
+    const target_tweet_id = target_tweet_info.tweet_id;
+    const target_tweet_user_id = target_tweet_info.user_data.user_id;
+    switch (mode) {
+        case "report_only":
+            target_element.setAttribute("cslt_temp_hide_flag", "complete");
+            target_element.textContent = "";
+            break;
+        case "mute_block":
+            const target_other_tweet_all = document.querySelectorAll('div[data-testid="cellInnerDiv"][cslt_tweet_info]:not([cslt_temp_hide_flag="complete"])');
+            for (let index = 0; index < target_other_tweet_all.length; index++) {
+                const all_target_tweet_info = JSON.parse(target_other_tweet_all[index].getAttribute("cslt_tweet_info"));
+                //console.log(all_target_tweet_info)
+                if(all_target_tweet_info.user_data.user_id == target_tweet_user_id){
+                    target_element.setAttribute("cslt_temp_hide_flag", "complete");
+                    target_other_tweet_all[index].textContent = "";
+                }
+            }
+            break;
+        default:
+            break;
+    }
+    
 }
 function ctid_create(){
     return btoa(String.fromCharCode.apply(null, crypto.getRandomValues(new Uint8Array(70)))).replaceAll("=", "");
