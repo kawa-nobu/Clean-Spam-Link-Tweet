@@ -14,6 +14,13 @@ let l_key_status = 0;
 //CSS&新ツイート解析スクリプト挿入
 document.head.insertAdjacentHTML("beforeend", `
 <style cslt_css>
+.cslt_report_icon{
+    background:url(${chrome.runtime.getURL("report_icon.svg")});
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+}
 .cslt_report_icon:hover{
     filter: invert(13%) sepia(89%) saturate(6665%) hue-rotate(343deg) brightness(95%) contrast(106%);
 }
@@ -345,17 +352,17 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                         //リストと照合&非表示
                         if(tweet_elem[index].querySelector('[data-testid="User-Name"]  a')?.href.replace("https://twitter.com/", "") != null){
                             let tweet_user_id = tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", "");
-                        //console.log(tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", ""))
-                        //console.log(imp_user_block_list_regexp)
-                        //console.log(tweet_elem[index])
-                        //console.log(tweet_elem[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_flag"))
-                        //tweet_elem[index].setAttribute("cslt_flag", "imp_ok");
-                        if(imp_user_block_list_regexp.test(tweet_user_id) && tweet_elem[index].getAttribute("cslt_flag") != "imp_ok"){
-                            //console.log("found!");
-                            tweet_elem[index].setAttribute("cslt_flag", "imp_ok");
-                            //tweet_elem[index].style.background = "#ffecb4";
-                            tweet_elem[index].textContent = "";
-                        }
+                            //console.log(tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", ""))
+                            //console.log(imp_user_block_list_regexp)
+                            //console.log(tweet_elem[index])
+                            //console.log(tweet_elem[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_flag"))
+                            //tweet_elem[index].setAttribute("cslt_flag", "imp_ok");
+                            if(imp_user_block_list_regexp.test(tweet_user_id) && tweet_elem[index].getAttribute("cslt_flag") != "imp_ok"){
+                                //console.log("found!");
+                                tweet_elem[index].setAttribute("cslt_flag", "imp_ok");
+                                //tweet_elem[index].style.background = "#ffecb4";
+                                tweet_elem[index].textContent = "";
+                            }
                         }
                     }
                 }
@@ -512,7 +519,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 if(cslp_settings.oneclick_report == true && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '3' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '4' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '5' && cslp_settings.oneclick_developer_report == true && is_timeline_report_btn != true){
                     let reply_elem = null;
                     let is_follow_page = false;
-                    if(window.location.pathname.split("/")[2]?.match(/(followers|following|verified_followers)/g) || window.location.pathname.split("/")[4]?.match(/(retweets|likes)/g)){//window.location.pathname.match(/(\/followers|\/following|\/verified_followers|\/retweets|\/likes)/g)?.length == 1
+                    if(window.location.pathname.split("/")[2]?.match(/(followers|following|verified_followers)/g)?.length == 1 || window.location.pathname.split("/")[4]?.match(/(retweets|likes)/g)?.length == 1){//window.location.pathname.match(/(\/followers|\/following|\/verified_followers|\/retweets|\/likes)/g)?.length == 1
                         is_follow_page = true;
                     }
                     let login_userid = null;
@@ -540,9 +547,9 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 
                             }
                             //console.log(reply_elem[index].querySelector('[data-testid="UserCell"]'))
-                            reply_elem[index].querySelector('[data-testid="UserCell"]')?.insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon cslt_report_icon" style="background:url(${chrome.runtime.getURL("report_icon.svg")});background-repeat: no-repeat;width: 20px;margin-left: 5px;" title="報告"></a>`);
+                            reply_elem[index].querySelector('[data-testid="UserCell"]')?.insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" title="報告"></a>`);
                         }else{
-                            reply_elem[index].insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" style="background:url(${chrome.runtime.getURL("report_icon.svg")});background-repeat: no-repeat;width: 20px;margin-left: 5px;" title="報告"></a>`);
+                            reply_elem[index].insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" title="報告"></a>`);
                         }
                         if(reply_elem[index].querySelector(".cslt_report_icon") != null){
                             reply_elem[index].setAttribute("cslt_flag", "report_ok");
