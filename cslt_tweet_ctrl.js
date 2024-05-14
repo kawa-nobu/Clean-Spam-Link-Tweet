@@ -38,8 +38,12 @@ const tweet_obs = new MutationObserver(function(){
         case 'verified_followers':
         case 'followers':    
         case 'following':
-            tweet_elem = document.querySelectorAll('section[role="region"] div[data-testid="cellInnerDiv"] div[role="button"][tabindex="0"][data-testid="UserCell"]:not([cslt_tweet_process="ok"])');
+            tweet_elem = document.querySelectorAll('section[role="region"] div[data-testid="cellInnerDiv"] div[role="button"][tabindex="0"][data-testid="UserCell"]:not([cslt_tweet_process="ok"]), section[role="region"] div[data-testid="cellInnerDiv"] [type="button"][data-testid="UserCell"]:not([cslt_tweet_process="ok"])');
             page_mode = 'followers';
+            break;
+        case 'communities':
+            tweet_elem = document.querySelectorAll('main div[data-testid="cellInnerDiv"] article[data-testid="tweet"][tabindex="0"] div[aria-label][role="group"][id]:not([cslt_tweet_process="ok"])');
+            page_mode = 'communities';
             break;
         default:
             tweet_elem = document.querySelectorAll('main div[data-testid="cellInnerDiv"] article[data-testid="tweet"][tabindex="0"] div[aria-label][role="group"][id]:not([cslt_tweet_process="ok"])');
@@ -48,7 +52,7 @@ const tweet_obs = new MutationObserver(function(){
     }
     //ツイートのリツイート、いいね画面の場合
     if(page_path == 'status' && page_path_status == 'retweets' || page_path_status == 'likes'){
-        tweet_elem = document.querySelectorAll('section[role="region"] div[data-testid="cellInnerDiv"] div[role="button"][tabindex="0"][data-testid="UserCell"]:not([cslt_tweet_process="ok"])');
+        tweet_elem = document.querySelectorAll('section[role="region"] div[data-testid="cellInnerDiv"] div[role="button"][tabindex="0"][data-testid="UserCell"]:not([cslt_tweet_process="ok"]), section[role="region"] div[data-testid="cellInnerDiv"] [type="button"][data-testid="UserCell"]:not([cslt_tweet_process="ok"])');
         //ユーザーが出て来るだけなのでフォロワー欄扱いで処理
         page_mode = 'followers';
     }
@@ -94,7 +98,7 @@ const tweet_obs = new MutationObserver(function(){
                     //console.log("follws_run")
                     if(login_userid() == view_user && now_follow_mode == "followers"){
                         const tweet_info_follow = get_tw_userdata(tweet_elem[tweet_index], "user_page");
-                        //console.log(tweet_info_follow)
+                        console.log(tweet_info_follow)
                         if(tweet_info_follow != undefined){
                             //報告用JSON生成
                             const report_json_body = `{\"input_flow_data\":{\"requested_variant\":\"{\\\"client_app_id\\\":\\\"3033300\\\",\\\"client_location\\\":\\\"profile:header:\\\",\\\"client_referer\\\":\\\"/${tweet_info_follow.screen_name}\\\",\\\"is_media\\\":false,\\\"is_promoted\\\":false,\\\"report_flow_id\\\":\\\"%cslt_random_uuid%\\\",\\\"reported_user_id\\\":\\\"${tweet_info_follow.id_str}\\\",\\\"source\\\":\\\"reportprofile\\\"}\",\"flow_context\":{\"debug_overrides\":{},\"start_location\":{\"location\":\"profile\",\"profile\":{\"profile_id\":\"${tweet_info_follow.id_str}\"}}}}}`;
@@ -159,6 +163,37 @@ const tweet_obs = new MutationObserver(function(){
                             report_json: report_json_body
                         };
                         tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_other));
+                    }
+                    break;
+                case 'communities':
+                    const tweet_info_communities = get_tw_userdata(tweet_elem[tweet_index], "reply");
+                    if(tweet_info_communities != undefined){
+                        //報告用JSON生成
+                        let is_media_tweet = false;
+                        let is_promo_tweet = false;
+                        if(tweet_info_communities.extended_entities?.media != undefined){
+                            is_media_tweet = true;
+                        }
+                        if(tweet_info_communities.promoted_content != undefined){
+                            is_promo_tweet = true;
+                        }
+                        //ツイート情報オブジェクト生成
+                        const report_urlparam = `client_location=community:ranked:suggest_community_tweet&client_referer=${window.location.pathname}&client_app_id=3033300&source=reporttweet&report_flow_id=%cslt_random_uuid%&reported_user_id=${tweet_info_communities.user.id_str}&reported_tweet_id=${tweet_info_communities.id_str}&initiated_in_app=1&lang=ja`;
+                        const tweetinfo_attr_communities = {
+                            text: tweet_info_communities?.text,
+                            tweet_id: tweet_info_communities?.id_str, 
+                            tweet_client: tweet_info_communities?.source_name,
+                            is_promoted: is_promo_tweet,
+                            user_data:{
+                                name: tweet_info_communities?.user.name, 
+                                user_id: tweet_info_communities?.user.id_str,
+                                scr_name: tweet_info_communities?.user.screen_name,
+                                all_tweet_count: tweet_info_communities?.user.statuses_count,
+                                view_blue: tweet_info_communities?.user.is_blue_verified
+                            },
+                            report_param: report_urlparam
+                        };
+                        tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_communities));
                     }
                     break;
                 default:
