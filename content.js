@@ -11,6 +11,66 @@ let debug_block_num_text = Math.random().toString(32).substring(2).replaceAll(/[
 let debug_block_num = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
 let shift_key_status = 0;
 let l_key_status = 0;
+//ブロック・ミュートツイートID格納
+let block_mute_user_ids = [];
+let block_mute_user_ids_regex = null;
+//報告ツイートID格納
+let report_tweet_status_ids = [];
+let report_tweet_status_ids_regex = null;
+//報告失敗ツイートID格納
+let fail_report_tweet_status_ids = [];
+let fail_report_tweet_status_ids_regex = null;
+//ブロック・ミュート失敗ID格納
+let fail_block_mute_user_ids = [];
+let fail_block_mute_user_ids_regex = null;
+//報告情報一時保管関数
+function report_ids_temp(id, mode){//report_ids_temp(id, mode)"block_mute""report"
+    switch (mode) {
+        case "block_mute":
+            //ブロック済ユーザーIDを保存
+            block_mute_user_ids.push(id);
+            block_mute_user_ids_regex = new RegExp(block_mute_user_ids.join('|'), 'g');
+            return  true;
+        case "report":
+            //報告完了IDを保存
+            report_tweet_status_ids.push(id);
+            report_tweet_status_ids_regex = new RegExp(report_tweet_status_ids.join('|'), 'g');
+            return true;
+        case "fail_report":
+            //報告完了IDを保存
+            if(fail_report_tweet_status_ids.includes(id) != true){
+                fail_report_tweet_status_ids.push(id);
+                fail_report_tweet_status_ids_regex = new RegExp(fail_report_tweet_status_ids.join('|'), 'g');
+                console.log(fail_report_tweet_status_ids)
+                return true;
+            }else{
+                return false;
+            }
+        case "fail_report_delete":
+            //報告完了IDを削除
+            fail_report_tweet_status_ids.filter(function(imp){return imp != id});
+            fail_report_tweet_status_ids_regex = new RegExp(fail_report_tweet_status_ids.join('|'), 'g');
+            console.log(fail_report_tweet_status_ids)
+            return true;
+        case "fail_block_mute":
+            if(fail_block_mute_user_ids.includes(id) != true){
+                fail_block_mute_user_ids.push(id);
+                fail_block_mute_user_ids_regex = new RegExp(fail_block_mute_user_ids.join('|'), 'g');
+                console.log(fail_block_mute_user_ids)
+                return true;
+            }else{
+                return false;
+            }
+        case "fail_block_mute_delete":
+            fail_block_mute_user_ids.filter(function(imp){return imp != id});
+            fail_block_mute_user_ids_regex = new RegExp(fail_block_mute_user_ids.join('|'), 'g');
+            console.log(fail_block_mute_user_ids)
+            return true;
+        default:
+            return false;
+    }
+    
+}
 //CSS&新ツイート解析スクリプト挿入
 document.head.insertAdjacentHTML("beforeend", `
 <style cslt_css>
@@ -26,6 +86,17 @@ document.head.insertAdjacentHTML("beforeend", `
 }
 .cslt_report_complete{
     filter: invert(76%) sepia(20%) saturate(2691%) hue-rotate(66deg) brightness(102%) contrast(97%);
+}
+.cslt_report_fail{
+    background:url(${chrome.runtime.getURL("report_fail_icon.svg")}) !important;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    margin-left: 5px;
+    filter: invert(13%) sepia(89%) saturate(6665%) hue-rotate(343deg) brightness(95%) contrast(106%);
+}
+.cslt_report_fail:hover{
+    filter: brightness(0) saturate(100%) invert(46%) sepia(95%) saturate(2856%) hue-rotate(1deg) brightness(93%) contrast(102%);
 }
 .cslt_message_wrap{
     display: none;
@@ -111,29 +182,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
     let reg_exp = json[1].concat_regex;
     const disable_short_url_regexp = new RegExp(json[1].short_url_regex, 'g');
     block_list = json;
-    //ブロック・ミュートツイートID格納
-    let block_mute_user_ids = [];
-    let block_mute_user_ids_regex = null;
-    //報告ツイートID格納
-    let report_tweet_status_ids = [];
-    let report_tweet_status_ids_regex = null;
-    //報告情報一時保管関数
-    function report_ids_temp(id, mode){//report_ids_temp(id, mode)"block_mute""report"
-        switch (mode) {
-            case "block_mute":
-                //ブロック済ユーザーIDを保存
-                block_mute_user_ids.push(id);
-                block_mute_user_ids_regex = new RegExp(block_mute_user_ids.join('|'), 'g');
-                return  true;
-            case "report":
-                //報告完了IDを保存
-                report_tweet_status_ids.push(id);
-                report_tweet_status_ids_regex = new RegExp(report_tweet_status_ids.join('|'), 'g');
-                return true;
-            default:
-                return false;
-        }
-    }
+    
     //設定
     let cslp_settings = null;
     
@@ -368,11 +417,10 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 }
                 //報告・ブロック・ミュート機能で追加されたアカウントを非表示
                 if(cslp_settings.oneclick_report == true || cslp_settings.oneclick_report_after_mode == '1' || cslp_settings.oneclick_report_after_mode == '2' || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4'){
-                    const csltinfo_complete_tweet_all = document.querySelectorAll('div[data-testid="cellInnerDiv"][cslt_tweet_info]:not([cslt_temp_hide_flag="complete"])');
-                    
+                    const csltinfo_complete_tweet_all = document.querySelectorAll('div[data-testid="cellInnerDiv"][cslt_tweet_info]:not([cslt_temp_hide_flag="complete"],[cslt_temp_fail_report_flag="fail_tweet"])');
                     for (let index = 0; index < csltinfo_complete_tweet_all.length; index++) {
                         const analyze_tweet_info = JSON.parse(csltinfo_complete_tweet_all[index].getAttribute("cslt_tweet_info"));
-                        //ユーザーID
+                        //ブロック・ミュート完了フラグ付加
                         if(block_mute_user_ids_regex != null){
                             //console.log(block_mute_user_ids_regex)
                             if(block_mute_user_ids_regex.test(analyze_tweet_info.user_data.user_id)){
@@ -380,12 +428,33 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 csltinfo_complete_tweet_all[index].textContent = "";
                             }
                         }
-                        //ツイートのみ
+                        //ツイートのみ報告完了フラグ付加
                         if(report_tweet_status_ids_regex != null){
                             //console.log(report_tweet_status_ids_regex)
                             if(report_tweet_status_ids_regex.test(analyze_tweet_info.tweet_id)){
                                 csltinfo_complete_tweet_all[index].setAttribute("cslt_temp_hide_flag", "complete");
                                 csltinfo_complete_tweet_all[index].textContent = "";
+                            }
+                        }
+                        //報告失敗アイコン変化&フラグ付加
+                        if(fail_report_tweet_status_ids_regex != null){
+                            if(fail_report_tweet_status_ids_regex.test(analyze_tweet_info.tweet_id) == true){
+                                console.log(fail_report_tweet_status_ids.includes(analyze_tweet_info.tweet_id))
+                                console.log(fail_report_tweet_status_ids_regex)
+                                if(csltinfo_complete_tweet_all[index].querySelector('a[cslt_report_btn]')?.classList != null){
+                                    console.log("ONNN")
+                                    csltinfo_complete_tweet_all[index].querySelector('a[cslt_report_btn]').classList.add("cslt_report_fail");
+                                    csltinfo_complete_tweet_all[index].setAttribute("cslt_temp_fail_report_flag", "fail_tweet");
+                                }
+                            }
+                        }
+                        //ブロック・ミュート失敗アイコン変化&フラグ付加
+                        if(fail_block_mute_user_ids_regex != null){
+                            if(fail_block_mute_user_ids_regex.test(analyze_tweet_info.user_data.user_id) == true){
+                                if(csltinfo_complete_tweet_all[index].querySelector('a[cslt_report_btn]')?.classList != null){
+                                    csltinfo_complete_tweet_all[index].querySelector('a[cslt_report_btn]').classList.add("cslt_report_fail");
+                                    csltinfo_complete_tweet_all[index].setAttribute("cslt_temp_fail_report_flag", "fail_tweet");
+                                }
                             }
                         }
                     }
@@ -519,8 +588,12 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 if(cslp_settings.oneclick_report == true && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '3' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '4' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '5' && cslp_settings.oneclick_developer_report == true && is_timeline_report_btn != true){
                     let reply_elem = null;
                     let is_follow_page = false;
+                    let is_community_page = false;
                     if(window.location.pathname.split("/")[2]?.match(/(followers|following|verified_followers)/g)?.length == 1 || window.location.pathname.split("/")[4]?.match(/(retweets|likes)/g)?.length == 1){//window.location.pathname.match(/(\/followers|\/following|\/verified_followers|\/retweets|\/likes)/g)?.length == 1
                         is_follow_page = true;
+                    }
+                    if(window.location.pathname.split("/")[2] == 'communities'){
+                        is_community_page = true;
                     }
                     let login_userid = null;
                     if(document.querySelector('a[data-testid="AppTabBar_Profile_Link"]')?.href != null){
@@ -547,9 +620,9 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 
                             }
                             //console.log(reply_elem[index].querySelector('[data-testid="UserCell"]'))
-                            reply_elem[index].querySelector('[data-testid="UserCell"]')?.insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" title="報告"></a>`);
+                            reply_elem[index].querySelector('[data-testid="UserCell"]')?.insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
                         }else{
-                            reply_elem[index].insertAdjacentHTML("beforeend", `<a id="${random_id}"class="cslt_report_icon" title="報告"></a>`);
+                            reply_elem[index].insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
                         }
                         if(reply_elem[index].querySelector(".cslt_report_icon") != null){
                             reply_elem[index].setAttribute("cslt_flag", "report_ok");
@@ -583,22 +656,61 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 //console.log(random_id);
                                 const target_element = this.closest('[data-testid="cellInnerDiv"]');
                                 const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
+                                let report_result = false;
+                                let block_mute_result = false;
+                                let fail_report_success_bm = false;
                                 //console.log(get_cookie_twid)
+                                console.log(tweet_info)
                                 if(get_cookie_twid != tweet_info.user_data.user_id || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4' || cslp_settings.oneclick_report_after_mode == '5'){
                                     if(cslp_settings.oneclick_report == true){
                                         if(Number(cslp_settings.oneclick_report_after_mode) <= 2){
-                                            report_tweet(cslp_settings.oneclick_report_option, target_element);
+                                            //報告処理
+                                            if(is_community_page != true){
+                                                //コミュニティ内ではない場合
+                                                const report_tweet_run = await new Promise((resolve)=>{
+                                                    report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.tweet_id).then((report_status)=>{
+                                                        resolve(report_status);
+                                                    });
+                                                });
+                                                if(report_tweet_run != true){
+                                                    this.classList.add("cslt_report_fail");
+                                                }else{
+                                                    report_result = true;
+                                                }
+                                            }else{
+                                                //コミュニティ内である場合
+                                                const report_tweet_run = await new Promise((resolve)=>{
+                                                    report_tweet_community(cslp_settings.oneclick_report_option, target_element, tweet_info.tweet_id).then((report_status)=>{
+                                                        resolve(report_status);
+                                                    });
+                                                });
+                                                console.log(report_tweet_run);
+                                                if(report_tweet_run != true){
+                                                    this.classList.add("cslt_report_fail");
+                                                }else{
+                                                    report_result = true;
+                                                }
+                                            }
                                             //報告完了IDを保存
-                                            if(is_follow_page == false){
+                                            if(is_follow_page == false && report_result == true){
                                                 report_ids_temp(tweet_info.tweet_id, "report");
                                             }
                                             //
                                             if(cslp_settings.oneclick_report_after_mode == "1"){
                                                 //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
                                                 //console.log(target_element.getAttribute("cslt_tweet_info"));
-                                                mute_user(tweet_info.user_data.user_id);
+                                                const mute_tweet_run = await new Promise((resolve)=>{
+                                                    mute_user(tweet_info.user_data.user_id).then((report_status)=>{
+                                                        resolve(report_status);
+                                                    });
+                                                });
+                                                if(mute_tweet_run != true){
+                                                    this.classList.add("cslt_report_fail");
+                                                }else{
+                                                    block_mute_result = true;
+                                                }
                                                 //ミュート済ユーザーIDを保存
-                                                if(is_follow_page == false){
+                                                if(is_follow_page == false && mute_tweet_run == true){
                                                     report_ids_temp(tweet_info.user_data.user_id, "block_mute");
                                                 }
                                                 //
@@ -606,9 +718,17 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                             if(cslp_settings.oneclick_report_after_mode == "2"){
                                                 //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
                                                 //console.log(target_element.getAttribute("cslt_tweet_info"));
-                                                block_user(tweet_info.user_data.user_id);
+                                                const block_user_run = await new Promise((resolve)=>{
+                                                    block_user(tweet_info.user_data.user_id).then((resp)=>{
+                                                        resolve(resp);
+                                                    });
+                                                });
+                                                if(block_user_run == true){
+                                                    block_mute_result = true;
+                                                }
+                                                console.log(block_user_run)
                                                 //ブロック済ユーザーIDを保存
-                                                if(is_follow_page == false){
+                                                if(is_follow_page == false && block_user_run == true){
                                                     report_ids_temp(tweet_info.user_data.user_id, "block_mute");
                                                 }
                                                 //
@@ -632,9 +752,18 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                             }
                                             //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
                                             //console.log(target_element.getAttribute("cslt_tweet_info"));
-                                            mute_user(tweet_info.user_data.user_id);
+                                            const mute_tweet_run = await new Promise((resolve)=>{
+                                                mute_user(tweet_info.user_data.user_id).then((report_status)=>{
+                                                    resolve(report_status);
+                                                });
+                                            });
+                                            if(mute_tweet_run != true){
+                                                this.classList.add("cslt_report_fail");
+                                            }else{
+                                                block_mute_result = true;
+                                            }
                                             //ミュート済ユーザーIDを保存
-                                            if(is_follow_page == false){
+                                            if(is_follow_page == false && mute_tweet_run == true){
                                                 report_ids_temp(tweet_info.user_data.user_id, "block_mute");
                                             }
                                             //
@@ -653,9 +782,21 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                             }
                                             //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
                                             //console.log(target_element.getAttribute("cslt_tweet_info"));
-                                            block_user(tweet_info.user_data.user_id);
+                                            const block_user_run = await new Promise((resolve)=>{
+                                                block_user(tweet_info.user_data.user_id).then((resp)=>{
+                                                    resolve(resp);
+                                                });
+                                            });
+                                            /*if(block_user_run == true){
+                                                block_mute_result = true;
+                                            }*/
+                                            if(block_user_run != true){
+                                                this.classList.add("cslt_report_fail");
+                                            }else{
+                                                block_mute_result = true;
+                                            }
                                             //ブロック済ユーザーIDを保存
-                                            if(is_follow_page == false){
+                                            if(is_follow_page == false && block_user_run == true){
                                                 report_ids_temp(tweet_info.user_data.user_id, "block_mute");
                                             }
                                             //
@@ -679,17 +820,29 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                             cslt_message_display("自身のツイートにこの操作はできません", "error");
                                         }
                                     }
+                                    //報告は失敗したが、ブロックミュートが成功した場合、一時保存から削除
+                                    if(cslp_settings.oneclick_report == true || cslp_settings.oneclick_report_after_mode == '1' || cslp_settings.oneclick_report_after_mode == '2'){
+                                        if(report_result == false && block_mute_result == true){
+                                            console.log("aaaaaa")
+                                            report_ids_temp(tweet_info.tweet_id, "fail_report_delete");
+                                            fail_report_success_bm = true;
+                                        }
+                                    }
+                                    
                                     //処理後にツイート非表示
                                     if(cslp_settings.oneclick_report == true || cslp_settings.oneclick_report_after_mode == '1' || cslp_settings.oneclick_report_after_mode == '2' || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4'){
                                         if(is_follow_page == false){
-                                            if(cslp_settings.oneclick_report == true && cslp_settings.oneclick_report_after_mode == '0'){
-                                                tweet_area_clear(target_element, "report_only");
-                                            }else{
-                                                tweet_area_clear(target_element, "mute_block");
+                                            if(fail_report_tweet_status_ids_regex != null && fail_report_tweet_status_ids_regex.test(tweet_info.tweet_id) == false && report_result == true || fail_block_mute_user_ids_regex != null && fail_block_mute_user_ids_regex.test(tweet_info.tweet_id) == false && block_mute_result == true || fail_report_success_bm == true){
+                                                //console.log(fail_report_tweet_status_ids_regex.test(tweet_info.tweet_id));
+                                                if(cslp_settings.oneclick_report == true && cslp_settings.oneclick_report_after_mode == '0'){
+                                                    tweet_area_clear(target_element, "report_only");
+                                                }else{
+                                                    tweet_area_clear(target_element, "mute_block");
+                                                }
                                             }
                                         }
                                     }
-                                    this.classList.add("cslt_report_complete");
+                                    //this.classList.add("cslt_report_complete");
                                 }else{
                                     document.querySelector('[id="layers"] div[role="group"] div div')?.click();
                                     cslt_message_display("自身のツイートにこの操作はできません", "error");
@@ -1118,7 +1271,7 @@ function stealth_blue_append(user_name, status){
 }
 
 //報告関数
-function report_tweet(report_mode, report_element){
+async function report_tweet(report_mode, report_element, report_twid, last_report_status){
     //report_target_elem.querySelector('[aria-haspopup="menu"][data-testid="caret"]').click();
     const public_bearer_token = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
     const report_mode_conv = Number(report_mode);
@@ -1133,8 +1286,12 @@ function report_tweet(report_mode, report_element){
         cslt_message_display(`広告のため報告はスキップされます`, "warning");
         return true;
     }
+    const get_ct0_token = await new Promise((resolve)=>{
+        ct0_token_get().then( async function(ct0_token){
+            resolve(ct0_token);
+        });
+    });
     //報告送信関数
-
     async function send_second_report(response_obj){
         const get_csrf_token = await new Promise((resolve)=>{
             ct0_token_get().then((response)=>{
@@ -1198,24 +1355,28 @@ function report_tweet(report_mode, report_element){
                         send_srv(resp_json_secondstep);
                     }else{
                         cslt_message_display(`通報の最終ステップ成功`, "message");
+                        if(fail_report_tweet_status_ids_regex != null && fail_report_tweet_status_ids_regex.test(report_twid) == true){
+                            report_ids_temp(report_twid, "fail_report_delete");
+                        }
                         resolve(true);
                     }
                 }
             }).catch(error =>{
                 console.log("Report 2nd stage error");
+                cslt_message_display(`通報の${now_steps}ステップ目失敗(${error.message})`, "error");
+                report_ids_temp(report_twid, "fail_report");
                 console.log(error);
             });
             }
         });
     }
-    //ct0トークン取得後実行
-    ct0_token_get().then( async function(ct0_token){
-        let csrf_token = ct0_token;
+    //ct0トークン取得後初期実行
+    const first_report = new Promise((resolve)=>{
         fetch("https://twitter.com/i/api/1.1/report/flow.json?flow_name=report-flow", {
             headers: {
                 "authorization": public_bearer_token,
                 "content-type": "application/json",
-                "x-csrf-token": csrf_token,
+                "x-csrf-token": get_ct0_token,
                 "X-Twitter-Active-User": "yes",
                 "X-Twitter-Auth-Type": "OAuth2Session",
                 "X-Twitter-Client-Language": "ja",
@@ -1223,7 +1384,7 @@ function report_tweet(report_mode, report_element){
             },
             "referrer": "https://twitter.com/i/safety/report_story_start",
             "body": report_first_json_body,
-            "method": "POST"
+        "method": "POST"
         }).then(response => {
             if (response.status != 200) {
                 if(response.status == 429){
@@ -1239,76 +1400,264 @@ function report_tweet(report_mode, report_element){
             }
         }).then((resp_json_firststep)=>{
             //2ステップ
-            send_second_report(resp_json_firststep);
+            send_second_report(resp_json_firststep).then((res)=>{
+                //console.log(res)
+                resolve(res);
+            });
         }).catch(error =>{
             console.log("Report 1st stage error");
+            cslt_message_display(`通報の初期ステップ失敗(${error.message})`, "error");
+            report_ids_temp(report_twid, "fail_report");
+            resolve(false);
             console.log(error);
         });
     });
+    return first_report;
+}
+//報告関数(コミュニティ)
+function report_tweet_community(report_mode, report_element, report_twid, last_report_status){
+    const report_mode_conv = Number(report_mode);
+    let report_mode_str_first = null;
+    let report_mode_str_second = null;
+    const tweet_info_obj = JSON.parse(report_element.getAttribute("cslt_tweet_info"));;
+    const report_first_param_body = tweet_info_obj.report_param.replaceAll("%cslt_random_uuid%", crypto.randomUUID());
+    let old_send_url = `https://twitter.com/i/report/status/${report_twid}`;
+    //プロモーションの場合関数終了
+    if(tweet_info_obj.is_promoted == true){
+        cslt_message_display(`広告のため報告はスキップされます`, "warning");
+        return true;
+    }
+    switch (report_mode_conv) {
+        case 5:
+            report_mode_str_first = "SpamOption";
+            report_mode_str_second = "SpamSomethingElseOption";
+            break;
+        default:
+            report_mode_str_first = "AbuseOption";
+            report_mode_str_second = "OffensiveOption";
+            break;
+    }
+    //報告2回目以降送信関数
+    async function send_second_report(response_obj){
+        return new Promise((resolve)=>{
+            const first_step_resp_html = new DOMParser().parseFromString(response_obj, "text/html");
+            let now_steps = 1;
+            let report_finalize = false;
+
+            send_srv(response_obj);
+            function send_srv(input_response){
+                const second_step_resp_html = new DOMParser().parseFromString(input_response, "text/html");
+                let send_url_param = "";
+                let send_body = null;
+                let send_method = "GET";
+                let send_content_type = null;
+                //送信項目case毎に動作シナリオ
+                switch (now_steps) {
+                    case 1:
+                        send_url_param = `?report_flow_state=${first_step_resp_html.querySelector('input[name="report_flow_state"]').value}&lang=${first_step_resp_html.querySelector('input[name="lang"]').value}&is_mobile=${first_step_resp_html.querySelector('input[name="is_mobile"]').value}&next_view=true&selected_option=${report_mode_str_first}`;
+                        send_body = null;
+                        send_method = "GET";
+                        send_content_type = null;
+                        break;
+                    case 2:
+                        send_body = `authenticity_token=${second_step_resp_html.querySelector('input[name="authenticity_token"]').value}&context=&report_flow_state=${second_step_resp_html.querySelector('input[name="report_flow_state"]').value}&lang=${second_step_resp_html.querySelector('input[name="lang"]').value}&is_mobile=${second_step_resp_html.querySelector('input[name="is_mobile"]').value}&selected_option=${report_mode_str_second}`;
+                        send_method = "POST";
+                        send_content_type = "application/x-www-form-urlencoded";
+                        break;
+                    /*case 3:
+                    //最終ステップはリダイレクトするので無視
+                        send_url_param = `_complete?report_flow_state=${second_step_resp_html.querySelector('input[name="report_flow_state"]').value}&lang=${second_step_resp_html.querySelector('input[name="lang"]').value}&report_type=spam`;
+                        send_body = null;
+                        send_method = "GET";
+                        send_content_type = null;
+                        break;*/
+                    default:
+                        break;
+                }
+                fetch(`https://twitter.com/i/safety/report_story${send_url_param}`, {
+                    headers: {
+                        "cache-control": "no-cache",
+                        "sec-fetch-dest": "iframe",
+                        "sec-fetch-mode": "navigate",
+                        "content-type": send_content_type
+                    },
+                    "referrer": old_send_url,
+                    "body": send_body,
+                    "method": send_method,
+                    "mode": "cors",
+                    "credentials": "include"
+                }).then(response => {
+                    if (response.status != 200 && response.status != 302) {
+                        if(response.status == 429){
+                            cslt_message_display(`通報の${now_steps}ステップ目失敗(コミュニティ/レートリミット)`, "error");
+                            console.error(response.status);
+                            resolve(false);
+                        }else{
+                            cslt_message_display(`通報の${now_steps}ステップ目失敗(コミュニティ/Res:${response.status})`, "error");
+                            console.error(response.status);
+                            resolve(false);
+                        }
+                    }else{
+                        old_send_url = response.url;
+                        cslt_message_display(`通報の${now_steps}ステップ目成功(コミュニティ/Res:${response.status})`, "message");
+                        return response.text();
+                    }
+                }).then((resp_text_firststep)=>{
+                    //次ステップへ
+                    if(now_steps != 2){
+                        now_steps += 1;
+                        send_srv(resp_text_firststep);
+                    }else{
+                        //console.log("community report end!");
+                        cslt_message_display(`通報の最終ステップ成功(コミュニティ)`, "message");
+                        if(fail_report_tweet_status_ids_regex != null && fail_report_tweet_status_ids_regex.test(report_twid) == true){
+                            report_ids_temp(report_twid, "fail_report_delete");
+                        }
+                        resolve(true);
+                    }
+                }).catch(error =>{
+                    console.log("Community Report 2nd stage error");
+                    report_ids_temp(report_twid, "fail_report");
+                    cslt_message_display(`通報の${now_steps}ステップ目失敗(コミュニティ/${error.message})`, "error");
+                    resolve(false);
+                    console.log(error);
+                });
+            }
+        });
+    }
+    const first_report = new Promise((resolve)=>{
+        fetch(`https://twitter.com/i/safety/report_story?${report_first_param_body}`, {
+            headers: {
+                "cache-control": "no-cache",
+                "sec-fetch-dest": "iframe",
+                "sec-fetch-mode": "navigate"
+            },
+            "referrer": old_send_url,
+            "body": null,
+            "method": "GET",
+            "mode": "cors",
+            "credentials": "include"
+        }).then(response => {
+            console.log(response.ok)
+            if (response.status != 200) {
+                if(response.status == 429){
+                    cslt_message_display(`通報の初期ステップ失敗(コミュニティ/レートリミット)`, "error");
+                    throw new Error(response.status);
+                }else{
+                    cslt_message_display(`通報の初期ステップ失敗(コミュニティ/Res:${response.status})`, "error");
+                    throw new Error(response.status);
+                }
+            }else{
+                old_send_url = response.url;
+                cslt_message_display(`通報の初期ステップ成功(コミュニティ/Res:${response.status})`, "message");
+                return response.text();
+            }
+        }).then((resp_text_firststep)=>{
+            //2ステップ
+            send_second_report(resp_text_firststep).then((res)=>{
+                console.log(res)
+                resolve(res);
+            });
+        }).catch(error =>{
+            console.log("Community Report 1st stage error");
+            cslt_message_display(`通報の初期ステップ失敗(コミュニティ/${error.message})`, "error");
+            report_ids_temp(report_twid, "fail_report");
+            resolve(false);
+            console.log(error);
+        });
+    });
+    return first_report;
 }
 //ブロック関数(API直接)
-function block_user(user_id){
+async function block_user(user_id){
     const public_bearer_token = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
-    ct0_token_get().then(function(ct0_token){
-        let csrf_token = ct0_token;
-        fetch("https://twitter.com/i/api/1.1/blocks/create.json", {
-            method:"POST",
-            headers: {
-                "authorization": public_bearer_token,
-                "X-Csrf-Token": csrf_token,
-                'Content-Type': 'application/x-www-form-urlencoded',
-                "X-Client-Transaction-Id": ctid_create(),
-                "X-Twitter-Active-User": "yes",
-                "X-Twitter-Auth-Type": "OAuth2Session",
-                "X-Twitter-Client-Language": "ja"
-            },
-            body: encodeURI(`user_id=${user_id}`)
-        }).then((resp)=>{
-            if(resp.status != 200){
-                if(resp.status == 429){
-                    cslt_message_display("ブロックできません(レートリミット)", "error");
+    const run_block = await new Promise((resolve)=>{
+        ct0_token_get().then(function(ct0_token){
+            let csrf_token = ct0_token;
+            fetch("https://twitter.com/i/api/1.1/blocks/create.json", {
+                method:"POST",
+                headers: {
+                    "authorization": public_bearer_token,
+                    "X-Csrf-Token": csrf_token,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    "X-Client-Transaction-Id": ctid_create(),
+                    "X-Twitter-Active-User": "yes",
+                    "X-Twitter-Auth-Type": "OAuth2Session",
+                    "X-Twitter-Client-Language": "ja"
+                },
+                body: encodeURI(`user_id=${user_id}`)
+            }).then((resp)=>{
+                if(resp.status != 200){
+                    if(resp.status == 429){
+                        cslt_message_display("ブロックできません(レートリミット)", "error");
+                    }
+                    throw new Error(resp.status);
+                }else{
+                    cslt_message_display("ブロックしました", "message");
+                    if(fail_block_mute_user_ids_regex != null && fail_block_mute_user_ids_regex.test(user_id) == true){
+                        report_ids_temp(user_id, "fail_block_mute_delete");
+                        console.log(fail_block_mute_user_ids)
+                    }
+                    return resp.json();
                 }
-                throw new Error(resp.status);
-            }else{
-                cslt_message_display("ブロックしました", "message");
-                return resp.json();
-            }
-        }).then((json)=>{
-            //console.log(json);
+            }).then((json)=>{
+                //console.log(json);
+                resolve(true);
+            }).catch(error =>{
+                console.log("fail block");
+                console.log(error);
+                report_ids_temp(user_id, "fail_block_mute");
+                cslt_message_display(`ブロックできません(${error.message})`, "error");
+                resolve(false);
+            });
         });
     });
+    return run_block;
 }
 //ミュート関数(API直接)
-function mute_user(user_id){
+async function mute_user(user_id){
     const public_bearer_token = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
-    ct0_token_get().then(function(ct0_token){
-        let csrf_token = ct0_token;
-        fetch("https://twitter.com/i/api/1.1/mutes/users/create.json", {
-            method:"POST",
-            headers: {
-                "authorization": public_bearer_token,
-                "X-Csrf-Token": csrf_token,
-                'Content-Type': 'application/x-www-form-urlencoded',
-                "X-Twitter-Active-User": "yes",
-                "X-Twitter-Auth-Type": "OAuth2Session",
-                "X-Twitter-Client-Language": "ja",
-                "X-Client-Transaction-Id": ctid_create()
-            },
-            body: encodeURI(`user_id=${user_id}`)
-        }).then((resp)=>{
-            if(resp.status != 200){
-                if(resp.status == 429){
-                    cslt_message_display("ミュートできません(レートリミット)", "error");
+    const run_mute = await new Promise((resolve)=>{
+        ct0_token_get().then(function(ct0_token){
+            let csrf_token = ct0_token;
+            fetch("https://twitter.com/i/api/1.1/mutes/users/create.json", {
+                method:"POST",
+                headers: {
+                    "authorization": public_bearer_token,
+                    "X-Csrf-Token": csrf_token,
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    "X-Twitter-Active-User": "yes",
+                    "X-Twitter-Auth-Type": "OAuth2Session",
+                    "X-Twitter-Client-Language": "ja",
+                    "X-Client-Transaction-Id": ctid_create()
+                },
+                body: encodeURI(`user_id=${user_id}`)
+            }).then((resp)=>{
+                if(resp.status != 200){
+                    if(resp.status == 429){
+                        cslt_message_display("ミュートできません(レートリミット)", "error");
+                    }
+                    throw new Error(resp.status);
+                }else{
+                    cslt_message_display("ミュートしました", "message");
+                    if(fail_block_mute_user_ids_regex != null && fail_block_mute_user_ids_regex.test(user_id) == true){
+                        report_ids_temp(user_id, "fail_block_mute_delete");
+                    }
+                    return resp.json();
                 }
-                throw new Error(resp.status);
-            }else{
-                cslt_message_display("ミュートしました", "message");
-                return resp.json();
-            }
-        }).then((json)=>{
-            //console.log(json);
+            }).then((json)=>{
+                //console.log(json);
+                resolve(true);
+            }).catch(error =>{
+                console.log("fail mute");
+                console.log(error);
+                report_ids_temp(user_id, "fail_block_mute");
+                cslt_message_display(`ミュートできません(${error.message})`, "error");
+                resolve(false);
+            });
         });
     });
+    return run_mute;
 }
 //開発者提供用関数
 function developer_spam_user_share(report_srv, spam_element){
@@ -1324,49 +1673,52 @@ function developer_spam_user_share(report_srv, spam_element){
     chrome.runtime.sendMessage({message: {mode:"developer_report_share", target:{report_srv_url:report_srv, tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length}}}, (response) => {});
 }
 //ユーザーメッセージ表示関数
-function cslt_message_display(message, mode){
-    document.querySelector(".cslt_message_wrap").style.display = "flex";
-    document.querySelector(".cslt_message_span").textContent = message;
-    switch (mode) {
-        case "warning":
-            document.querySelector(".cslt_message_content").style.backgroundColor = "#f0721d";
-            break;
-        case "error":
-            document.querySelector(".cslt_message_content").style.backgroundColor = "#f01d47";
-            break;
+async function cslt_message_display(message, mode){
+    new Promise(()=>{
+        document.querySelector(".cslt_message_wrap").style.display = "flex";
+        document.querySelector(".cslt_message_span").textContent = message;
+        switch (mode) {
+            case "warning":
+                document.querySelector(".cslt_message_content").style.backgroundColor = "#f0721d";
+                break;
+            case "error":
+                document.querySelector(".cslt_message_content").style.backgroundColor = "#f01d47";
+                break;
     
-        default:
-            document.querySelector(".cslt_message_content").style.backgroundColor = "#1d9bf0";
-            break;
-    }
-    setTimeout(function(){
-        document.querySelector(".cslt_message_wrap").style.display = "none";
-    }, 5000);
+            default:
+                document.querySelector(".cslt_message_content").style.backgroundColor = "#1d9bf0";
+                break;
+        }
+        setTimeout(function(){
+            document.querySelector(".cslt_message_wrap").style.display = "none";
+        }, 5000);
+    });
 }
-function tweet_area_clear(target_element, mode){
-    const target_tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
-    const target_tweet_id = target_tweet_info.tweet_id;
-    const target_tweet_user_id = target_tweet_info.user_data.user_id;
-    switch (mode) {
-        case "report_only":
-            target_element.setAttribute("cslt_temp_hide_flag", "complete");
-            target_element.textContent = "";
-            break;
-        case "mute_block":
-            const target_other_tweet_all = document.querySelectorAll('div[data-testid="cellInnerDiv"][cslt_tweet_info]:not([cslt_temp_hide_flag="complete"])');
-            for (let index = 0; index < target_other_tweet_all.length; index++) {
-                const all_target_tweet_info = JSON.parse(target_other_tweet_all[index].getAttribute("cslt_tweet_info"));
-                //console.log(all_target_tweet_info)
-                if(all_target_tweet_info.user_data.user_id == target_tweet_user_id){
-                    target_element.setAttribute("cslt_temp_hide_flag", "complete");
-                    target_other_tweet_all[index].textContent = "";
+async function tweet_area_clear(target_element, mode){
+    new Promise(()=>{
+        const target_tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
+        const target_tweet_id = target_tweet_info.tweet_id;
+        const target_tweet_user_id = target_tweet_info.user_data.user_id;
+        switch (mode) {
+            case "report_only":
+                target_element.setAttribute("cslt_temp_hide_flag", "complete");
+                target_element.textContent = "";
+                break;
+            case "mute_block":
+                const target_other_tweet_all = document.querySelectorAll('div[data-testid="cellInnerDiv"][cslt_tweet_info]:not([cslt_temp_hide_flag="complete"])');
+                for (let index = 0; index < target_other_tweet_all.length; index++) {
+                    const all_target_tweet_info = JSON.parse(target_other_tweet_all[index].getAttribute("cslt_tweet_info"));
+                    //console.log(all_target_tweet_info)
+                    if(all_target_tweet_info.user_data.user_id == target_tweet_user_id){
+                        target_element.setAttribute("cslt_temp_hide_flag", "complete");
+                        target_other_tweet_all[index].textContent = "";
+                    }
                 }
-            }
-            break;
-        default:
-            break;
-    }
-    
+                break;
+            default:
+                break;
+        }
+    });
 }
 function ctid_create(){
     return btoa(String.fromCharCode.apply(null, crypto.getRandomValues(new Uint8Array(70)))).replaceAll("=", "");
