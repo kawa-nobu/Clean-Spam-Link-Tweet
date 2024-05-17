@@ -399,9 +399,9 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     for (let index = 0; index < tweet_elem.length; index++) {
                         debug_block_num = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
                         //リストと照合&非表示
-                        if(tweet_elem[index].querySelector('[data-testid="User-Name"]  a')?.href.replace("https://twitter.com/", "") != null){
-                            let tweet_user_id = tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", "");
-                            //console.log(tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", ""))
+                        if(tweet_elem[index].querySelector('[data-testid="User-Name"]  a')?.href.replace("https://x.com/", "") != null){
+                            let tweet_user_id = tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://x.com/", "");
+                            //console.log(tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace("https://x.com/", ""))
                             //console.log(imp_user_block_list_regexp)
                             //console.log(tweet_elem[index])
                             //console.log(tweet_elem[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_flag"))
@@ -609,7 +609,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                         const random_id = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "")+Math.random().toString(32).substring(2);
                         if(is_follow_page == true && cslp_settings.oneclick_report_follow_list == true){//is_follow_page == true && cslp_settings.oneclick_report_follow_list == true
                             if(cslp_settings.imp_user_block == true && cslp_settings.follow_list_imp_find_user == true){
-                                const follower_user_id = reply_elem[index].querySelector('[data-testid="UserCell"] a[role="link"]')?.href.replace("https://twitter.com/", "");
+                                const follower_user_id = reply_elem[index].querySelector('[data-testid="UserCell"] a[role="link"]')?.href.replace("https://x.com/", "");
                                 if(imp_user_block_list_regexp.test(follower_user_id) && reply_elem[index].querySelector('[data-testid="UserCell"]').getAttribute("cslt_flag") != "follower_imp_ok"){
                                     reply_elem[index].querySelector('[data-testid="UserCell"]').setAttribute("cslt_flag", "follower_imp_ok");
                                     reply_elem[index].querySelector('[data-testid="UserCell"] div[data-testid="userFollowIndicator"]').style.backgroundColor = "#ffb9ad";
@@ -809,7 +809,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                         //開発者情報提供
                                         if(get_cookie_twid != tweet_info.user_data.user_id){
                                             //アカウント蓄積
-                                            //console.log(imp_account.push(target_element.querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", "")));
+                                            //console.log(imp_account.push(target_element.querySelector('[data-testid="User-Name"]  a').href.replace("https://x.com/", "")));
                                             //console.log(JSON.stringify(imp_account))
                                             if(is_follow_page == false){
                                                 developer_spam_user_share(report_srvurl, target_element);
@@ -1315,7 +1315,7 @@ async function report_tweet(report_mode, report_element, report_twid, last_repor
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"${input_response.subtasks[0].subtask_id}\",\"settings_list\":{\"setting_responses\":[],\"link\":\"next_link\"}}]}`;
                     }
                 }
-                fetch("https://twitter.com/i/api/1.1/report/flow.json", {
+                fetch("https://x.com/i/api/1.1/report/flow.json", {
                 headers: {
                     "authorization": public_bearer_token,
                     "content-type": "application/json",
@@ -1325,7 +1325,7 @@ async function report_tweet(report_mode, report_element, report_twid, last_repor
                     "X-Twitter-Client-Language": "ja",
                     "X-Client-Transaction-Id": ctid_create()
                 },
-                "referrer": "https://twitter.com/i/safety/report_story_start",
+                "referrer": "https://x.com/i/safety/report_story_start",
                 "body": report_second_stage_body,
                 "method": "POST"
             }).then(response => {
@@ -1372,7 +1372,7 @@ async function report_tweet(report_mode, report_element, report_twid, last_repor
     }
     //ct0トークン取得後初期実行
     const first_report = new Promise((resolve)=>{
-        fetch("https://twitter.com/i/api/1.1/report/flow.json?flow_name=report-flow", {
+        fetch("https://x.com/i/api/1.1/report/flow.json?flow_name=report-flow", {
             headers: {
                 "authorization": public_bearer_token,
                 "content-type": "application/json",
@@ -1382,7 +1382,7 @@ async function report_tweet(report_mode, report_element, report_twid, last_repor
                 "X-Twitter-Client-Language": "ja",
                 "X-Client-Transaction-Id": ctid_create()
             },
-            "referrer": "https://twitter.com/i/safety/report_story_start",
+            "referrer": "https://x.com/i/safety/report_story_start",
             "body": report_first_json_body,
         "method": "POST"
         }).then(response => {
@@ -1421,7 +1421,7 @@ function report_tweet_community(report_mode, report_element, report_twid, last_r
     let report_mode_str_second = null;
     const tweet_info_obj = JSON.parse(report_element.getAttribute("cslt_tweet_info"));;
     const report_first_param_body = tweet_info_obj.report_param.replaceAll("%cslt_random_uuid%", crypto.randomUUID());
-    let old_send_url = `https://twitter.com/i/report/status/${report_twid}`;
+    let old_send_url = `https://x.com/i/report/status/${report_twid}`;
     //プロモーションの場合関数終了
     if(tweet_info_obj.is_promoted == true){
         cslt_message_display(`広告のため報告はスキップされます`, "warning");
@@ -1474,7 +1474,7 @@ function report_tweet_community(report_mode, report_element, report_twid, last_r
                     default:
                         break;
                 }
-                fetch(`https://twitter.com/i/safety/report_story${send_url_param}`, {
+                fetch(`https://x.com/i/safety/report_story${send_url_param}`, {
                     headers: {
                         "cache-control": "no-cache",
                         "sec-fetch-dest": "iframe",
@@ -1526,7 +1526,7 @@ function report_tweet_community(report_mode, report_element, report_twid, last_r
         });
     }
     const first_report = new Promise((resolve)=>{
-        fetch(`https://twitter.com/i/safety/report_story?${report_first_param_body}`, {
+        fetch(`https://x.com/i/safety/report_story?${report_first_param_body}`, {
             headers: {
                 "cache-control": "no-cache",
                 "sec-fetch-dest": "iframe",
@@ -1574,7 +1574,7 @@ async function block_user(user_id){
     const run_block = await new Promise((resolve)=>{
         ct0_token_get().then(function(ct0_token){
             let csrf_token = ct0_token;
-            fetch("https://twitter.com/i/api/1.1/blocks/create.json", {
+            fetch("https://x.com/i/api/1.1/blocks/create.json", {
                 method:"POST",
                 headers: {
                     "authorization": public_bearer_token,
@@ -1620,7 +1620,7 @@ async function mute_user(user_id){
     const run_mute = await new Promise((resolve)=>{
         ct0_token_get().then(function(ct0_token){
             let csrf_token = ct0_token;
-            fetch("https://twitter.com/i/api/1.1/mutes/users/create.json", {
+            fetch("https://x.com/i/api/1.1/mutes/users/create.json", {
                 method:"POST",
                 headers: {
                     "authorization": public_bearer_token,
@@ -1665,7 +1665,7 @@ function developer_spam_user_share(report_srv, spam_element){
     let tweet_uesr_name = null;
     let tweet_text = null;
     let tweet_text_length = null;
-    tweet_user_id = spam_element.querySelector('[data-testid="User-Name"]  a').href.replace("https://twitter.com/", "");
+    tweet_user_id = spam_element.querySelector('[data-testid="User-Name"]  a').href.replace("https://x.com/", "");
     tweet_uesr_name = spam_element.querySelector('article [data-testid="User-Name"] a').textContent;
     tweet_text = `${spam_element.querySelector('article[data-testid="tweet"] [aria-labelledby]')?.innerText}%and%${spam_element.querySelector('[aria-labelledby] div[data-testid="tweetText"]')?.innerText}`;
     tweet_text_length = tweet_text.length;

@@ -1,6 +1,6 @@
 {
   "name": "Clean-Spam-Link-Tweet",
-  "version": "1.9.5",
+  "version": "1.9.5.1",
   "manifest_version": 2,
   "description": "ツイート(返信)から悪質なリンクが記載されたツイートを可視化してナイト系スパム等のリンクを踏む事を阻止します。",
   "icons" : {
@@ -45,7 +45,7 @@
     "<all_urls>"
   ],
   "content_scripts": [{
-    "matches": ["https://twitter.com/*"],
+    "matches": ["https://twitter.com/*", "https://x.com/*"],
     "js": ["content.js"],
     "all_frames": true
     }]
