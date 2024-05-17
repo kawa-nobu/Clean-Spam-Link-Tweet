@@ -105,13 +105,13 @@ async function check_main(request){
             break;
         case "ct0_token_get":
             return new Promise((resolve)=>{
-                chrome.cookies.get({url:'https://twitter.com/', name:'ct0'}, function(cookies){
+                chrome.cookies.get({url:'https://x.com/', name:'ct0'}, function(cookies){
                     resolve(cookies.value);
                 });
             });
         case "login_userid_get":
             return new Promise((resolve)=>{
-                chrome.cookies.get({url:'https://twitter.com/', name:'twid'}, function(cookies){
+                chrome.cookies.get({url:'https://x.com/', name:'twid'}, function(cookies){
                     resolve(cookies.value);
                 });
             });
@@ -123,7 +123,7 @@ async function check_main(request){
 async function blue_check(gt, account){
     //使用しているBearer TokenはXが使いまわしている固定のトークンなので問題無し
     let default_token = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA";
-    let url = `https://twitter.com/i/api/graphql/G3KGOASz96M-Qu0nwmGXNg/UserByScreenName?variables={"screen_name":"${account}","withSafetyModeUserFields":true}&features={"hidden_profile_likes_enabled":false,"hidden_profile_subscriptions_enabled":false,"responsive_web_graphql_exclude_directive_enabled":true,"verified_phone_label_enabled":false,"subscriptions_verification_info_is_identity_verified_enabled":false,"subscriptions_verification_info_verified_since_enabled":true,"highlights_tweets_tab_ui_enabled":true,"creator_subscriptions_tweet_preview_api_enabled":true,"responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,"responsive_web_graphql_timeline_navigation_enabled":true}&fieldToggles={"withAuxiliaryUserLabels":false}`;
+    let url = `https://xcom/i/api/graphql/G3KGOASz96M-Qu0nwmGXNg/UserByScreenName?variables={"screen_name":"${account}","withSafetyModeUserFields":true}&features={"hidden_profile_likes_enabled":false,"hidden_profile_subscriptions_enabled":false,"responsive_web_graphql_exclude_directive_enabled":true,"verified_phone_label_enabled":false,"subscriptions_verification_info_is_identity_verified_enabled":false,"subscriptions_verification_info_verified_since_enabled":true,"highlights_tweets_tab_ui_enabled":true,"creator_subscriptions_tweet_preview_api_enabled":true,"responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,"responsive_web_graphql_timeline_navigation_enabled":true}&fieldToggles={"withAuxiliaryUserLabels":false}`;
     return new Promise((resolve)=>{
         fetch(encodeURI(url), {
             headers: {
@@ -150,7 +150,7 @@ async function blue_check(gt, account){
 //Guest_token取得用関数
 async function get_gtoken(){
     return new Promise((resolve)=>{
-        fetch('https://twitter.com/undefined').then((res)=>{
+        fetch('https://x.com/undefined').then((res)=>{
             return(res.text());
         }).then((text)=>{
             //console.log(text.match(/gt=[^;]*/)[0].replace(/gt=/, ""));
