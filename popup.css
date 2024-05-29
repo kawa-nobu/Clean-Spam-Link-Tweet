@@ -14,6 +14,9 @@ details{
 select{
   width: 15em;
 }
+hr{
+  margin: 0;
+}
 .main{
   display: flex;
   flex-direction: column;
@@ -126,9 +129,10 @@ label:after {
 input:checked + label:after {
   left: 40px;
 }
-#settings_reset_sw {
+#settings_reset_sw, #debug_info_dump_sw {
   margin: 5px;
 }
+
 .append_alert{
   position: fixed;
   z-index: 1000;
@@ -171,6 +175,16 @@ input:checked + label:after {
 }
 #settings_reset_sw {
   width: 50%;
+}
+.adv_set_check_content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.adv_set_content{
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
 }
 
 @media screen and (min-width: 300px) {
