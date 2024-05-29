@@ -70,17 +70,48 @@
                 </div>
             </div>
             <div class="blue_block">
-                <h3>アラビア文字リプ非表示</h3>
+                <h3>アラビア文字等リプ非表示</h3>
                 <div class="sw_1 new_mode_sw" title="アラビア文字やデーヴァーナーガリー文字が含まれたリプを非表示にします。">
                     <input class="sw_1_input" type="checkbox" id="arabic_block_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
             <div class="blue_block">
-                <h3>アラビア文字ユーザー対象</h3>
+                <h3>アラビア文字等ユーザー対象</h3>
                 <div class="sw_1 new_mode_sw" title="アラビア文字が含まれたユーザー名のリプも追加で非表示にします。">
                     <input class="sw_1_input" type="checkbox" id="arabic_user_block_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>短時間動画非表示</h3>
+                <div class="sw_1 new_mode_sw" title="短時間の動画が含まれたツイートを非表示にします">
+                    <input class="sw_1_input" type="checkbox" id="short_video_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>TL(フォロー中)+α短時間動画非表示無効</h3>
+                <div class="sw_1 new_mode_sw" title="タイムライン(フォロー中)とユーザーページ、ブックマークで短時間動画非表示機能を無効にします">
+                    <input class="sw_1_input" type="checkbox" id="short_video_block_tl_disable_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>動画非表示範囲(秒)</h3>
+                <div class="sw_1 new_mode_sw" title="短時間動画非表示の範囲時間を設定します(秒単位)">
+                    <input id="short_video_block_val_num" class="setting_input_num" type="number" min="1" value="1">
+                </div>
+            </div>
+        </details>
+    </section>
+    <section>
+        <details>
+            <summary title="インプレ稼ぎ対策の詳細設定が可能です">インプレ稼ぎ対策(詳細設定)</summary>
+            <div class="">
+                <h3>「アラビア文字等リプ非表示」機能 対象文字</h3>
+                <div class="adv_set_content" title="アラビア文字等リプ非表示機能の対象文字を選択できます">
+                    <span class="adv_set_check_content">アラビア<input type="checkbox" id="arabic_block_lang_arabic"></span><span class="adv_set_check_content">デーヴァナーガリー<input type="checkbox" id="arabic_block_lang_devanagari"></span>
                 </div>
             </div>
         </details>
@@ -244,13 +275,6 @@
                         <label for="sw_1" class="sw_1_label"></label>
                     </div>
                 </div>
-                <div class="blue_block">
-                    <h3>ステルスBlue確認</h3>
-                    <div class="sw_1 new_mode_sw" title="Blueマーク非表示のアカウントを確認します。ユーザーのページで確認できます">
-                        <input class="sw_1_input" type="checkbox" id="stealth_blue_sw"> 
-                        <label for="sw_1" class="sw_1_label"></label>
-                    </div>
-                </div>
             </div>
             <div>
                 <h3>報告用サーバーURL</h3>
@@ -259,6 +283,10 @@
                 </div>
                 
             </div>
+            <div class="reset_sw_center">
+                <button id="debug_info_dump_sw" title="現在の環境情報をクリップボードへコピーします">環境情報をコピー</button>
+            </div>
+            <hr>
             <div class="reset_sw_center">
                 <button id="settings_reset_sw" title="設定を初期化して再構築を行います">設定を初期化</button>
             </div>

@@ -36,7 +36,6 @@ window.addEventListener("load", function(){
 
             document.getElementById("hiturl_copy_adv_sw").checked = cslp_settings.hit_url_copy_advanced;
             document.getElementById("hiturl_copy_adv_filter_sw").checked = cslp_settings.hit_url_copy_advanced_filter;
-            document.getElementById("stealth_blue_sw").checked = cslp_settings.stealth_blue_view;
             document.getElementById("blue_block_sw").checked = cslp_settings.blue_block;
             document.getElementById("root_blue_block_sw").checked = cslp_settings.root_tweetuser_block;
             document.getElementById("blue_block_val_num").value = cslp_settings.blue_block_value_num;
@@ -44,6 +43,10 @@ window.addEventListener("load", function(){
             document.getElementById("imp_blocker_sw").checked = cslp_settings.imp_user_block;
             document.getElementById("imp_blocker_all_sw").checked = cslp_settings.imp_filter_block_all_area;
             document.getElementById("follow_list_find_impuser_sw").checked = cslp_settings.follow_list_imp_find_user;
+
+            document.getElementById("short_video_block_sw").checked = cslp_settings.short_video_block;
+            document.getElementById("short_video_block_tl_disable_sw").checked = cslp_settings.short_video_block_disable_tl;
+            document.getElementById("short_video_block_val_num").value = Number(cslp_settings.short_video_block_ms)/1000;
 
             document.getElementById("arabic_block_sw").checked = cslp_settings.arabic_reply_block;
             document.getElementById("arabic_user_block_sw").checked = cslp_settings.arabic_user_reply_block;
@@ -63,6 +66,9 @@ window.addEventListener("load", function(){
 
             document.getElementById("filter_list").innerHTML = `<a href="${cslp_settings.filter_link}" target="_blank" rel="noopener noreferrer">フィルタリスト</a>`;
             document.getElementById("filter_thanks").innerText = cslp_settings.filter_thanks+" 様";
+            //アラビア文字非表示言語
+            document.getElementById("arabic_block_lang_arabic").checked = cslp_settings.arabic_reply_block_lang.arabic;
+            document.getElementById("arabic_block_lang_devanagari").checked = cslp_settings.arabic_reply_block_lang.devanagari;
             //報告選択できる項目
             if(cslp_settings.oneclick_report != true){
                 document.querySelector('#click_mute_block_opt option[value="1"]').disabled = true;
@@ -191,13 +197,7 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
-    document.getElementById("stealth_blue_sw").addEventListener("change", function(){
-        cslp_settings.stealth_blue_view = document.getElementById("stealth_blue_sw").checked;
-        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
-            console.log(cslp_settings);
-        });
-        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
-    })
+
     //
     document.getElementById("imp_blocker_all_sw").addEventListener("change", function(){
         cslp_settings.imp_filter_block_all_area = document.getElementById("imp_blocker_all_sw").checked;
@@ -265,6 +265,76 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>この設定は「アラビア文字リプ非表示」がオンになっている場合のみ動作します。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
+    //アラビア文字等言語選択
+    document.getElementById("arabic_block_lang_arabic").addEventListener("change", function(){
+        cslp_settings.arabic_reply_block_lang.arabic = document.getElementById("arabic_block_lang_arabic").checked;
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log(cslp_settings);
+            });
+        
+        //true数チェック&警告
+        const now_lang_obj_keys = Object.keys(cslp_settings.arabic_reply_block_lang);
+        let lang_obj_true_count = 0;
+        for (let index = 0; index < now_lang_obj_keys.length; index++) {
+            console.log(cslp_settings.arabic_reply_block_lang[now_lang_obj_keys[index]])
+            if(cslp_settings.arabic_reply_block_lang[now_lang_obj_keys[index]] == true){
+                lang_obj_true_count += 1;
+            }
+        }
+        if(lang_obj_true_count <= 0){
+            append_alert("<p>全ての文字がオフになりました。<br>全ての文字で非表示になりません<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }else{
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }
+    })
+    document.getElementById("arabic_block_lang_devanagari").addEventListener("change", function(){
+        cslp_settings.arabic_reply_block_lang.devanagari = document.getElementById("arabic_block_lang_devanagari").checked;
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log(cslp_settings);
+            });
+        //true数チェック&警告
+        const now_lang_obj_keys = Object.keys(cslp_settings.arabic_reply_block_lang);
+        let lang_obj_true_count = 0;
+        for (let index = 0; index < now_lang_obj_keys.length; index++) {
+            console.log(cslp_settings.arabic_reply_block_lang[now_lang_obj_keys[index]])
+            if(cslp_settings.arabic_reply_block_lang[now_lang_obj_keys[index]] == true){
+                lang_obj_true_count += 1;
+            }
+        }
+        if(lang_obj_true_count <= 0){
+            append_alert("<p>全ての文字がオフになりました。<br>全ての文字で非表示になりません<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }else{
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }
+    })
+    //
+    document.getElementById("short_video_block_sw").addEventListener("change", function(){
+        cslp_settings.short_video_block = document.getElementById("short_video_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("short_video_block_tl_disable_sw").addEventListener("change", function(){
+        cslp_settings.short_video_block_disable_tl = document.getElementById("short_video_block_tl_disable_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("short_video_block_val_num").addEventListener("change", function(){
+        if(Number(this.value) >= 1){
+            cslp_settings.short_video_block_ms = String(Number(document.getElementById("short_video_block_val_num").value)*1000);
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log(cslp_settings);
+            });
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }else{
+            document.getElementById("short_video_block_val_num").value = 1;
+            append_alert("正しい値を入力してください");
+        }
+    })
+    //
 //
     document.getElementById("click_report_btn_tl_disable_sw").addEventListener("change", function(){
         cslp_settings.oneclick_report_timeline_disable = document.getElementById("click_report_btn_tl_disable_sw").checked;
@@ -344,10 +414,22 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>ご協力頂きありがとうございます。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
-//
+    //
     document.getElementById("settings_reset_sw").addEventListener("click", function(){
         chrome.storage.local.remove("cslp_settings", function(value){
             append_alert("<p>設定を初期化しました。<br>Twitterを再読み込みしてください。</p>");
+        });
+    })
+    //デバッグ情報コピー
+    document.getElementById("debug_info_dump_sw").addEventListener("click", function(){
+        const debug_info = {
+            browser_useragent: window.navigator.userAgent,
+            browser_info: window.navigator.userAgentData,
+            cslt_version: chrome.runtime.getManifest().version,
+            cslt_settings: cslp_settings
+        };
+        navigator.clipboard.writeText(JSON.stringify(debug_info)).then(()=>{
+            append_alert("<p>環境情報をコピーしました</p>");
         });
     })
     //alertの代替
