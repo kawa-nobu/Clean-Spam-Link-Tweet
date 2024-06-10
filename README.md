@@ -50,7 +50,6 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 
 [動作確認URL](https://twitter.com/search?q=bnc.lt&f=live)
 
-
 ### Android版FireFox(Beta、Nightly)の場合
 - ユーザー ID:17926836
 - コレクション名:cslt
@@ -84,6 +83,22 @@ Twitterに良く出現するナイト系スパムツイート(リプライ)を�
 新バージョンがリリースされた際に上記手順を行う必要があります。
 
 **※常に最新のバージョンで使用したい場合は[Chrome Web Store](https://chrome.google.com/webstore/detail/clean-spam-link-tweet/bniigfmpkmcabajbkelbmphoelijoang)より追加を行って下さい**
+
+## 使用方法(iOS/iPadOSの場合)
+- [AppStore](https://apps.apple.com/jp/app/clean-spam-link-tweet/id6503911724)よりインストールを行ってください
+- Clean-Spam-Link-Tweetアプリの記載されている手順通りに設定を行ってください
+
+## 使用方法(iOS/iPadOS用、Xcodeよりビルド)
+**MacとXcodeが必要になります。MacOS以外では基本的にこの方法は実行できません**
+**Developerアカウントの種類により1週間ごとに再ビルド・インストールが必要なる場合があります。**
+- Chromeブランチをgit cloneする
+- Xcodeに付属するsafari-web-extension-converterを使ってgit cloneしたディレクトリを指定してXcodeプロジェクトにコンバートを行う
+  - 詳細な方法は[Appleのドキュメント](https://developer.apple.com/documentation/safariservices/safari_web_extensions/converting_a_web_extension_for_safari) を確認願います
+- Bundle IdentifierやDeveloperアカウントの設定を行う
+- ビルド・アーカイブ化し、お使いの端末へインストールする
+- 設定アプリ=>Safariの拡張機能設定より、「twitter .com」、「x .com」のアクセス権を許可する
+- Safariを開き、 Twitterへアクセスし、初期設定構築を行う
+- アドレスバーにあるアイコンから拡張機能の画面へアクセスしお好みの設定を行い、メッセージに従う
 
 ## ポップアップメニュー(設定画面の出し方)
 **下記手順はBraveの場合です。**
