@@ -18,7 +18,9 @@ function get_tw_userdata(input_element, mode){
         case "login_user":
             return props_data?.children?.props?.children?.props?.children[1]?.props?.children?.props?.children?.props?.children?.props?.value?.loggedInUserId;
         case "user_page_info":
-            return props_data?.children[1]?.props?.user;
+            return props_data?.children[0]?.props?.children[1]?.props?.user;
+        case "settings_block_mute_user_id":
+            return props_data?.children[0][1]?.props?.children[0]?.props?.children[1]?.props?.userId;
     }
 }
 const root_elem = document.querySelector('#react-root');
@@ -58,6 +60,13 @@ const tweet_obs = new MutationObserver(function(){
         //ユーザーが出て来るだけなのでフォロワー欄扱いで処理
         page_mode = 'followers';
     }
+    //設定のブロックかミュートのページの場合
+    /*if(window.location.pathname.split("/")[1] == 'settings' && page_path == 'blocked' || page_path == 'muted'){
+        tweet_elem = document.querySelectorAll('section[role="region"] [data-testid="UserCell"][type="button"]:not([cslt_block_mute_list_user_id])');
+        if(tweet_elem != null){
+            page_mode = 'settings_block_mute';
+        }
+    }*/
     //
     for (let tweet_index = 0; tweet_index < tweet_elem.length; tweet_index++) {
         if(tweet_elem[tweet_index] != null){
@@ -66,7 +75,7 @@ const tweet_obs = new MutationObserver(function(){
                 case 'status':
                     //console.log("status")
                     const tweet_info_reply = get_tw_userdata(tweet_elem[tweet_index], "reply");
-                    //console.log(tweet_info_reply)
+                    console.log(tweet_info_reply)
                     if(tweet_info_reply != undefined){
                         //報告用JSON生成
                         let is_media_tweet = false;
@@ -99,6 +108,29 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         const report_json_body = `{\"input_flow_data\":{\"requested_variant\":\"{\\\"client_app_id\\\":\\\"3033300\\\",\\\"client_location\\\":\\\"tweet:conversation_descendants:tweet\\\",\\\"client_referer\\\":\\\"${tweet_info_reply.permalink}\\\",\\\"is_media\\\":${is_media_tweet},\\\"is_promoted\\\":${is_promo_tweet},\\\"report_flow_id\\\":\\\"%cslt_random_uuid%\\\",\\\"reported_tweet_id\\\":\\\"${tweet_info_reply.id_str}\\\",\\\"reported_user_id\\\":\\\"${tweet_info_reply.user.id_str}\\\",\\\"source\\\":\\\"reporttweet\\\"}\",\"flow_context\":{\"debug_overrides\":{},\"start_location\":{\"location\":\"tweet\",\"tweet\":{\"tweet_id\":\"${tweet_info_reply.id_str}\"}}}},\"subtask_versions\":{\"action_list\":2,\"alert_dialog\":1,\"app_download_cta\":1,\"check_logged_in_account\":1,\"choice_selection\":3,\"contacts_live_sync_permission_prompt\":0,\"cta\":7,\"email_verification\":2,\"end_flow\":1,\"enter_date\":1,\"enter_email\":2,\"enter_password\":5,\"enter_phone\":2,\"enter_recaptcha\":1,\"enter_text\":5,\"enter_username\":2,\"generic_urt\":3,\"in_app_notification\":1,\"interest_picker\":3,\"js_instrumentation\":1,\"menu_dialog\":1,\"notifications_permission_prompt\":2,\"open_account\":2,\"open_home_timeline\":1,\"open_link\":1,\"phone_verification\":4,\"privacy_options\":1,\"security_key\":3,\"select_avatar\":4,\"select_banner\":2,\"settings_list\":7,\"show_code\":1,\"sign_up\":2,\"sign_up_review\":4,\"tweet_selection_urt\":1,\"update_users\":1,\"upload_media\":1,\"user_recommendations_list\":4,\"user_recommendations_urt\":1,\"wait_spinner\":3,\"web_modal\":1}}`;
                         //ツイート情報オブジェクト生成
+                        let reply_quoted_obj = null;
+                        let reply_out_urls = null;
+                        let quoted_urls = null;
+                        if(tweet_info_reply.quoted_status != undefined){
+                            if(tweet_info_reply.quoted_status.entities.urls.length != 0){
+                                quoted_urls = tweet_info_reply.quoted_status.entities.urls;
+                            }
+                            reply_quoted_obj = {
+                                text:tweet_info_reply.quoted_status.full_text,
+                                possibly_sensitive:tweet_info_reply.quoted_status.possibly_sensitive,
+                                possibly_sensitive_editable:tweet_info_reply.quoted_status.possibly_sensitive_editable,
+                                "quoted_urls":quoted_urls,
+                                user_data:{
+                                    name: tweet_info_reply.quoted_status.user.name, 
+                                    user_id: tweet_info_reply.quoted_status.user.id_str,
+                                    scr_name: tweet_info_reply.quoted_status.user.screen_name,
+                                    all_tweet_count: tweet_info_reply.quoted_status.user.statuses_count
+                                }
+                            }
+                        }
+                        if(tweet_info_reply.entities.urls.length != 0){
+                            reply_out_urls = tweet_info_reply.entities.urls;
+                        }
                         const tweetinfo_attr_reply = {
                             text: tweet_info_reply.text,
                             tweet_id: tweet_info_reply.id_str, 
@@ -111,8 +143,11 @@ const tweet_obs = new MutationObserver(function(){
                                 view_blue: tweet_info_reply.user.is_blue_verified
                             },
                             tweet_video_info: video_info,
-                            report_json: report_json_body
+                            report_json: report_json_body,
+                            "quoted_obj":reply_quoted_obj,
+                            "reply_urls":reply_out_urls
                         };
+                        //console.log(tweetinfo_attr_reply)
                         tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_reply));
                     }
                     break;
@@ -284,6 +319,11 @@ const tweet_obs = new MutationObserver(function(){
                         };
                         tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_communities));
                     }
+                    break;
+                case 'settings_block_mute':
+                    const block_mute_list_userid = get_tw_userdata(tweet_elem[tweet_index], "settings_block_mute_user_id");
+                    tweet_elem[tweet_index].setAttribute("cslt_block_mute_list_user_id", block_mute_list_userid);
+                    console.log(block_mute_list_userid)
                     break;
                 default:
                     tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify({status:null}));

@@ -22,6 +22,7 @@ window.addEventListener("load", function(){
             cslp_settings = JSON.parse(cslp_settings.cslp_settings);
             console.log(cslp_settings);
             document.getElementById("filter_sw").checked = cslp_settings.filter;
+            document.getElementById("night_spam_sw").checked = cslp_settings.night_spam_block;
             document.getElementById("hit_tweet_sw").checked = cslp_settings.hit_del;
             document.getElementById("disable_url_sw").checked = cslp_settings.disable_hit;
             document.getElementById("amz_aff_sw").checked = cslp_settings.amazon_hit;
@@ -69,6 +70,14 @@ window.addEventListener("load", function(){
             //アラビア文字非表示言語
             document.getElementById("arabic_block_lang_arabic").checked = cslp_settings.arabic_reply_block_lang.arabic;
             document.getElementById("arabic_block_lang_devanagari").checked = cslp_settings.arabic_reply_block_lang.devanagari;
+            //
+            document.getElementById("look_profile_delete_sw").checked = cslp_settings.look_profile_spam_block;
+            document.getElementById("reprint_manga_delete_sw").checked = cslp_settings.reprint_manga_spam_block;
+            document.getElementById("reprint_manga_delete_strict_sw").checked = cslp_settings.reprint_manga_spam_block_strict;
+            document.getElementById("reprint_manga_delete_root_user_disable_sw").checked = cslp_settings.reprint_manga_spam_block_root_user_disable;
+            document.getElementById("affiliate_block_sw").checked = cslp_settings.affiliate_spam_block;
+            document.getElementById("user_register_words_input").value = cslp_settings.user_register_word_list;
+            document.getElementById("report_btn_size_selector").value = cslp_settings.oneclick_report_btn_size; 
             //報告選択できる項目
             if(cslp_settings.oneclick_report != true){
                 document.querySelector('#click_mute_block_opt option[value="1"]').disabled = true;
@@ -103,6 +112,13 @@ window.addEventListener("load", function(){
     })
     document.getElementById("filter_sw").addEventListener("change", function(){
         cslp_settings.filter = document.getElementById("filter_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("night_spam_sw").addEventListener("change", function(){
+        cslp_settings.night_spam_block = document.getElementById("night_spam_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
@@ -152,6 +168,50 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
+    //
+    document.getElementById("look_profile_delete_sw").addEventListener("change", function(){
+        cslp_settings.look_profile_spam_block = document.getElementById("look_profile_delete_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("reprint_manga_delete_sw").addEventListener("change", function(){
+        cslp_settings.reprint_manga_spam_block = document.getElementById("reprint_manga_delete_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("reprint_manga_delete_strict_sw").addEventListener("change", function(){
+        cslp_settings.reprint_manga_spam_block_strict = document.getElementById("reprint_manga_delete_strict_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("reprint_manga_delete_root_user_disable_sw").addEventListener("change", function(){
+        cslp_settings.reprint_manga_spam_block_root_user_disable = document.getElementById("reprint_manga_delete_root_user_disable_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("affiliate_block_sw").addEventListener("change", function(){
+        cslp_settings.affiliate_spam_block = document.getElementById("affiliate_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("user_register_words_input").addEventListener("change", function(){
+        cslp_settings.user_register_word_list = document.getElementById("user_register_words_input").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    //
     document.getElementById("filter_latest_sw").addEventListener("change", function(){
         cslp_settings.filter_latest = document.getElementById("filter_latest_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
@@ -372,7 +432,13 @@ window.addEventListener("load", function(){
             document.querySelector("#click_report_opt").disabled = false;
         }
     })
-
+    document.getElementById("report_btn_size_selector").addEventListener("change", function(){
+        cslp_settings.oneclick_report_btn_size = document.getElementById("report_btn_size_selector").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
     document.getElementById("click_report_follow_list_sw").addEventListener("change", function(){
         cslp_settings.oneclick_report_follow_list = document.getElementById("click_report_follow_list_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
