@@ -23,6 +23,13 @@
         <details open>
             <summary title="ナイト系スパム対策の設定をします">ナイト系スパム対策</summary>
             <div class="blue_block">
+                <h3>ナイト系スパム対策</h3>
+                <div class="sw_1 new_mode_sw" title="ナイト系スパム対策の有効/無効を設定します">
+                    <input class="sw_1_input" type="checkbox" id="night_spam_sw">
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
                 <h3>ヒットツイート非表示</h3>
                 <div class="sw_1 new_mode_sw" title="阻止対象のツイートを画面上から消し去る事ができます">
                     <input class="sw_1_input" type="checkbox" id="hit_tweet_sw"> 
@@ -161,6 +168,47 @@
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
+            <div class="blue_block">
+                <h3>アフィリエイトスパム非表示(リプのみ)</h3>
+                <div class="sw_1 new_mode_sw" title="アフィリエイトスパムを非表示にします">
+                    <input class="sw_1_input" type="checkbox" id="affiliate_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>「oo見てね」系スパム非表示</h3>
+                <div class="sw_1 new_mode_sw" title="「プロフ見てね」系スパムを非表示にします">
+                    <input class="sw_1_input" type="checkbox" id="look_profile_delete_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>無断転載漫画スパム非表示(リプのみ)</h3>
+                <div class="sw_1 new_mode_sw" title="無断転載漫画系スパムを非表示にします">
+                    <input class="sw_1_input" type="checkbox" id="reprint_manga_delete_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>無断転載漫画スパム非表示厳格化</h3>
+                <div class="sw_1 new_mode_sw" title="無断転載漫画系スパム非表示の条件へシャドウバン等の条件も追加します">
+                    <input class="sw_1_input" type="checkbox" id="reprint_manga_delete_strict_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>無断転載漫画スパム非表示 投稿主除外</h3>
+                <div class="sw_1 new_mode_sw" title="無断転載漫画系スパム非表示機能で投稿主のアカウントを除外します">
+                    <input class="sw_1_input" type="checkbox" id="reprint_manga_delete_root_user_disable_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div>
+                <h3>非表示ワード設定(カンマ切り)</h3>
+                <div class="mode_selector">
+                    <input id="user_register_words_input" type="text" title="任意の非表示ワードを設定します">
+                </div>
+            </div>
         </details>
     </section>
     <section>
@@ -281,7 +329,6 @@
                 <div class="mode_selector">
                     <input id="developer_report_srv" type="text" title="インプ稼ぎアカウント情報提供用サーバーのURLを設定します">
                 </div>
-                
             </div>
             <div class="reset_sw_center">
                 <button id="debug_info_dump_sw" title="現在の環境情報をクリップボードへコピーします">環境情報をコピー</button>
@@ -300,6 +347,17 @@
                 <div class="sw_1 new_mode_sw" title="開発者本人が更新・配信している最新の定義リストを使用します(推奨)">
                     <input class="sw_1_input" type="checkbox" id="filter_latest_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div>
+                <h3>報告ボタンサイズ</h3>
+                <div class="mode_selector">
+                    <select id="report_btn_size_selector" title="報告ボタンのサイズを変更します">
+                        <option value="0" title="報告ボタンサイズ小">小</option>
+                        <option value="1" title="報告ボタンサイズ中">中</option>
+                        <option value="2" title="報告ボタンサイズ大">大</option>
+                        <option value="3" title="報告ボタンサイズ特大">特大</option>
+                    </select>
                 </div>
             </div>
         </details>

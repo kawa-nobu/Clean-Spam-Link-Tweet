@@ -1,5 +1,9 @@
 html{
   scrollbar-width: thin;
+  body {
+  font-family: system-ui;
+  }
+
 }
 body{
   width: 250px;
@@ -367,4 +371,121 @@ input:checked + label:after {
   .append_alert_message{
     background: rgb(29, 28, 34);
   }
+}
+/*Safari*/
+_::-webkit-full-page-media, _:future, :root body {
+    body{
+        width: 97%;
+        
+    }
+    h1{
+        font-size:1.5rem;
+    }
+    section{
+        width: 96%
+    }
+    .main {
+        font-size: 1.5rem;
+    }
+    details {
+        font-size: 1.6rem;
+        margin-bottom: 1rem !important;
+    }
+    h3 {
+        font-size: 0.9rem;
+    }
+    
+    .blue_block {
+        margin-top: 1rem;
+        margin-bottom: 0;
+    }
+    details div .sw_1 {
+        position: absolute;
+        right: 5px;
+    }
+    .sw_1 {
+        width: 70px;
+        height: 40px;
+        padding: 0;
+        margin: 0 0.5rem;
+    }
+    div .sw_1_input {
+        position: absolute;
+        z-index: 10;
+        opacity: 0;
+        width: 70px;
+        height: 40px;
+        margin: 0;
+        cursor: pointer;
+    }
+    div .sw_1_label {
+        height: 40px;
+    }
+    label:after {
+        width: 40px;
+        height: 40px;
+        border-radius: 100%;
+        top: 0;
+    }
+    input:checked + label:after {
+        left: 30px;
+    }
+    .setting_input_num {
+        right: 10px;
+        width: 80%;
+        height: 50%;
+        font-size: 1.6rem;
+    }
+    .mode_selector select, input {
+        height: 2rem;
+        width: 2rem;
+        font-size: 1rem;
+    }
+    .mode_selector select, input[type="text"] {
+        width: 100%;
+    }
+    .adv_set_check_content {
+        font-size: 1.5rem;
+    }
+    #blue_block_opt {
+        height: 2.5rem;
+        font-size: 1.2rem;
+    }
+    .mode_selector {
+        width: 100%;
+    }
+    .mode_selector select{
+        width: 100%;
+        height: 2.5rem;
+        font-size: 1.2rem;
+    }
+    #hiturl_copy_opt {
+        margin: 0;
+    }
+    #debug_info_dump_sw {
+        margin: 10px;
+        height: 2rem;
+        font-size: 1.2rem;
+    }
+    #settings_reset_sw {
+        margin-top: 10px;
+        font-size: 1.2rem;
+    }
+    .about_text {
+        font-size: 1.2rem;
+    }
+    .append_alert {
+        height: 100vh;
+    }
+    .append_alert_message div p {
+        font-size: 1.5rem;
+    }
+    #append_alert_okbtn {
+        width: 6rem;
+        height: 3rem;
+        font-size: 1.5rem;
+    }
+    .append_alert_message div {
+        margin: 10px;
+    }
 }
