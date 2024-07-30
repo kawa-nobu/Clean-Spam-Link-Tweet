@@ -75,7 +75,7 @@ const tweet_obs = new MutationObserver(function(){
                 case 'status':
                     //console.log("status")
                     const tweet_info_reply = get_tw_userdata(tweet_elem[tweet_index], "reply");
-                    console.log(tweet_info_reply)
+                    //console.log(tweet_info_reply)
                     if(tweet_info_reply != undefined){
                         //報告用JSON生成
                         let is_media_tweet = false;

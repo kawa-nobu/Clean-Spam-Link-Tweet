@@ -80,6 +80,14 @@ function report_ids_temp(id, mode){//report_ids_temp(id, mode)"block_mute""repor
     }
     
 }
+//Apple系ブラウザ判定
+function is_apple_device(){
+    if(new RegExp('(iPhone|iPad|Macintosh)', 'g').test(navigator.userAgent)){
+        return true;
+    }else{
+        return false;
+    }
+}
 //CSS&新ツイート解析スクリプト挿入
 document.head.insertAdjacentHTML("beforeend", `
 <style cslt_css>
@@ -167,6 +175,9 @@ document.head.insertAdjacentHTML("beforeend", `
     cursor: pointer;
     margin: 0.9rem;
     border: solid 1px rgb(207, 217, 222);
+    font-family: system-ui;
+    white-space: nowrap;
+    padding: 0 0.3rem;
 }
 .cslt_block_mute_list_func_btn:hover{
     background: rgb(207, 217, 222);
@@ -175,9 +186,8 @@ document.head.insertAdjacentHTML("beforeend", `
     display: flex;
     flex-direction: row;
     justify-content: center;
-    border-top: 1px solid rgb(239, 243, 244);
 }
-.csslt_userlist_data_input{
+.cslt_userlist_data_input{
     display: none;
 }
 </style>
@@ -398,7 +408,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
             block_regexp = new RegExp(reg_exp);
             advanced_regexp = json[1].hit_url_adv_filter;
             //報告ボタンサイズ変更適用
-            if(cslp_settings.oneclick_report){
+            if(cslp_settings.oneclick_report || cslp_settings.oneclick_report_after_mode == 3 || cslp_settings.oneclick_report_after_mode == 4 || cslp_settings.oneclick_report_after_mode == 5){
                 let cslt_report_icon_size = "20";
                 switch(cslp_settings.oneclick_report_btn_size){
                     case "0":
@@ -1948,7 +1958,7 @@ async function get_block_mute_list(mode, host_mode){
                         return resp.json();
                     }
                 }).then((json)=>{
-                    console.log(json);
+                    //console.log(json);
                     resolve(json);
                 }).catch(error =>{
                     cslt_message_display(`リストが取得できません(${error.message})`, "error");
@@ -2029,7 +2039,8 @@ function ctid_create(){
 function ct0_token_get(host_mode){
     return new Promise((resolve)=>{
         const is_private_mode = chrome.extension.inIncognitoContext;
-        if(is_private_mode){
+        //console.log(is_apple_device())
+        if(is_private_mode || is_apple_device()){
             const doc_cookie_ct0 = document.cookie.match(/(?<=ct0=)(.*?)(?=;)/g);
             resolve(doc_cookie_ct0);
         }else{
@@ -2052,11 +2063,11 @@ function get_tweet_status_root_user(){
 //ブロック・ミュートインポート/エクスポート機能関数
 function block_mute_io(){
     if(document.getElementsByClassName('cslt_block_mute_io_btn_wrap').length == 0 && document.querySelector('a[target="_blank"][role="link"]')?.closest('div:not([dir="ltr"])') != null){
-        document.querySelector('a[target="_blank"][role="link"]').closest('div:not([dir="ltr"])').insertAdjacentHTML('afterbegin', `<div class="cslt_block_mute_io_btn_wrap"><div class="cslt_block_mute_list_func_btn" id="cslt_block_mute_userlist_import_btn">リストインポート(CSLT)<input type="file" accept="application/json" class="csslt_userlist_data_input" id="cslt_block_mute_userlist_input_data"/></div><div class="cslt_block_mute_list_func_btn" id="cslt_block_mute_userlist_export_btn">リストエクスポート(CSLT)</div></div>`);
+        document.querySelector('a[target="_blank"][role="link"]').closest('div:not([dir="ltr"])').insertAdjacentHTML('afterbegin', `<div class="cslt_block_mute_io_btn_wrap"><div class="cslt_block_mute_list_func_btn" id="cslt_block_mute_userlist_import_btn">リストインポート(CSLT)<input type="file" accept="application/json" class="cslt_userlist_data_input" id="cslt_block_mute_userlist_input_data"/></div><div class="cslt_block_mute_list_func_btn" id="cslt_block_mute_userlist_export_btn">リストエクスポート(CSLT)</div></div>`);
         document.querySelector("#cslt_block_mute_userlist_export_btn").addEventListener("click", async function(){
             function download_list(user_list, mode){
                 const now_date = new Date();
-                const blob_url = URL.createObjectURL(new Blob([JSON.stringify(user_list)], {type: "text/plain"}));
+                const blob_url = URL.createObjectURL(new Blob([JSON.stringify(user_list)], {type: "application/json"}));
                 const dl_tag = document.createElement("a");
                 dl_tag.target = "_blank";
                 dl_tag.href = blob_url;
@@ -2067,7 +2078,7 @@ function block_mute_io(){
             }
             const export_user_list = [];
             if(window.location.pathname.split("/")[2] == 'blocked'){
-                console.log("OK")
+                //console.log("OK")
                 const user_list = await get_block_mute_list("block", location.host);
                 user_list.forEach((user_data)=>{
                     if(user_data.content.itemContent?.user_results != undefined){
