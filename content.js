@@ -819,19 +819,24 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 //アラビア文字が含まれた返信
                 if(cslp_settings.arabic_reply_block == true){
                     if(window.location.pathname.match("\/status\/")?.length == 1){
-                        const tweet_text_arabic = document.querySelectorAll('[data-testid="tweetText"]');
+                        const tweet_text_arabic = document.querySelectorAll('[data-testid="cellInnerDiv"]:not([cslt_arabic_block_flag="delete_ok"], [cslt_arabic_block_flag="success"]) article:not([tabindex="-1"]) [data-testid="tweetText"]');
                         for (let index = 0; index < tweet_text_arabic.length; index++) {
+                            const target = tweet_text_arabic[index].closest('[data-testid="cellInnerDiv"]');
                             if(cslp_settings.arabic_user_reply_block == true){
                                 if(arabic_regexp.test(tweet_text_arabic[index].closest('article').querySelector('[data-testid="User-Name"] a').textContent)){
                                     //console.log("arabic_user_delete-"+document.querySelectorAll('[data-testid="tweetText"]')[index].closest('article').querySelector('[data-testid="User-Name"] a').textContent)
-                                    let target = tweet_text_arabic[index];
-                                    target.closest('[data-testid="cellInnerDiv"]').textContent = "";
+                                    target.textContent = "";
+                                    target.setAttribute("cslt_arabic_block_flag", "delete_ok")
+                                }else{
+                                    target.setAttribute("cslt_arabic_block_flag", "success");
                                 }
                             }
                             if(tweet_text_arabic[index]?.innerText != undefined && arabic_regexp.test(tweet_text_arabic[index].innerText)){
                                 //console.log("arabicdelete-"+document.querySelectorAll('[data-testid="tweetText"]')[index].innerText) 
-                                let target = tweet_text_arabic[index];
-                                target.closest('[data-testid="cellInnerDiv"]').textContent = "";
+                                target.textContent = "";
+                                target.setAttribute("cslt_arabic_block_flag", "delete_ok");
+                            }else{
+                                target.setAttribute("cslt_arabic_block_flag", "success");
                             }
                         }
                     }
