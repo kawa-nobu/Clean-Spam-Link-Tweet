@@ -71,6 +71,8 @@ window.addEventListener("load", function(){
             document.getElementById("arabic_block_lang_arabic").checked = cslp_settings.arabic_reply_block_lang.arabic;
             document.getElementById("arabic_block_lang_devanagari").checked = cslp_settings.arabic_reply_block_lang.devanagari;
             //
+            document.getElementById("tw_f_adv_block_sw").checked = cslp_settings.tw_for_adv_block;
+            //
             document.getElementById("look_profile_delete_sw").checked = cslp_settings.look_profile_spam_block;
             document.getElementById("reprint_manga_delete_sw").checked = cslp_settings.reprint_manga_spam_block;
             document.getElementById("reprint_manga_delete_strict_sw").checked = cslp_settings.reprint_manga_spam_block_strict;
@@ -161,6 +163,15 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
+    //
+    document.getElementById("tw_f_adv_block_sw").addEventListener("change", function(){
+        cslp_settings.tw_for_adv_block = document.getElementById("tw_f_adv_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    //
     document.getElementById("amz_aff_sw").addEventListener("change", function(){
         cslp_settings.amazon_hit = document.getElementById("amz_aff_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {

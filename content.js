@@ -171,12 +171,12 @@ document.head.insertAdjacentHTML("beforeend", `
     font-size: 0.9rem;
     align-items: center;
     justify-content: center;
+    flex-direction: column;
     border-radius: 100px;
     cursor: pointer;
     margin: 0.9rem;
     border: solid 1px rgb(207, 217, 222);
     font-family: system-ui;
-    white-space: nowrap;
     padding: 0 0.3rem;
 }
 .cslt_block_mute_list_func_btn:hover{
@@ -311,7 +311,8 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                 reprint_manga_spam_block_strict:false,
                 reprint_manga_spam_block_root_user_disable:true,
                 affiliate_spam_block:false,
-                user_register_word_list:""
+                user_register_word_list:"",
+                tw_for_adv_block:false
             };
             if(input_setting.cslp_settings != undefined){
                 let settings_array = new Object();
@@ -550,6 +551,17 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                         return false;
                     }
                 }
+                //Twitter_for_Advertisers投稿非表示
+                if(cslp_settings.tw_for_adv_block == true){
+                    const tw_elem_tw_f_adv = document.querySelectorAll('article[data-testid="tweet"][tabindex="0"]:not([cslt_tw_for_adv_flag="tw4adv_spam_ok"])');
+                    tw_elem_tw_f_adv.forEach((element)=>{
+                        const elem_tw_info = JSON.parse(element.closest('div[data-testid="cellInnerDiv"]').getAttribute("cslt_tweet_info"));
+                        if(elem_tw_info.tweet_client == 'Twitter for Advertisers'){
+                            element.textContent = "";
+                            element.setAttribute("cslt_tw_for_adv_flag", "tw4adv_spam_ok");
+                        }
+                    })
+                }
                 //インプ稼ぎ非表示
                 const tweet_elem = document.querySelectorAll('article[data-testid="tweet"][tabindex="0"]');
                 if(cslp_settings.imp_user_block == true && window.location.pathname.match("\/status\/")?.length == 1 || cslp_settings.imp_filter_block_all_area == true && cslp_settings.imp_user_block == true){
@@ -558,14 +570,10 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                         //リストと照合&非表示
                         if(tweet_elem[index].querySelector('[data-testid="User-Name"]  a')?.href.replace(/(https:\/\/x.com\/|https:\/\/twitter.com\/)/g, "") != null){
                             let tweet_user_id = tweet_elem[index].querySelector('[data-testid="User-Name"]  a').href.replace(/(https:\/\/x.com\/|https:\/\/twitter.com\/)/g, "");
-                            //console.log(imp_user_block_list_regexp)
-                            //console.log(tweet_elem[index])
-                            //console.log(tweet_elem[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_flag"))
-                            //tweet_elem[index].setAttribute("cslt_flag", "imp_ok");
-                            if(imp_user_block_list_regexp.test(tweet_user_id) && tweet_elem[index].getAttribute("cslt_flag") != "imp_ok"){
+                            if(imp_user_block_list_regexp.test(tweet_user_id) && tweet_elem[index].getAttribute("cslt_imp_user_flag") != "imp_ok"){
                                 //console.log(tweet_user_id)
                                 //console.log("found!");
-                                tweet_elem[index].setAttribute("cslt_flag", "imp_ok");
+                                tweet_elem[index].setAttribute("cslt_imp_user_flag", "imp_ok");
                                 //tweet_elem[index].style.background = "#ffecb4";
                                 tweet_elem[index].textContent = "";
                             }
@@ -577,11 +585,11 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     //console.log("work")
                     for (let index = 0; index < tweet_elem.length; index++) {
                         const tweet_video_info = JSON.parse(tweet_elem[index].closest('div[data-testid="cellInnerDiv"]').getAttribute("cslt_tweet_info"))?.tweet_video_info;
-                        if(tweet_video_info != null && tweet_elem[index].getAttribute("cslt_flag") != "imp_ok"){
+                        if(tweet_video_info != null && tweet_elem[index].getAttribute("cslt_short_video_flag") != "imp_ok"){
                             for (let video_index = 0; video_index < tweet_video_info.length; video_index++) {
                                 if(tweet_video_info[video_index].duration_ms <= Number(cslp_settings.short_video_block_ms)){
                                     //console.log(tweet_video_info[video_index])
-                                    tweet_elem[index].setAttribute("cslt_flag", "imp_ok");
+                                    tweet_elem[index].setAttribute("cslt_short_video_flag", "imp_ok");
                                     tweet_elem[index].textContent = "";
                                     break;
                                 }
@@ -591,9 +599,9 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     }
                 }
                 //無断転載漫画系スパム対策
-                const cellinnerdiv_no_flag_reprint_elem = document.querySelectorAll('div[data-testid="cellInnerDiv"]:not([cslt_flag="reprint_spam_ok"])');
+                const cellinnerdiv_no_flag_reprint_elem = document.querySelectorAll('div[data-testid="cellInnerDiv"]:not([cslt_reprint_manga_flag="reprint_spam_ok"])');
                 const tweet_root_user_scrname = get_tweet_status_root_user();
-                if(cslp_settings.reprint_manga_spam_block == true && window.location.pathname.match("\/status\/")?.length == 1){
+                if(cslp_settings.reprint_manga_spam_block == true && window.location.pathname.match("\/status\/")?.length == 1 && window.location.pathname.split("/")[4] == undefined){
                     cellinnerdiv_no_flag_reprint_elem.forEach((element)=>{
                         const tweet_info_json = element.getAttribute("cslt_tweet_info");
                         if(tweet_info_json != null){
@@ -604,32 +612,32 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                     if(cslp_settings.reprint_manga_spam_block_root_user_disable == true){
                                         //投稿主除外
                                         if(tweet_root_user_scrname != tweet_info_obj.user_data.scr_name){
-                                            if(reprint_manga_spam_regexp.test(tweet_info_obj.quoted_obj.text) && element.getAttribute("cslt_flag") != "reprint_spam_ok"){
-                                                element.setAttribute("cslt_flag", "reprint_spam_ok");
+                                            if(reprint_manga_spam_regexp.test(tweet_info_obj.quoted_obj.text) && element.getAttribute("cslt_reprint_manga_flag") != "reprint_spam_ok"){
+                                                element.setAttribute("cslt_reprint_manga_flag", "reprint_spam_ok");
                                                 element.textContent = "";
                                             }
                                         }
                                     }else{
                                         //投稿主除外オフ
-                                        if(reprint_manga_spam_regexp.test(tweet_info_obj.quoted_obj.text) && element.getAttribute("cslt_flag") != "reprint_spam_ok"){
-                                            element.setAttribute("cslt_flag", "reprint_spam_ok");
+                                        if(reprint_manga_spam_regexp.test(tweet_info_obj.quoted_obj.text) && element.getAttribute("cslt_reprint_manga_flag") != "reprint_spam_ok"){
+                                            element.setAttribute("cslt_reprint_manga_flag", "reprint_spam_ok");
                                             element.textContent = "";
                                         }
                                     }
                                 }else{
                                     if(cslp_settings.reprint_manga_spam_block_root_user_disable == true){
                                         //投稿主除外
-                                        console.log(tweet_root_user_scrname != tweet_info_obj.user_data.scr_name)
+                                        //console.log(tweet_root_user_scrname != tweet_info_obj.user_data.scr_name)
                                         if(tweet_root_user_scrname != tweet_info_obj.user_data.scr_name){
-                                            if(tweet_info_obj.quoted_obj.possibly_sensitive == true || tweet_info_obj.quoted_obj.possibly_sensitive_editable == true && reprint_manga_spam_regexp.test(tweet_info_obj.quoted_obj.text) && element.getAttribute("cslt_flag") != "reprint_spam_ok"){
-                                                element.setAttribute("cslt_flag", "reprint_spam_ok");
+                                            if(tweet_info_obj.quoted_obj.possibly_sensitive == true || tweet_info_obj.quoted_obj.possibly_sensitive_editable == true && reprint_manga_spam_regexp.test(tweet_info_obj.quoted_obj.text) && element.getAttribute("cslt_reprint_manga_flag") != "reprint_spam_ok"){
+                                                element.setAttribute("cslt_reprint_manga_flag", "reprint_spam_ok");
                                                 element.textContent = "";
                                             }
                                         }
                                     }else{
                                         //投稿主除外オフ
-                                        if(tweet_info_obj.quoted_obj.possibly_sensitive == true || tweet_info_obj.quoted_obj.possibly_sensitive_editable == true && reprint_manga_spam_regexp.test(tweet_info_obj.quoted_obj.text) && element.getAttribute("cslt_flag") != "reprint_spam_ok"){
-                                            element.setAttribute("cslt_flag", "reprint_spam_ok");
+                                        if(tweet_info_obj.quoted_obj.possibly_sensitive == true || tweet_info_obj.quoted_obj.possibly_sensitive_editable == true && reprint_manga_spam_regexp.test(tweet_info_obj.quoted_obj.text) && element.getAttribute("cslt_reprint_manga_flag") != "reprint_spam_ok"){
+                                            element.setAttribute("cslt_reprint_manga_flag", "reprint_spam_ok");
                                             element.textContent = "";
                                         }
                                     }
@@ -639,33 +647,32 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     })
                 }
                 //プロフ見てね系スパム対策
-                const cellinnerdiv_no_flag_look_prof_elem = document.querySelectorAll('div[data-testid="cellInnerDiv"]:not([cslt_flag="look_prof_spam_ok"])');
                 if(cslp_settings.look_profile_spam_block == true){
+                    const cellinnerdiv_no_flag_look_prof_elem = document.querySelectorAll('div[data-testid="cellInnerDiv"]:not([cslt_look_prof_flag="look_prof_spam_ok"])');
                     cellinnerdiv_no_flag_look_prof_elem.forEach((element)=>{
                         const tweet_info_json = element.getAttribute("cslt_tweet_info");
                         if(tweet_info_json != null){
                             const tweet_info_obj = JSON.parse(tweet_info_json);
                             if(look_profile_spam_regexp.test(tweet_info_obj.text)){
                                 console.log(tweet_info_obj.text)
-                                element.setAttribute("cslt_flag", "look_prof_spam_ok");
+                                element.setAttribute("cslt_look_prof_flag", "look_prof_spam_ok");
                                 element.textContent = "";
                             }
                         }
                     })
                 }
                 //アフィリエイトリンク対策
-                const cellinnerdiv_no_flag_affiliate_elem = document.querySelectorAll('div[data-testid="cellInnerDiv"]:not([cslt_flag="affiliate_spam_ok"])');
-                if(cslp_settings.affiliate_spam_block == true){
+                if(cslp_settings.affiliate_spam_block == true && window.location.pathname.match("\/status\/")?.length == 1 && window.location.pathname.split("/")[4] == undefined){
+                    const cellinnerdiv_no_flag_affiliate_elem = document.querySelectorAll('div[data-testid="cellInnerDiv"]:not([cslt_affiliate_flag="affiliate_spam_ok"])');
                     cellinnerdiv_no_flag_affiliate_elem.forEach((element)=>{
                         const tweet_info_json = element.getAttribute("cslt_tweet_info");
                         if(tweet_info_json != null){
                             const tweet_info_obj = JSON.parse(tweet_info_json);
-                            //引用の場合
-                            if(tweet_info_obj.quoted_obj != null && tweet_info_obj.quoted_obj.quoted_urls.length != 0){
+                            if(tweet_info_obj.quoted_obj != null && tweet_info_obj.quoted_obj.quoted_urls != null && tweet_info_obj.quoted_obj.quoted_urls.length != 0){
                                 tweet_info_obj.quoted_obj.quoted_urls.forEach((url_obj)=>{
                                     if(affiliate_url_regexp.test(new URL(url_obj.expanded_url).host)){
-                                        element.setAttribute("cslt_flag", "affiliate_spam_ok");
                                         element.textContent = "";
+                                        element.setAttribute("cslt_affiliate_flag", "affiliate_spam_ok");
                                     }
                                 })
                             }
@@ -673,8 +680,8 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                             if(tweet_info_obj.reply_urls != null && tweet_info_obj.reply_urls.length != 0){
                                 tweet_info_obj.reply_urls.forEach((url_obj)=>{
                                     if(affiliate_url_regexp.test(new URL(url_obj.expanded_url).host)){
-                                        element.setAttribute("cslt_flag", "affiliate_spam_ok");
                                         element.textContent = "";
+                                        element.setAttribute("cslt_affiliate_flag", "affiliate_spam_ok");
                                     }
                                 })
                             }
@@ -682,14 +689,14 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     })
                 }
                 //ユーザーワードリスト
-                const cellinnerdiv_no_flag_user_list_elem = document.querySelectorAll('div[data-testid="cellInnerDiv"]:not([cslt_flag="user_list_blocking_ok"])');
+                const cellinnerdiv_no_flag_user_list_elem = document.querySelectorAll('div[data-testid="cellInnerDiv"]:not([cslt_user_text_filter_flag="user_list_blocking_ok"])');
                 if(cslp_settings.user_register_word_list != ""){
                     cellinnerdiv_no_flag_user_list_elem.forEach((element)=>{
                         const tweet_info_json = element.getAttribute("cslt_tweet_info");
                         if(tweet_info_json != null){
                             const tweet_info_obj = JSON.parse(tweet_info_json);
                             if(user_blocking_list_regexp.test(tweet_info_obj.text)){
-                                element.setAttribute("cslt_flag", "user_list_blocking_ok");
+                                element.setAttribute("cslt_user_text_filter_flag", "user_list_blocking_ok");
                                 element.textContent = "";
                             }
                         }
@@ -805,7 +812,7 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                                 if(typeof blue_target_elem[index]?.closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag") != "undefined"){
                                     if(blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').getAttribute("cslt_blue_flag")!= "blue_ok"){
                                         //console.log(blue_target_elem[index].closest('[data-testid="cellInnerDiv"]'));
-                                        console.log(blue_target_elem[index])
+                                        //console.log(blue_target_elem[index])
                                         blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_blue_flag", "blue_ok");
                                         blue_target_elem[index].closest('[data-testid="cellInnerDiv"]').textContent = ``;
                                     }
@@ -854,8 +861,6 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                     let reply_elem = null;
                     let is_follow_page = false;
                     let is_community_page = false;
-                    //let login_userid = document.querySelector('script[type="text/javascript"][charset="utf-8"][nonce]').textContent.match(/(?<="screen_name":")(.*)(?=","statuses_count")/g);
-                    //const user_page_header_item = document.querySelector('[aria-haspopup="menu"][role="button"][data-testid="userActions"]:not([cslt_flag_user_page_add_report="ok"])');
                     if(window.location.pathname.split("/")[2]?.match(/(followers|following|verified_followers)/g)?.length == 1 || window.location.pathname.split("/")[4]?.match(/(retweets|likes)/g)?.length == 1){//window.location.pathname.match(/(\/followers|\/following|\/verified_followers|\/retweets|\/likes)/g)?.length == 1
                         is_follow_page = true;
                     }
@@ -1127,15 +1132,15 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                         //ツイート内にリンク(要素全体)を検出
                         if(spam_elem_not_card[index] != undefined){
                             //ヒットツイート削除設定無効で、リスト内に該当のURLが存在かつ阻止済フラグがあるかどうか->阻止
-                            if(cslp_settings.hit_del == false && block_regexp.test(spam_elem_not_card[index].textContent) && spam_elem_not_card[index].getAttribute("cslt_flag") != "ok"){
+                            if(cslp_settings.hit_del == false && block_regexp.test(spam_elem_not_card[index].textContent) && spam_elem_not_card[index].getAttribute("cslt_vicious_link_flag") != "ok"){
                                 let ins_html;
                                 if(spam_elem_not_card[index].offsetWidth < 230){
                                     ins_html = `<div style="position: absolute;z-index: 99999;width: ${spam_elem_not_card[index].offsetWidth+1}px;height: ${spam_elem_not_card[index].offsetHeight+5}px;max-height:25px;display: inline-flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;font-size: 0.5rem;"><p>スパム</p></div>`;
                                 }else{
-                                    ins_html = `<div class="cslt_spam_link_found" "style="position: absolute;z-index: 99999;width: ${spam_elem_not_card[index].offsetWidth+1}px;height: ${spam_elem_not_card[index].offsetHeight+5}px;max-height:25px;display: inline-flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;"><p>スパムを検出!&nbsp;(${spam_elem_not_card[index].textContent.match(/\/\/([^/]*)/)[1]})</p></div>`;
+                                    ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: ${spam_elem_not_card[index].offsetWidth+1}px;height: ${spam_elem_not_card[index].offsetHeight+5}px;max-height:25px;display: inline-flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;"><p>スパムを検出!&nbsp;(${spam_elem_not_card[index].textContent.match(/\/\/([^/]*)/)[1]})</p></div>`;
                                 }
                                 spam_elem_not_card[index].style.whiteSpace = "nowrap";
-                                spam_elem_not_card[index].setAttribute("cslt_flag", "ok");
+                                spam_elem_not_card[index].setAttribute("cslt_vicious_link_flag", "ok");
                                 spam_elem_not_card[index].insertAdjacentHTML("beforebegin", ins_html);
                                 copy_url(index, debug_block_num_text, "text");
                             }
@@ -1154,11 +1159,11 @@ if(filter_url == "https://cdn.jsdelivr.net/gh/kawa-nobu/Clean-Spam-Link-Tweet_Fi
                         //document.querySelectorAll('[data-testid="card.wrapper"]')[index].querySelectorAll('[dir="ltr"], [dir="auto"]')[0]
                         if(spam_elem_card_a[index] != undefined){
                             //ヒットツイート削除設定無効で、リスト内に該当のURLが存在かつ阻止済フラグがあるかどうか->阻止
-                            if(cslp_settings.hit_del == false && block_regexp.test(spam_elem_card_a[index].textContent) && spam_elem_card[index].getAttribute("cslt_flag") != "ok"){
+                            if(cslp_settings.hit_del == false && block_regexp.test(spam_elem_card_a[index].textContent) && spam_elem_card[index].getAttribute("cslt_vicious_link_flag") != "ok"){
                                 //console.log("found!");
                                 //console.log(document.querySelectorAll('[data-testid="card.wrapper"]')[index]);
                                 let ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 16px 16px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${spam_elem_card_a[index].textContent}<br>クリックでツイートを開く</p></div>`;
-                                spam_elem_card[index].setAttribute("cslt_flag", "ok");
+                                spam_elem_card[index].setAttribute("cslt_vicious_link_flag", "ok");
                                 spam_elem_card[index].insertAdjacentHTML("beforebegin", ins_html);
                                 copy_url(index, debug_block_num, "tw_card");
                             }
@@ -2068,7 +2073,7 @@ function get_tweet_status_root_user(){
 //ブロック・ミュートインポート/エクスポート機能関数
 function block_mute_io(){
     if(document.getElementsByClassName('cslt_block_mute_io_btn_wrap').length == 0 && document.querySelector('a[target="_blank"][role="link"]')?.closest('div:not([dir="ltr"])') != null){
-        document.querySelector('a[target="_blank"][role="link"]').closest('div:not([dir="ltr"])').insertAdjacentHTML('afterbegin', `<div class="cslt_block_mute_io_btn_wrap"><div class="cslt_block_mute_list_func_btn" id="cslt_block_mute_userlist_import_btn">リストインポート(CSLT)<input type="file" accept="application/json" class="cslt_userlist_data_input" id="cslt_block_mute_userlist_input_data"/></div><div class="cslt_block_mute_list_func_btn" id="cslt_block_mute_userlist_export_btn">リストエクスポート(CSLT)</div></div>`);
+        document.querySelector('a[target="_blank"][role="link"]').closest('div:not([dir="ltr"])').insertAdjacentHTML('afterbegin', `<div class="cslt_block_mute_io_btn_wrap"><div class="cslt_block_mute_list_func_btn" id="cslt_block_mute_userlist_import_btn"><span>リストインポート</span><span>(CSLT/試験実装)</span><input type="file" accept="application/json" class="cslt_userlist_data_input" id="cslt_block_mute_userlist_input_data"/></div><div class="cslt_block_mute_list_func_btn" id="cslt_block_mute_userlist_export_btn"><span>リストエクスポート</span><span>(CSLT/試験実装)</span></div></div>`);
         document.querySelector("#cslt_block_mute_userlist_export_btn").addEventListener("click", async function(){
             function download_list(user_list, mode){
                 const now_date = new Date();
