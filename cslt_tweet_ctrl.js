@@ -158,7 +158,7 @@ const tweet_obs = new MutationObserver(function(){
                     //console.log("follws_run")
                     if(login_userid() == view_user && now_follow_mode == "followers"){
                         const tweet_info_follow = get_tw_userdata(tweet_elem[tweet_index], "user_page");
-                        console.log(tweet_info_follow)
+                        //console.log(tweet_info_follow)
                         if(tweet_info_follow != undefined){
                             //報告用JSON生成
                             const report_json_body = `{\"input_flow_data\":{\"requested_variant\":\"{\\\"client_app_id\\\":\\\"3033300\\\",\\\"client_location\\\":\\\"profile:header:\\\",\\\"client_referer\\\":\\\"/${tweet_info_follow.screen_name}\\\",\\\"is_media\\\":false,\\\"is_promoted\\\":false,\\\"report_flow_id\\\":\\\"%cslt_random_uuid%\\\",\\\"reported_user_id\\\":\\\"${tweet_info_follow.id_str}\\\",\\\"source\\\":\\\"reportprofile\\\"}\",\"flow_context\":{\"debug_overrides\":{},\"start_location\":{\"location\":\"profile\",\"profile\":{\"profile_id\":\"${tweet_info_follow.id_str}\"}}}}}`;
