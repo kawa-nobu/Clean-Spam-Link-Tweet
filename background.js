@@ -58,7 +58,7 @@ async function check_main(request){
             });
         case "developer_report_share":
             //情報提供用なので投げっぱなしでOK
-            const send_data = {tweet_user_id:request.message.target.tweet_user_id, tweet_user_name:request.message.target.tweet_user_name, tweet_text:request.message.target.tweet_text, tweet_length:request.message.target.tweet_length};
+            const send_data = {tweet_user_id:request.message.target.tweet_user_id, tweet_user_name:request.message.target.tweet_user_name, tweet_text:request.message.target.tweet_text, tweet_length:request.message.target.tweet_length, report_json_data:request.message.target.report_json_data};
             console.log(send_data)
             fetch(`https://${request.message.target.report_srv_url}`,{method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(send_data)}).then(function(res){
                 return res.json();

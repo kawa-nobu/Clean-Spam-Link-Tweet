@@ -36,7 +36,8 @@ const tweet_obs = new MutationObserver(function(){
     const page_path_status = window.location.pathname.split("/")[4];
     switch (page_path) {
         case 'status':
-            tweet_elem = document.querySelectorAll('main div[data-testid="cellInnerDiv"] article[data-testid="tweet"][tabindex="0"] div[aria-label][role="group"][id]:not([cslt_tweet_process="ok"])');
+            //tweet_elem = document.querySelectorAll('main div[data-testid="cellInnerDiv"] article[data-testid="tweet"][tabindex="0"] div[aria-label][role="group"][id]:not([cslt_tweet_process="ok"])');
+            tweet_elem = document.querySelectorAll('#react-root div[data-testid="cellInnerDiv"] article[data-testid="tweet"] div[aria-label][role="group"][id]:not([cslt_tweet_process="ok"])');
             page_mode = 'status';
             break;
         case 'verified_followers':
@@ -50,9 +51,18 @@ const tweet_obs = new MutationObserver(function(){
             page_mode = 'communities';
             break;
         default:
-            tweet_elem = document.querySelectorAll('main div[data-testid="cellInnerDiv"] article[data-testid="tweet"][tabindex="0"] div[aria-label][role="group"][id]:not([cslt_tweet_process="ok"])');
-            page_mode = 'other';
-            break;
+            if(window.location.search.match(/f=user/g)?.length == 1){
+                //ユーザー検索ページの場合
+                tweet_elem = document.querySelectorAll('section[role="region"] div[data-testid="cellInnerDiv"] div[role="button"][tabindex="0"][data-testid="UserCell"]:not([cslt_tweet_process="ok"]), section[role="region"] div[data-testid="cellInnerDiv"] [type="button"][data-testid="UserCell"]:not([cslt_tweet_process="ok"])');
+                page_mode = 'followers';
+                break;
+            }else{
+                //その他の場合
+                tweet_elem = document.querySelectorAll('main div[data-testid="cellInnerDiv"] article[data-testid="tweet"][tabindex="0"] div[aria-label][role="group"][id]:not([cslt_tweet_process="ok"])');
+                page_mode = 'other';
+                break;
+            }
+            
     }
     //ツイートのリツイート、いいね画面の場合
     if(page_path == 'status' && page_path_status == 'retweets' || page_path_status == 'likes'){
@@ -75,7 +85,9 @@ const tweet_obs = new MutationObserver(function(){
                 case 'status':
                     //console.log("status")
                     const tweet_info_reply = get_tw_userdata(tweet_elem[tweet_index], "reply");
-                    //console.log(tweet_info_reply)
+
+                    //console.dir(tweet_info_reply)
+
                     if(tweet_info_reply != undefined){
                         //報告用JSON生成
                         let is_media_tweet = false;
@@ -108,9 +120,16 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         const report_json_body = `{\"input_flow_data\":{\"requested_variant\":\"{\\\"client_app_id\\\":\\\"3033300\\\",\\\"client_location\\\":\\\"tweet:conversation_descendants:tweet\\\",\\\"client_referer\\\":\\\"${tweet_info_reply.permalink}\\\",\\\"is_media\\\":${is_media_tweet},\\\"is_promoted\\\":${is_promo_tweet},\\\"report_flow_id\\\":\\\"%cslt_random_uuid%\\\",\\\"reported_tweet_id\\\":\\\"${tweet_info_reply.id_str}\\\",\\\"reported_user_id\\\":\\\"${tweet_info_reply.user.id_str}\\\",\\\"source\\\":\\\"reporttweet\\\"}\",\"flow_context\":{\"debug_overrides\":{},\"start_location\":{\"location\":\"tweet\",\"tweet\":{\"tweet_id\":\"${tweet_info_reply.id_str}\"}}}},\"subtask_versions\":{\"action_list\":2,\"alert_dialog\":1,\"app_download_cta\":1,\"check_logged_in_account\":1,\"choice_selection\":3,\"contacts_live_sync_permission_prompt\":0,\"cta\":7,\"email_verification\":2,\"end_flow\":1,\"enter_date\":1,\"enter_email\":2,\"enter_password\":5,\"enter_phone\":2,\"enter_recaptcha\":1,\"enter_text\":5,\"enter_username\":2,\"generic_urt\":3,\"in_app_notification\":1,\"interest_picker\":3,\"js_instrumentation\":1,\"menu_dialog\":1,\"notifications_permission_prompt\":2,\"open_account\":2,\"open_home_timeline\":1,\"open_link\":1,\"phone_verification\":4,\"privacy_options\":1,\"security_key\":3,\"select_avatar\":4,\"select_banner\":2,\"settings_list\":7,\"show_code\":1,\"sign_up\":2,\"sign_up_review\":4,\"tweet_selection_urt\":1,\"update_users\":1,\"upload_media\":1,\"user_recommendations_list\":4,\"user_recommendations_urt\":1,\"wait_spinner\":3,\"web_modal\":1}}`;
                         //ツイート情報オブジェクト生成
+                        let is_reply_root_tweet = false;
                         let reply_quoted_obj = null;
                         let reply_out_urls = null;
                         let quoted_urls = null;
+                        let is_reply_status = false;
+                        let reply_user_data_status_obj = null;
+                        let reply_twitter_card_obj = null;
+                        if(tweet_info_reply.permalink == location.pathname){
+                            is_reply_root_tweet = true;
+                        }
                         if(tweet_info_reply.quoted_status != undefined){
                             if(tweet_info_reply.quoted_status.entities.urls.length != 0){
                                 quoted_urls = tweet_info_reply.quoted_status.entities.urls;
@@ -120,35 +139,73 @@ const tweet_obs = new MutationObserver(function(){
                                 possibly_sensitive:tweet_info_reply.quoted_status.possibly_sensitive,
                                 possibly_sensitive_editable:tweet_info_reply.quoted_status.possibly_sensitive_editable,
                                 "quoted_urls":quoted_urls,
+                                tweet_lang: tweet_info_reply.quoted_status.lang,
                                 user_data:{
                                     name: tweet_info_reply.quoted_status.user.name, 
+                                    description: tweet_info_reply.quoted_status.user.description,
                                     user_id: tweet_info_reply.quoted_status.user.id_str,
                                     scr_name: tweet_info_reply.quoted_status.user.screen_name,
-                                    all_tweet_count: tweet_info_reply.quoted_status.user.statuses_count
+                                    all_tweet_count: tweet_info_reply.quoted_status.user.statuses_count,
+                                    is_blue:tweet_info_reply.quoted_status.user.is_blue_verified
                                 }
                             }
                         }
                         if(tweet_info_reply.entities.urls.length != 0){
                             reply_out_urls = tweet_info_reply.entities.urls;
                         }
+                        if(tweet_info_reply.in_reply_to_status_id_str != undefined){
+                            is_reply_status = true;
+                            reply_user_data_status_obj = {
+                                name: tweet_info_reply.in_reply_to_user.name, 
+                                user_id: tweet_info_reply.in_reply_to_user.id_str,
+                                scr_name: tweet_info_reply.in_reply_to_user.screen_name,
+                                all_tweet_count: tweet_info_reply.in_reply_to_user.statuses_count,
+                                is_blue:tweet_info_reply.in_reply_to_user.is_blue_verified
+                            }
+                        }
+                        if(tweet_info_reply?.card?.binding_values?.domain?.string_value != undefined){
+                            reply_twitter_card_obj = {
+                                domain: tweet_info_reply.card.binding_values.domain.string_value
+                            }
+                        }
                         const tweetinfo_attr_reply = {
+                            is_root_tweet: is_reply_root_tweet,
                             text: tweet_info_reply.text,
                             tweet_id: tweet_info_reply.id_str, 
                             tweet_client: tweet_info_reply.source_name,
+                            is_reply: is_reply_status,
+                            tweet_lang: tweet_info_reply.lang,
                             user_data:{
                                 name: tweet_info_reply.user.name, 
+                                description: tweet_info_reply.user.description,
                                 user_id: tweet_info_reply.user.id_str,
                                 scr_name: tweet_info_reply.user.screen_name,
                                 all_tweet_count: tweet_info_reply.user.statuses_count,
-                                view_blue: tweet_info_reply.user.is_blue_verified
+                                is_blue: tweet_info_reply.user.is_blue_verified
                             },
+                            in_reply_user_data: reply_user_data_status_obj,
                             tweet_video_info: video_info,
                             report_json: report_json_body,
                             "quoted_obj":reply_quoted_obj,
-                            "reply_urls":reply_out_urls
+                            "attached_urls":reply_out_urls,
+                            "tw_card_obj": reply_twitter_card_obj
                         };
                         //console.log(tweetinfo_attr_reply)
-                        tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_reply));
+                        const target_root_elem_reply = tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]');
+                        target_root_elem_reply.setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_reply));
+                        //フォロー済フラグ付加
+                        if(tweet_info_reply.user.following){
+                            target_root_elem_reply.setAttribute("cslt_tweet_info_following_flag", "true");
+                        }
+                        //自分のツイートフラグ付加
+                        //console.log(login_userid()[0])
+                        if(login_userid()[0] == tweet_info_reply.user.screen_name){
+                            target_root_elem_reply.setAttribute("cslt_tweet_info_mytweet_flag", "true");
+                        }
+                        //Blue認証付きフラグ
+                        if(tweet_info_reply.user.is_blue_verified){
+                            target_root_elem_reply.setAttribute("cslt_tweet_info_isblue_flag", "true");
+                        }
                     }
                     break;
                 case 'followers':
@@ -156,7 +213,7 @@ const tweet_obs = new MutationObserver(function(){
                     const view_user = window.location.pathname.split("/")[1];
                     const now_follow_mode = window.location.pathname.split("/")[2];
                     //console.log("follws_run")
-                    if(login_userid() == view_user && now_follow_mode == "followers"){
+                    if(login_userid()[0] == view_user && now_follow_mode == "followers"){
                         const tweet_info_follow = get_tw_userdata(tweet_elem[tweet_index], "user_page");
                         //console.log(tweet_info_follow)
                         if(tweet_info_follow != undefined){
@@ -169,7 +226,7 @@ const tweet_obs = new MutationObserver(function(){
                                     user_id: tweet_info_follow.id_str,
                                     scr_name: tweet_info_follow.screen_name,
                                     all_tweet_count: tweet_info_follow.statuses_count,
-                                    view_blue: tweet_info_follow.is_blue_verified
+                                    is_blue: tweet_info_follow.is_blue_verified
                                 },
                                 report_json: report_json_body
                             };
@@ -207,7 +264,7 @@ const tweet_obs = new MutationObserver(function(){
                                 user_id: user_page_info?.id_str,
                                 scr_name: user_page_info?.screen_name,
                                 all_tweet_count: user_page_info?.statuses_count,
-                                view_blue: user_page_info?.is_blue_verified
+                                is_blue: user_page_info?.is_blue_verified
                             },
                             report_json: report_json_body_user_page
                         };
@@ -217,8 +274,9 @@ const tweet_obs = new MutationObserver(function(){
                     }
                     //
                     const tweet_info_other = get_tw_userdata(tweet_elem[tweet_index], "reply");
-                    
-                    //console.log(tweet_info_other)
+
+                    //console.dir(tweet_info_other)
+
                     if(tweet_info_other != undefined){
                         //報告用JSON生成
                         let is_media_tweet = false;
@@ -251,21 +309,65 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         //ツイート情報オブジェクト生成
                         const report_json_body = `{\"input_flow_data\":{\"requested_variant\":\"{\\\"client_app_id\\\":\\\"3033300\\\",\\\"client_location\\\":\\\"tweet:conversation_descendants:tweet\\\",\\\"client_referer\\\":\\\"${tweet_info_other.permalink}\\\",\\\"is_media\\\":${is_media_tweet},\\\"is_promoted\\\":${is_promo_tweet},\\\"report_flow_id\\\":\\\"%cslt_random_uuid%\\\",\\\"reported_tweet_id\\\":\\\"${tweet_info_other.id_str}\\\",\\\"reported_user_id\\\":\\\"${tweet_info_other.user.id_str}\\\",\\\"source\\\":\\\"reporttweet\\\"}\",\"flow_context\":{\"debug_overrides\":{},\"start_location\":{\"location\":\"tweet\",\"tweet\":{\"tweet_id\":\"${tweet_info_other.id_str}\"}}}}}`;
+                        let is_other_root_tweet = false;
+                        let is_reply_other = false;
+                        let reply_user_data_other_obj = null;
+                        let other_twitter_card_obj = null;
+                        let other_out_urls = null;
+                        if(tweet_info_other?.permalink == location.pathname){
+                            is_other_root_tweet = true;
+                        }
+                        if(tweet_info_other?.in_reply_to_status_id_str != undefined){
+                            is_reply_other = true;
+                            reply_user_data_other_obj = {
+                                user_id: tweet_info_other?.in_reply_to_user.id_str,
+                                scr_name: tweet_info_other?.in_reply_to_user.screen_name
+                            }
+                        }
+                        if(tweet_info_other?.card?.binding_values?.domain?.string_value != undefined){
+                            //console.log(tweet_info_other)
+                            other_twitter_card_obj = {
+                                domain: tweet_info_other?.card.binding_values.domain.string_value
+                            }
+                        }
+                        if(tweet_info_other?.entities.urls.length != 0){
+                            other_out_urls = tweet_info_other?.entities.urls;
+                        }
                         const tweetinfo_attr_other = {
+                            is_root_tweet: is_other_root_tweet,
                             text: tweet_info_other?.text,
                             tweet_id: tweet_info_other?.id_str, 
                             tweet_client: tweet_info_other?.source_name,
+                            is_reply: is_reply_other,
+                            tweet_lang: tweet_info_other?.lang,
                             user_data:{
                                 name: tweet_info_other?.user.name, 
+                                description: tweet_info_other?.user.description,
                                 user_id: tweet_info_other?.user.id_str,
                                 scr_name: tweet_info_other?.user.screen_name,
                                 all_tweet_count: tweet_info_other?.user.statuses_count,
-                                view_blue: tweet_info_other?.user.is_blue_verified
+                                is_blue: tweet_info_other?.user.is_blue_verified
                             },
+                            in_reply_user_data: reply_user_data_other_obj,
                             tweet_video_info: video_info,
-                            report_json: report_json_body
+                            report_json: report_json_body,
+                            "tw_card_obj": other_twitter_card_obj,
+                            "attached_urls": other_out_urls,
                         };
-                        tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_other));
+                        const target_root_elem_other = tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]');
+                        target_root_elem_other.setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_other));
+                        //フォロー済フラグ付加
+                        if(tweet_info_other?.user.following){
+                            target_root_elem_other.setAttribute("cslt_tweet_info_following_flag", "true");
+                        }
+                        //自分のツイートフラグ付加
+                        if(login_userid()[0] == tweet_info_other.user.screen_name){
+                            target_root_elem_other.setAttribute("cslt_tweet_info_mytweet_flag", "true");
+                        }
+                        //Blue認証付きフラグ
+                        if(tweet_info_other.user.is_blue_verified){
+                            target_root_elem_other.setAttribute("cslt_tweet_info_isblue_flag", "true");
+                        }
                     }
                     break;
                 case 'communities':
@@ -302,22 +404,62 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         //ツイート情報オブジェクト生成
                         const report_urlparam = `client_location=community:ranked:suggest_community_tweet&client_referer=${window.location.pathname}&client_app_id=3033300&source=reporttweet&report_flow_id=%cslt_random_uuid%&reported_user_id=${tweet_info_communities.user.id_str}&reported_tweet_id=${tweet_info_communities.id_str}&initiated_in_app=1&lang=ja`;
+                        let is_reply_communities = false;
+                        let reply_user_data_communities_obj = null;
+                        let communities_twitter_card_obj = null;
+                        let communities_out_urls = null;
+                        if(tweet_info_communities?.in_reply_to_status_id_str != undefined){
+                            is_reply_communities = true;
+                            reply_user_data_communities_obj = {
+                                name: tweet_info_communities?.in_reply_to_user.name, 
+                                user_id: tweet_info_communities?.in_reply_to_user.id_str,
+                                scr_name: tweet_info_communities?.in_reply_to_user.screen_name,
+                                all_tweet_count: tweet_info_communities?.in_reply_to_user.statuses_count,
+                                is_blue: tweet_info_communities?.in_reply_to_user.is_blue_verified
+                            }
+                        }
+                        if(tweet_info_communities?.card?.binding_values?.domain?.string_value != undefined){
+                            communities_twitter_card_obj = {
+                                domain: tweet_info_communities?.card.binding_values.domain.string_value
+                            }
+                        }
+                        if(tweet_info_communities?.entities.urls.length != 0){
+                            communities_out_urls = tweet_info_communities?.entities.urls;
+                        }
                         const tweetinfo_attr_communities = {
+                            is_root_tweet: false,
                             text: tweet_info_communities?.text,
                             tweet_id: tweet_info_communities?.id_str, 
                             tweet_client: tweet_info_communities?.source_name,
                             is_promoted: is_promo_tweet,
+                            is_reply: is_reply_communities,
                             user_data:{
                                 name: tweet_info_communities?.user.name, 
                                 user_id: tweet_info_communities?.user.id_str,
                                 scr_name: tweet_info_communities?.user.screen_name,
                                 all_tweet_count: tweet_info_communities?.user.statuses_count,
-                                view_blue: tweet_info_communities?.user.is_blue_verified
+                                is_blue: tweet_info_communities?.user.is_blue_verified
                             },
+                            in_reply_user_data: reply_user_data_communities_obj,
                             tweet_video_info: video_info,
-                            report_param: report_urlparam
+                            report_param: report_urlparam,
+                            "tw_card_obj": communities_twitter_card_obj,
+                            "attached_urls": communities_out_urls,
                         };
-                        tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_communities));
+                        const target_root_elem_communities = tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]');
+                        target_root_elem_communities.setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_communities));
+                        //フォロー済フラグ付加
+                        if(tweet_info_communities?.user.following){
+                            target_root_elem_communities.setAttribute("cslt_tweet_info_following_flag", "true");
+                        }
+                        //自分のツイートフラグ付加
+                        if(login_userid()[0] == tweet_info_communities?.user.screen_name){
+                            target_root_elem_communities.setAttribute("cslt_tweet_info_mytweet_flag", "true");
+                        }
+                        //Blue認証付きフラグ
+                        if(tweet_info_communities?.user.is_blue_verified){
+                            target_root_elem_communities.setAttribute("cslt_tweet_info_isblue_flag", "true");
+                        }
                     }
                     break;
                 case 'settings_block_mute':
