@@ -43,6 +43,7 @@ window.addEventListener("load", function(){
             document.getElementById("blue_block_opt").value = cslp_settings.blue_block_mode;
             document.getElementById("imp_blocker_sw").checked = cslp_settings.imp_user_block;
             document.getElementById("imp_blocker_all_sw").checked = cslp_settings.imp_filter_block_all_area;
+            document.getElementById("emoji_block_sw").checked = cslp_settings.hide_emoji_text;
             document.getElementById("follow_list_find_impuser_sw").checked = cslp_settings.follow_list_imp_find_user;
 
             document.getElementById("short_video_block_sw").checked = cslp_settings.short_video_block;
@@ -51,12 +52,14 @@ window.addEventListener("load", function(){
 
             document.getElementById("arabic_block_sw").checked = cslp_settings.arabic_reply_block;
             document.getElementById("arabic_user_block_sw").checked = cslp_settings.arabic_user_reply_block;
+            document.getElementById("arabic_user_profile_text_block_sw").checked = cslp_settings.arabic_user_profile_text_block;
 
             document.getElementById("click_report_sw").checked = cslp_settings.oneclick_report;
             document.getElementById("click_report_follow_list_sw").checked = cslp_settings.oneclick_report_follow_list;
             document.getElementById("click_report_btn_tl_disable_sw").checked = cslp_settings.oneclick_report_timeline_disable;
 
             document.getElementById("click_report_btn_confirm_sw").checked = cslp_settings.oneclick_report_confirm;
+            document.getElementById("one_click_add_cslt_hide_user_list_sw").checked = cslp_settings.oneclick_report_add_cslt_hideuser;
 
             document.getElementById("click_mute_block_opt").value = cslp_settings.oneclick_report_after_mode;
             document.getElementById("click_report_opt").value = cslp_settings.oneclick_report_option;
@@ -64,22 +67,26 @@ window.addEventListener("load", function(){
 
             document.getElementById("developer_report_srv").value = cslp_settings.oneclick_developer_reportsrv_url;
 
-
-            document.getElementById("filter_list").innerHTML = `<a href="${cslp_settings.filter_link}" target="_blank" rel="noopener noreferrer">フィルタリスト</a>`;
+            document.getElementById("filter_list").innerHTML = `<a href="${cslp_settings.filter_link}" target="_blank" rel="noopener noreferrer"><div class="op_other_link_btn_wrap" title=""><h3>URLフィルタ参考元リスト</h3><span class="other_link_icon"></span></div></a>`;
             document.getElementById("filter_thanks").innerText = cslp_settings.filter_thanks+" 様";
             //アラビア文字非表示言語
             document.getElementById("arabic_block_lang_arabic").checked = cslp_settings.arabic_reply_block_lang.arabic;
             document.getElementById("arabic_block_lang_devanagari").checked = cslp_settings.arabic_reply_block_lang.devanagari;
+            document.getElementById("arabic_block_lang_tamil").checked = cslp_settings.arabic_reply_block_lang.tamil;
             //
             document.getElementById("tw_f_adv_block_sw").checked = cslp_settings.tw_for_adv_block;
             //
+            document.getElementById("affiliate_block_sw").checked = cslp_settings.affiliate_spam_block;
+            document.getElementById("affiliate_strict_block_sw").checked = cslp_settings.affiliate_spam_block_strict;
             document.getElementById("look_profile_delete_sw").checked = cslp_settings.look_profile_spam_block;
             document.getElementById("reprint_manga_delete_sw").checked = cslp_settings.reprint_manga_spam_block;
             document.getElementById("reprint_manga_delete_strict_sw").checked = cslp_settings.reprint_manga_spam_block_strict;
             document.getElementById("reprint_manga_delete_root_user_disable_sw").checked = cslp_settings.reprint_manga_spam_block_root_user_disable;
-            document.getElementById("affiliate_block_sw").checked = cslp_settings.affiliate_spam_block;
-            document.getElementById("user_register_words_input").value = cslp_settings.user_register_word_list;
-            document.getElementById("report_btn_size_selector").value = cslp_settings.oneclick_report_btn_size; 
+            document.getElementById("user_hide_words_profile_sw").checked = cslp_settings.user_register_word_hide_profile;
+            document.getElementById("follow_user_delete_bypass_sw").checked = cslp_settings.following_user_exclusion;
+            //document.getElementById("user_register_words_input").value = cslp_settings.user_register_word_list;
+            document.getElementById("report_btn_size_selector").value = cslp_settings.oneclick_report_btn_size;
+            document.getElementById("report_btn_set_tweetmore_sw").checked = cslp_settings.oneclick_report_btn_set_tweetmore;
             //報告選択できる項目
             if(cslp_settings.oneclick_report != true){
                 document.querySelector('#click_mute_block_opt option[value="1"]').disabled = true;
@@ -180,6 +187,20 @@ window.addEventListener("load", function(){
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
     //
+    document.getElementById("affiliate_block_sw").addEventListener("change", function(){
+        cslp_settings.affiliate_spam_block = document.getElementById("affiliate_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("affiliate_strict_block_sw").addEventListener("change", function(){
+        cslp_settings.affiliate_spam_block_strict = document.getElementById("affiliate_strict_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
     document.getElementById("look_profile_delete_sw").addEventListener("change", function(){
         cslp_settings.look_profile_spam_block = document.getElementById("look_profile_delete_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
@@ -208,15 +229,15 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
-    document.getElementById("affiliate_block_sw").addEventListener("change", function(){
-        cslp_settings.affiliate_spam_block = document.getElementById("affiliate_block_sw").checked;
+    document.getElementById("user_hide_words_profile_sw").addEventListener("change", function(){
+        cslp_settings.user_register_word_hide_profile = document.getElementById("user_hide_words_profile_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
-    document.getElementById("user_register_words_input").addEventListener("change", function(){
-        cslp_settings.user_register_word_list = document.getElementById("user_register_words_input").value;
+    document.getElementById("follow_user_delete_bypass_sw").addEventListener("change", function(){
+        cslp_settings.following_user_exclusion = document.getElementById("follow_user_delete_bypass_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
@@ -235,7 +256,7 @@ window.addEventListener("load", function(){
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
-        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p><p>URLをコピーするには[Ctrl]キーを、ツイート情報は[L]キー押してブラックアウトされたツイートをクリックしてください。</p>");
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p><p>URLをコピー(レガシー)するには[Ctrl]キーを、ツイート情報は[Alt]+[L]キー押してブラックアウトされたツイートをクリックしてください。</p>");
     })
     document.getElementById("hiturl_copy_opt").addEventListener("change", function(){
         cslp_settings.hit_url_copy_mode = document.getElementById("hiturl_copy_opt").value;
@@ -276,6 +297,13 @@ window.addEventListener("load", function(){
             console.log(cslp_settings);
         });
         append_alert("<p>お使いの端末スペックによっては動作が遅くなる可能性がります。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("emoji_block_sw").addEventListener("change", function(){
+        cslp_settings.hide_emoji_text = document.getElementById("emoji_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
     //
     document.getElementById("follow_list_find_impuser_sw").addEventListener("change", function(){
@@ -336,6 +364,13 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>この設定は「アラビア文字リプ非表示」がオンになっている場合のみ動作します。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
+    document.getElementById("arabic_user_profile_text_block_sw").addEventListener("change", function(){
+        cslp_settings.arabic_user_profile_text_block = document.getElementById("arabic_user_profile_text_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>この設定は「アラビア文字リプ非表示」がオンになっている場合のみ動作します。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
     //アラビア文字等言語選択
     document.getElementById("arabic_block_lang_arabic").addEventListener("change", function(){
         cslp_settings.arabic_reply_block_lang.arabic = document.getElementById("arabic_block_lang_arabic").checked;
@@ -360,6 +395,26 @@ window.addEventListener("load", function(){
     })
     document.getElementById("arabic_block_lang_devanagari").addEventListener("change", function(){
         cslp_settings.arabic_reply_block_lang.devanagari = document.getElementById("arabic_block_lang_devanagari").checked;
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log(cslp_settings);
+            });
+        //true数チェック&警告
+        const now_lang_obj_keys = Object.keys(cslp_settings.arabic_reply_block_lang);
+        let lang_obj_true_count = 0;
+        for (let index = 0; index < now_lang_obj_keys.length; index++) {
+            console.log(cslp_settings.arabic_reply_block_lang[now_lang_obj_keys[index]])
+            if(cslp_settings.arabic_reply_block_lang[now_lang_obj_keys[index]] == true){
+                lang_obj_true_count += 1;
+            }
+        }
+        if(lang_obj_true_count <= 0){
+            append_alert("<p>全ての文字がオフになりました。<br>全ての文字で非表示になりません<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }else{
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }
+    })
+    document.getElementById("arabic_block_lang_tamil").addEventListener("change", function(){
+        cslp_settings.arabic_reply_block_lang.tamil = document.getElementById("arabic_block_lang_tamil").checked;
             chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
                 console.log(cslp_settings);
             });
@@ -422,6 +477,13 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
+    document.getElementById("one_click_add_cslt_hide_user_list_sw").addEventListener("change", function(){
+        cslp_settings.oneclick_report_add_cslt_hideuser = document.getElementById("one_click_add_cslt_hide_user_list_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
 
     document.getElementById("click_report_sw").addEventListener("change", function(){
         cslp_settings.oneclick_report = document.getElementById("click_report_sw").checked;
@@ -445,6 +507,13 @@ window.addEventListener("load", function(){
     })
     document.getElementById("report_btn_size_selector").addEventListener("change", function(){
         cslp_settings.oneclick_report_btn_size = document.getElementById("report_btn_size_selector").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("report_btn_set_tweetmore_sw").addEventListener("change", function(){
+        cslp_settings.oneclick_report_btn_set_tweetmore = document.getElementById("report_btn_set_tweetmore_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
@@ -509,14 +578,59 @@ window.addEventListener("load", function(){
             append_alert("<p>環境情報をコピーしました</p>");
         });
     })
+    //ユーザーホワイトリスト設定マネージャー
+    document.getElementById("op_user_whitelist_sw").addEventListener("click", function(){
+        document.body.insertAdjacentHTML('afterbegin', `<div class="user_whitelist_manager append_alert mobile_manager_wrap" id="user_whitelist_manager_wrap"><div class="append_alert_message mobile_manager"><div>ユーザーをホワイトリストに登録できます<br>ユーザー名(@なし)で登録し、1アカウント毎に改行を行ってください</div><textarea id="user_whitelist_manager_input" class="settings_manager_textarea" rows="15" cols="25"></textarea><div><button id="append_user_whitelist_okbtn">登録</button></div></div></div>`);
+        const user_whitelist_input_area = document.getElementById("user_whitelist_manager_input");
+        user_whitelist_input_area.value = cslp_settings.user_register_whitelist.join("\n");
+        user_whitelist_input_area.scrollTop = user_whitelist_input_area.scrollHeight;
+        document.getElementById("append_user_whitelist_okbtn").addEventListener("click", function(){
+            cslp_settings.user_register_whitelist = user_whitelist_input_area.value.split("\n").filter(line => line.trim() !== '');
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log(cslp_settings);
+            });
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+            document.getElementById("user_whitelist_manager_wrap").remove();
+        })
+    })
+    //非表示ワード設定マネージャー
+    document.getElementById("op_user_words_register_sw").addEventListener("click", function(){
+        document.body.insertAdjacentHTML('afterbegin', `<div class="user_hide_words_manager append_alert mobile_manager_wrap" id="user_hide_words_manager_wrap"><div class="append_alert_message mobile_manager"><div>登録した文字が含まれるツイートを非表示にできます<br>1ワード毎に改行を行ってください</div><textarea id="hide_words_manager_input" class="settings_manager_textarea" rows="15" cols="25"></textarea><div><button id="append_hide_words_okbtn">登録</button></div></div></div>`);
+        const hide_word_input_area = document.getElementById("hide_words_manager_input");
+        hide_word_input_area.value = cslp_settings.user_register_word_list.replaceAll(",", "\n")
+        hide_word_input_area.scrollTop = hide_word_input_area.scrollHeight;
+        document.getElementById("append_hide_words_okbtn").addEventListener("click", function(){
+            cslp_settings.user_register_word_list = hide_word_input_area.value.split("\n").filter(line => line.trim() !== '').join(",");
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log(cslp_settings);
+            });
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+            document.getElementById("user_hide_words_manager_wrap").remove();
+        })
+    })
+    //非表示ユーザー設定マネージャー
+    document.getElementById("op_hide_user_register_sw").addEventListener("click", function(){
+        document.body.insertAdjacentHTML('afterbegin', `<div class="hide_users_manager append_alert mobile_manager_wrap" id="hide_users_manager_wrap"><div class="append_alert_message mobile_manager"><div>登録したユーザを非表示にできます<br>ユーザー名(@なし)で登録し、1アカウント毎に改行を行ってください</div><textarea id="hide_users_manager_input" class="settings_manager_textarea" rows="15" cols="25"></textarea><div><button id="append_hide_users_okbtn">登録</button></div></div></div>`);
+        const hide_user_input_area = document.getElementById("hide_users_manager_input");
+        hide_user_input_area.value = cslp_settings.user_register_hideuser.join("\n");
+        hide_user_input_area.scrollTop = hide_user_input_area.scrollHeight;
+        document.getElementById("append_hide_users_okbtn").addEventListener("click", function(){
+            cslp_settings.user_register_hideuser = hide_user_input_area.value.split("\n").filter(line => line.trim() !== '');
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log(cslp_settings);
+            });
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+            document.getElementById("hide_users_manager_wrap").remove();
+        })
+    })
     //alertの代替
     function append_alert(message, trig){
-        document.body.insertAdjacentHTML('afterbegin', `<div class="append_alert"><div class="append_alert_message"><div>${message}</div><div><button id="append_alert_okbtn">OK</button></div></div></div>`);
+        document.body.insertAdjacentHTML('afterbegin', `<div class="append_alert" id="append_alert_wrap"><div class="append_alert_message"><div>${message}</div><div><button id="append_alert_okbtn">OK</button></div></div></div>`);
         document.getElementById("append_alert_okbtn").addEventListener("click", function(){
-            document.getElementsByClassName("append_alert")[0].remove()
+            document.getElementById("append_alert_wrap").remove()
             if(trig == "window_close"){
                 if(window.navigator.userAgent.toLowerCase().indexOf("android") != -1 ){
-                    console("Android!");
+                    console.log("Android!");
                 }else{
                     window.close();
                 }

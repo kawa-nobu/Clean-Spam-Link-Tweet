@@ -3,7 +3,7 @@ html{
   body {
   font-family: system-ui;
   }
-
+  color-scheme: light dark;
 }
 body{
   width: 250px;
@@ -59,6 +59,7 @@ h1{
 }
 h3{
   font-size: 0.55rem;
+  margin-left: 2%;
 }
 .text_bold{
   font-weight: bold;
@@ -72,7 +73,7 @@ h3{
   flex-direction: row;
   align-items: center;
 }
-.about div{
+.about div:not(.op_other_link_btn_wrap){
   display: flex;
   flex-direction: column;
 }
@@ -137,6 +138,51 @@ input:checked + label:after {
   margin: 5px;
 }
 
+.op_setting_manager_btn_wrap{
+  border-radius: 3px;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.op_setting_manager_btn_wrap:hover{
+  background-color: #74747426;
+}
+.op_setting_manager_btn_wrap .settings_manager_icon{
+  margin-right: 4%;
+  background: url(./settings_manager_menu.svg) no-repeat center;
+  height: 8px;
+  width: 8px;
+}
+
+.op_other_link_btn_wrap{
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 3px;
+}
+.op_other_link_btn_wrap:hover{
+  background-color: #74747426;
+}
+.op_other_link_btn_wrap .other_link_icon{
+  margin-right: 4%;
+  background: url(./new_window.svg) no-repeat center;
+  height: 8px;
+  width: 8px;
+}
+.op_other_link_btn_wrap h3{
+  margin-top: 0;
+}
+.op_other_link_btn_no_decoration a{
+  text-decoration:none;
+  color: inherit;
+}
+
+.settings_manager_textarea{
+  width: 180px;
+  height: 220px;
+}
+
 .append_alert{
   position: fixed;
   z-index: 1000;
@@ -151,14 +197,19 @@ input:checked + label:after {
 }
 .append_alert_message{
   width: 200px;
-  max-height: 280px;
+  max-height: 350px;
   background: white;
   text-align: center;
   border-radius: 10px;
+  overflow: hidden;
+}
+.append_alert_message textarea{
+  resize: none;
 }
 .append_alert_message div{
   margin: 5px;
   line-height: 1.1;
+  font-size: 0.85rem;
 }
 #append_alert_okbtn{
   width: 60px;
@@ -213,8 +264,15 @@ input:checked + label:after {
     font-size: 2rem;
   }
   details{
-    font-size: 3rem;
+    font-size: 2.5rem;
     margin-bottom: 5px;
+  }
+  .adv_set_content{
+    margin-bottom: 5px;
+    margin-bottom: 50px;
+  }
+  .adv_set_content input[type="checkbox"]{
+    height: 5rem;
   }
   .blue_block{
     margin-bottom: 30px;
@@ -235,10 +293,10 @@ input:checked + label:after {
   .new_mode_sw{
     margin-bottom: 0 !important;
   }
-  .about div{
+  /*.about div{
     display: flex;
     flex-direction: column;
-  }
+  }*/
   details div .sw_1{
     position: absolute;
     right: 5px;
@@ -330,6 +388,14 @@ input:checked + label:after {
   #hiturl_copy_opt {
     margin: 5px;
   }
+  .op_setting_manager_btn_wrap .settings_manager_icon {
+    height: 20px;
+    width: 20px;
+  }
+  .op_other_link_btn_wrap .other_link_icon {
+    height: 20px;
+    width: 20px;
+  }
   .append_alert{
     position: fixed;
     z-index: 1000;
@@ -349,6 +415,28 @@ input:checked + label:after {
     text-align: center;
     margin: 8px;
     border-radius: 10px;
+    overflow: hidden;
+  }
+  .mobile_manager_wrap{
+    height: 100% !important;
+  }
+  .mobile_manager div {
+    font-size: 2.8rem;
+  }
+  .settings_manager_textarea {
+    width: 800px;
+    height: 720px;
+    font-size: 2.2rem;
+  }
+  .mobile_manager button{
+    font-size: 3rem;
+    width: 200px;
+    height: 90px;
+    margin-top: 5px;
+  }
+  .append_alert_message.mobile_manager{
+    height: 100% !important;
+    max-height: 1150px !important;
   }
   .append_alert_message div{
     margin: 5px;
@@ -362,6 +450,9 @@ input:checked + label:after {
     height: 5rem;
     font-size: 2rem;
   }
+  .op_other_link_btn_wrap{
+    height: 100px;
+  }
 }
 @media (prefers-color-scheme: dark) {
   body {
@@ -370,6 +461,12 @@ input:checked + label:after {
   }
   .append_alert_message{
     background: rgb(29, 28, 34);
+  }
+  .op_setting_manager_btn_wrap .settings_manager_icon{
+    filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(2%) hue-rotate(124deg) brightness(107%) contrast(101%);
+  }
+  .op_other_link_btn_wrap .other_link_icon{
+    filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(2%) hue-rotate(124deg) brightness(107%) contrast(101%);
   }
 }
 /*Safari*/
@@ -388,7 +485,7 @@ _::-webkit-full-page-media, _:future, :root body {
         font-size: 1.5rem;
     }
     details {
-        font-size: 1.6rem;
+        font-size: 1.3rem;
         margin-bottom: 1rem !important;
     }
     h3 {
@@ -445,7 +542,15 @@ _::-webkit-full-page-media, _:future, :root body {
         width: 100%;
     }
     .adv_set_check_content {
-        font-size: 1.5rem;
+        font-size: 1.15rem;
+    }
+    .op_setting_manager_btn_wrap .settings_manager_icon {
+      height: 10px;
+      width: 10px;
+    }
+    .op_other_link_btn_wrap .other_link_icon {
+      height: 10px;
+      width: 10px;
     }
     #blue_block_opt {
         height: 2.5rem;
@@ -459,6 +564,32 @@ _::-webkit-full-page-media, _:future, :root body {
         height: 2.5rem;
         font-size: 1.2rem;
     }
+    
+    .append_alert_message.mobile_manager {
+        height: initial !important;
+        max-height: 1150px !important;
+    }
+    .mobile_manager div {
+        font-size: 1.2rem;
+    }
+    .settings_manager_textarea {
+        width: 250px;
+        height: 54%;
+        font-size: 1.1rem;
+    }
+    .mobile_manager button {
+        font-size: 1.5rem;
+        width: 130px;
+        height: 60px;
+        margin-top: 5px;
+    }
+    .adv_set_content input[type="checkbox"] {
+    height: 1.8rem;
+    }
+    .op_other_link_btn_wrap{
+      height: 50px;
+    }
+    
     #hiturl_copy_opt {
         margin: 0;
     }

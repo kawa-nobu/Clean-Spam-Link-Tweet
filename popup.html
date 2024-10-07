@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-    <meta charset="UTF-8" >
+    <meta charset="UTF-8">
     <title>CSLT PopUp</title>
     <script src="popup.js" charset="UTF-8"></script>
     <link href="popup.css" rel="stylesheet">
@@ -77,6 +77,13 @@
                 </div>
             </div>
             <div class="blue_block">
+                <h3>絵文字のみのリプ非表示</h3>
+                <div class="sw_1 new_mode_sw" title="絵文字のみのリプを非表示にします。">
+                    <input class="sw_1_input" type="checkbox" id="emoji_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
                 <h3>アラビア文字等リプ非表示</h3>
                 <div class="sw_1 new_mode_sw" title="アラビア文字やデーヴァーナーガリー文字が含まれたリプを非表示にします。">
                     <input class="sw_1_input" type="checkbox" id="arabic_block_sw"> 
@@ -84,9 +91,16 @@
                 </div>
             </div>
             <div class="blue_block">
-                <h3>アラビア文字等ユーザー対象</h3>
+                <h3>アラビア文字等ユーザー名対象</h3>
                 <div class="sw_1 new_mode_sw" title="アラビア文字が含まれたユーザー名のリプも追加で非表示にします。">
                     <input class="sw_1_input" type="checkbox" id="arabic_user_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>アラビア文字等ユーザー自己紹介文対象</h3>
+                <div class="sw_1 new_mode_sw" title="自己紹介文にアラビア文字が含まれたユーザーも追加で非表示にします。">
+                    <input class="sw_1_input" type="checkbox" id="arabic_user_profile_text_block_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
@@ -118,7 +132,9 @@
             <div class="">
                 <h3>「アラビア文字等リプ非表示」機能 対象文字</h3>
                 <div class="adv_set_content" title="アラビア文字等リプ非表示機能の対象文字を選択できます">
-                    <span class="adv_set_check_content">アラビア<input type="checkbox" id="arabic_block_lang_arabic"></span><span class="adv_set_check_content">デーヴァナーガリー<input type="checkbox" id="arabic_block_lang_devanagari"></span>
+                    <span class="adv_set_check_content">アラビア<input type="checkbox" id="arabic_block_lang_arabic"></span>
+                    <span class="adv_set_check_content">デーヴァナーガリー<input type="checkbox" id="arabic_block_lang_devanagari"></span>
+                    <span class="adv_set_check_content">タミル<input type="checkbox" id="arabic_block_lang_tamil"></span>
                 </div>
             </div>
         </details>
@@ -169,8 +185,8 @@
                 </div>
             </div>
             <div class="blue_block">
-                <h3>Amazonリンク阻止</h3>
-                <div class="sw_1 new_mode_sw" title="amazon.co.jp等のリンクを阻止の対象にします">
+                <h3>Amazonリンク非表示</h3>
+                <div class="sw_1 new_mode_sw" title="amazon.co.jp等のリンクを非表示にします">
                     <input class="sw_1_input" type="checkbox" id="amz_aff_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
@@ -179,6 +195,13 @@
                 <h3>アフィリエイトスパム非表示(リプのみ)</h3>
                 <div class="sw_1 new_mode_sw" title="アフィリエイトスパムを非表示にします">
                     <input class="sw_1_input" type="checkbox" id="affiliate_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>アフィリエイトスパム非表示厳格化</h3>
+                <div class="sw_1 new_mode_sw" title="アフィリエイトスパム非表示機能を更に強化します">
+                    <input class="sw_1_input" type="checkbox" id="affiliate_strict_block_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
@@ -210,12 +233,40 @@
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
-            <div>
-                <h3>非表示ワード設定(カンマ切り)</h3>
-                <div class="mode_selector">
-                    <input id="user_register_words_input" type="text" title="任意の非表示ワードを設定します">
+            <div class="blue_block">
+                <h3>非表示ワード プロフィール文適用</h3>
+                <div class="sw_1 new_mode_sw" title="自己紹介文に任意の非表示ワードが含まれたユーザーを非表示にします。">
+                    <input class="sw_1_input" type="checkbox" id="user_hide_words_profile_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
+            <div class="blue_block op_setting_manager_btn_wrap" id="op_user_words_register_sw" title="任意の非表示ワードを設定します">
+                <h3>非表示ワード設定</h3>
+                <span class="settings_manager_icon"></span>
+            </div>
+            <div class="blue_block op_setting_manager_btn_wrap" id="op_hide_user_register_sw"  title="非表示にするユーザーを設定します">
+                <h3>非表示ユーザー設定</h3>
+                <span class="settings_manager_icon"></span>
+            </div>
+        </details>
+    </section>
+    <section>
+        <details>
+            <summary title="スパム対策を除外設定を行います">スパム対策除外設定・ホワイトリスト</summary>
+            <div class="blue_block">
+                <h3>フォロー中ユーザー非表示除外</h3>
+                <div class="sw_1 new_mode_sw" title="フォロー中ユーザーを非表示の対象外にします">
+                    <input class="sw_1_input" type="checkbox" id="follow_user_delete_bypass_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block op_setting_manager_btn_wrap" id="op_user_whitelist_sw" title="スパム対策から除外するユーザーを設定します">
+                <h3>ユーザーホワイトリスト設定</h3>
+                <span class="settings_manager_icon"></span>
+            </div>
+            <!--<div class="reset_sw_center">
+                <button id="op_user_whitelist_sw" title="スパム対策から除外するユーザーを設定します">ユーザーホワイトリスト設定</button>
+            </div>-->
         </details>
     </section>
     <section>
@@ -246,6 +297,13 @@
                 <h3>報告実行前の確認</h3>
                 <div class="sw_1 new_mode_sw" title="報告ボタン押下後に確認メッセージを出します">
                     <input class="sw_1_input" type="checkbox" id="click_report_btn_confirm_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
+                <h3>ブロック/ミュート非表示リスト追加</h3>
+                <div class="sw_1 new_mode_sw" title="ブロック・ミュート操作でCSLT側の非表示ユーザーリストへ自動追加します">
+                    <input class="sw_1_input" type="checkbox" id="one_click_add_cslt_hide_user_list_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
@@ -356,6 +414,13 @@
                     <label for="sw_1" class="sw_1_label"></label>
                 </div>
             </div>
+            <div class="blue_block">
+                <h3>報告ボタンを「もっと見る」の付近に配置</h3>
+                <div class="sw_1 new_mode_sw" title="報告ボタンをツイートの「もっと見る」ボタンの付近に配置します">
+                    <input class="sw_1_input" type="checkbox" id="report_btn_set_tweetmore_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
             <div>
                 <h3>報告ボタンサイズ</h3>
                 <div class="mode_selector">
@@ -373,14 +438,14 @@
         <details class="about">
             <summary title="この拡張機能の情報を表示します">CSLTについて</summary>
             <div>
-                <div><h3>拡張機能Ver</h3><span class="about_text" id="extt_ver"></span></div>
-                <div><h3>定義リスト参考元</h3><span class="about_text" id="filter_list"></span></div>
-                <div><h3>定義リスト協力</h3><span class="about_text" id="filter_thanks"></span></div>
-                <div><h3>拡張機能リポジトリ</h3><a class="about_text" href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet" target="_blank" rel="noopener noreferrer">GitHub</a></div>
-                <div><h3>拡張機能ヘルプ</h3><a class="about_text" href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet#clean-spam-link-tweetcslt" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+                <div class="op_other_link_btn_no_decoration" title="拡張機能バージョン"><h3>拡張機能Ver</h3><span class="about_text" id="extt_ver"></span></div>
+                <div title="ドメインフィルタの作成協力者情報"><h3>URLフィルタ作成協力者</h3><span class="about_text" id="filter_thanks"></span></div>
+                <div class="op_other_link_btn_no_decoration" title="ドメインフィルタ参考元リスト"><span class="about_text" id="filter_list"></span></div>
+                <div class="op_other_link_btn_no_decoration" title="拡張機能のGitHubリポジトリ"><a class="about_text" href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet" target="_blank" rel="noopener noreferrer"><div class="op_other_link_btn_wrap"><h3>拡張機能リポジトリ(GitHub)</h3><span class="other_link_icon"></span></div></a></div>
+                <div class="op_other_link_btn_no_decoration" title="拡張機能ヘルプページ"><a class="about_text" href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet/wiki" target="_blank" rel="noopener noreferrer"><div class="op_other_link_btn_wrap"><h3>拡張機能ヘルプ(公式Wiki)</h3><span class="other_link_icon"></span></div></a></div>
+                <div class="op_other_link_btn_no_decoration" title="拡張機能の開発者へ直接フィードバック"><a class="about_text" href="https://forms.gle/pnha22jrmy478xau9" target="_blank" rel="noopener noreferrer"><div class="op_other_link_btn_wrap"><h3>フィードバック(Googleフォーム)</h3><span class="other_link_icon"></span></div></a></div>
             </div>
           </details>
     </section>
-    
 </body>
 </html>
