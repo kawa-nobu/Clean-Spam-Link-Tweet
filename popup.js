@@ -1,4 +1,9 @@
 window.addEventListener("load", function(){
+    //iPadサイズ調整
+    if(new RegExp('(iPad|Macintosh)', 'g').test(navigator.userAgent)){
+        console.log("iPad_Mode")
+        document.body.style.width = "450px";
+    }
     let cslp_settings = null;
     chrome.storage.local.get("cslp_settings", function(value){
         let cslp_update_flag = null;
@@ -73,6 +78,7 @@ window.addEventListener("load", function(){
             document.getElementById("arabic_block_lang_arabic").checked = cslp_settings.arabic_reply_block_lang.arabic;
             document.getElementById("arabic_block_lang_devanagari").checked = cslp_settings.arabic_reply_block_lang.devanagari;
             document.getElementById("arabic_block_lang_tamil").checked = cslp_settings.arabic_reply_block_lang.tamil;
+            document.getElementById("arabic_block_lang_english").checked = cslp_settings.arabic_reply_block_lang.english;
             //
             document.getElementById("tw_f_adv_block_sw").checked = cslp_settings.tw_for_adv_block;
             //
@@ -415,6 +421,26 @@ window.addEventListener("load", function(){
     })
     document.getElementById("arabic_block_lang_tamil").addEventListener("change", function(){
         cslp_settings.arabic_reply_block_lang.tamil = document.getElementById("arabic_block_lang_tamil").checked;
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log(cslp_settings);
+            });
+        //true数チェック&警告
+        const now_lang_obj_keys = Object.keys(cslp_settings.arabic_reply_block_lang);
+        let lang_obj_true_count = 0;
+        for (let index = 0; index < now_lang_obj_keys.length; index++) {
+            console.log(cslp_settings.arabic_reply_block_lang[now_lang_obj_keys[index]])
+            if(cslp_settings.arabic_reply_block_lang[now_lang_obj_keys[index]] == true){
+                lang_obj_true_count += 1;
+            }
+        }
+        if(lang_obj_true_count <= 0){
+            append_alert("<p>全ての文字がオフになりました。<br>全ての文字で非表示になりません<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }else{
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }
+    })
+    document.getElementById("arabic_block_lang_english").addEventListener("change", function(){
+        cslp_settings.arabic_reply_block_lang.english = document.getElementById("arabic_block_lang_english").checked;
             chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
                 console.log(cslp_settings);
             });
