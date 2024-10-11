@@ -1,6 +1,6 @@
 window.addEventListener("load", function(){
     //iPadサイズ調整
-    if(new RegExp('(iPad|Macintosh)', 'g').test(navigator.userAgent)){
+    if(new RegExp('(iPad|Macintosh)', 'g').test(navigator.userAgent) && !new RegExp('(Chrome|FireFox)', 'g').test(navigator.userAgent)){
         console.log("iPad_Mode")
         document.body.style.width = "450px";
     }
@@ -93,6 +93,7 @@ window.addEventListener("load", function(){
             //document.getElementById("user_register_words_input").value = cslp_settings.user_register_word_list;
             document.getElementById("report_btn_size_selector").value = cslp_settings.oneclick_report_btn_size;
             document.getElementById("report_btn_set_tweetmore_sw").checked = cslp_settings.oneclick_report_btn_set_tweetmore;
+            document.getElementById("report_btn_dsp_all_users").checked = cslp_settings.oneclick_report_btn_all_users;
             //報告選択できる項目
             if(cslp_settings.oneclick_report != true){
                 document.querySelector('#click_mute_block_opt option[value="1"]').disabled = true;
@@ -540,6 +541,13 @@ window.addEventListener("load", function(){
     })
     document.getElementById("report_btn_set_tweetmore_sw").addEventListener("change", function(){
         cslp_settings.oneclick_report_btn_set_tweetmore = document.getElementById("report_btn_set_tweetmore_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("report_btn_dsp_all_users").addEventListener("change", function(){
+        cslp_settings.oneclick_report_btn_all_users = document.getElementById("report_btn_dsp_all_users").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });

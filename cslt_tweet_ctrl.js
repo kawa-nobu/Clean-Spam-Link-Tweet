@@ -230,7 +230,7 @@ const tweet_obs = new MutationObserver(function(){
                                 },
                                 report_json: report_json_body
                             };
-                            //console.log(tweet_info);
+                            //console.log(tweet_info_follow);
                             //console.log(tweetinfo_attr_follow)
                             tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_follow));
                         }
@@ -245,7 +245,7 @@ const tweet_obs = new MutationObserver(function(){
                             },
                             report_json: report_json_body
                         };
-                        //console.log(tweet_info);
+                        //console.log(tweet_info_follow);
                         //console.log(tweetinfo_attr_follow)
                         tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify(tweetinfo_attr_follow));
                     }
