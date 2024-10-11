@@ -312,6 +312,7 @@ function main(filter_url, imp_filter_url) {
                     filter_thanks: json[0].thanks_name,
                     oneclick_report: false,
                     oneclick_report_btn_size: "0",
+                    oneclick_report_btn_all_users:true,
                     oneclick_report_btn_set_tweetmore: false,
                     oneclick_report_follow_list: true,
                     oneclick_report_confirm: false,
@@ -649,7 +650,7 @@ function main(filter_url, imp_filter_url) {
                     const tweet_root_user_scrname = get_tweet_status_root_user();
                     const target_tweet_ids = [];
                     //ターゲット要素取得(任意のフラグは「:not()」内にOR条件で追加しましょう)
-                    const target_selector = `div[data-testid="cellInnerDiv"][cslt_tweet_info]:not(${cslt_exclusion_css_flag},[cslt_white_list_user],[cslt_hide_flag="true"],[cslt_blue_bypass_flag="true"],[cslt_night_spam_processed_flag="true"],[cslt_process_ok="true"],[cslt_temp_fail_report_flag="fail_tweet"])`;//,[cslt_report_btn_set_flag="true"]
+                    const target_selector = `div[data-testid="cellInnerDiv"][cslt_tweet_info]:not([cslt_tweet_info_mytweet_flag="true"],[cslt_white_list_user],[cslt_hide_flag="true"],[cslt_blue_bypass_flag="true"],[cslt_night_spam_processed_flag="true"],[cslt_process_ok="true"],[cslt_temp_fail_report_flag="fail_tweet"])`;//,[cslt_report_btn_set_flag="true"] ${cslt_exclusion_css_flag}
                     const target_tweet_element = target_elem.querySelectorAll(target_selector);
                     /* 非表示等動作 */
                     /* TIPS:新しい非表示機能付けたけど画面が固まってしまう場合、フラグが立っていない可能性があります！
@@ -660,19 +661,28 @@ function main(filter_url, imp_filter_url) {
                         if (!target_element_num(target_tweet_element.length, target_selector)) {
                             break;
                         }
-                        //非表示処理開始
                         const cslt_target_tweet_elem = target_tweet_element[target_index];
                         const cslt_tweet_info_obj = JSON.parse(cslt_target_tweet_elem.getAttribute('cslt_tweet_info'));
-                        //console.log(cslt_tweet_info_obj)
+                        //フォロー中ユーザー除外設定フラグ
+                        let processing_following_user_exclusion_flag = true;
+                        if(cslp_settings.following_user_exclusion){
+                            if(cslt_target_tweet_elem.getAttribute("cslt_tweet_info_following_flag") == "true"){
+                                processing_following_user_exclusion_flag = false;
+                            }
+                        }
+                        /* 非表示処理開始 */
                         if (!cslt_tweet_info_obj.is_root_tweet) {
                             /* 元ツイート以外に適用するにはこの中に記述 */
                             /* リツイート欄等では非表示機能を無効化 */
-                            if (!is_status_rt()) {
+                            if (!is_status_rt() && processing_following_user_exclusion_flag) {
                                 //ホワイトリスト処理
                                 if (cslp_settings.user_register_whitelist.length != 0) {
                                     if (user_whitelist_regexp.test(cslt_tweet_info_obj.user_data.scr_name)) {
                                         //console.log("match=>"+cslt_tweet_info_obj.text)
                                         cslt_target_tweet_elem.setAttribute("cslt_white_list_user", "");
+                                        if(cslp_settings.oneclick_report_btn_all_users || processing_following_user_exclusion_flag){
+                                            report_btn_init(cslt_target_tweet_elem);
+                                        }
                                         continue;
                                     }
                                 }
@@ -719,6 +729,9 @@ function main(filter_url, imp_filter_url) {
                                     if (cslp_settings.root_tweetuser_block == true && window.location.pathname.split("/")[4] != 'quotes') {
                                         if (tweet_root_user_scrname == cslt_tweet_info_obj.user_data.scr_name) {
                                             cslt_target_tweet_elem.setAttribute("cslt_blue_bypass_flag", "true");
+                                            if(cslp_settings.oneclick_report_btn_all_users || processing_following_user_exclusion_flag){
+                                                report_btn_init(cslt_target_tweet_elem);
+                                            }
                                             continue;
                                         }
                                     }
@@ -1062,19 +1075,8 @@ function main(filter_url, imp_filter_url) {
                                 }
                             }
                             //報告・ブロック機能付加
-                            const is_timeline_report_btn = is_timeline_follow_report();
-                            if (cslp_settings.oneclick_report == true && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '3' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '4' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '5' && cslp_settings.oneclick_developer_report == true && is_timeline_report_btn != true) {
-                                if (is_follow_page()) {
-                                    report_init(cslt_target_tweet_elem, "follow");
-                                } else {
-                                    if (!cslp_settings.oneclick_report_btn_set_tweetmore) {
-                                        //もっと見る付近配置モードオフ
-                                        report_init(cslt_target_tweet_elem, "share");
-                                    } else {
-                                        report_init(cslt_target_tweet_elem, "more");
-                                    }
-                                }
-                                cslt_target_tweet_elem.setAttribute("cslt_report_btn_set_flag", "true");
+                            if(cslp_settings.oneclick_report_btn_all_users || processing_following_user_exclusion_flag){
+                                report_btn_init(cslt_target_tweet_elem);
                             }
                             //報告・ブロック・ミュート機能で追加されたアカウントを非表示
                             if (cslp_settings.oneclick_report == true || cslp_settings.oneclick_report_after_mode == '1' || cslp_settings.oneclick_report_after_mode == '2' || cslp_settings.oneclick_report_after_mode == '3' || cslp_settings.oneclick_report_after_mode == '4') {
@@ -1123,7 +1125,7 @@ function main(filter_url, imp_filter_url) {
                         }
                         /*元ツイート以外にも適用するにはここから記述*/
                         //ナイト系スパム対策
-                        if (cslp_settings.night_spam_block == true && !is_follow_page() && !is_status_rt() && window.location.search.match(/f=user/g) == null) {
+                        if (cslp_settings.night_spam_block == true && !is_follow_page() && !is_status_rt() && processing_following_user_exclusion_flag && window.location.search.match(/f=user/g) == null) {
                             //テキスト内のURLチェック
                             const night_spam_text_urls = cslt_tweet_info_obj.text.replaceAll('\n', ' ').match(/((https?:\/\/|www\.)[^\s/$.?#].[^\s]*)/gi);
                             let night_spam_processed_flag = false;
@@ -1211,6 +1213,22 @@ function main(filter_url, imp_filter_url) {
                 }
                 /* 以下非表示以外の機能用関数 */
                 //報告・ブロック機能用関数
+                function report_btn_init(target_tweet_elem){
+                    const is_timeline_report_btn = is_timeline_follow_report();
+                    if (cslp_settings.oneclick_report == true && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '3' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '4' && is_timeline_report_btn != true || cslp_settings.oneclick_report_after_mode == '5' && cslp_settings.oneclick_developer_report == true && is_timeline_report_btn != true) {
+                        if (is_follow_page()) {
+                            report_init(target_tweet_elem, "follow");
+                        } else {
+                            if (!cslp_settings.oneclick_report_btn_set_tweetmore) {
+                                //もっと見る付近配置モードオフ
+                                report_init(target_tweet_elem, "share");
+                            } else {
+                                report_init(target_tweet_elem, "more");
+                            }
+                        }
+                        target_tweet_elem.setAttribute("cslt_report_btn_set_flag", "true");
+                    }
+                }
                 function report_init(input_element, btn_mode) {
                     let reply_elem = null;
                     //let is_follow_page = is_follow_page();
@@ -1271,7 +1289,6 @@ function main(filter_url, imp_filter_url) {
                         copy_tweet_data(reply_elem_user_cell_copy.getAttribute("cslt_tweet_info"), `cslt_tweet_info_copy_${random_id}`);
                         reply_elem_user_cell_copy.setAttribute('cslt_copy_tweet_data_success', '');
                     }
-
                     //報告ボタン動作
                     document.getElementById(random_id)?.addEventListener("click", async function () {
                         let get_cookie_twid = null;
