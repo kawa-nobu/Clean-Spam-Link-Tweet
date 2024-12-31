@@ -127,12 +127,18 @@ const tweet_obs = new MutationObserver(function(){
                         let is_reply_status = false;
                         let reply_user_data_status_obj = null;
                         let reply_twitter_card_obj = null;
+                        let reply_twitter_card_unified_obj = null;
+                        let reply_blocked_by_flag = false;
+                        let reply_quoted_blocked_by_flag = false;
                         if(tweet_info_reply.permalink == location.pathname){
                             is_reply_root_tweet = true;
                         }
                         if(tweet_info_reply.quoted_status != undefined){
                             if(tweet_info_reply.quoted_status.entities.urls.length != 0){
                                 quoted_urls = tweet_info_reply.quoted_status.entities.urls;
+                            }
+                            if(tweet_info_reply.quoted_status.user.blocked_by){
+                                reply_quoted_blocked_by_flag = true;
                             }
                             reply_quoted_obj = {
                                 text:tweet_info_reply.quoted_status.full_text,
@@ -146,7 +152,10 @@ const tweet_obs = new MutationObserver(function(){
                                     user_id: tweet_info_reply.quoted_status.user.id_str,
                                     scr_name: tweet_info_reply.quoted_status.user.screen_name,
                                     all_tweet_count: tweet_info_reply.quoted_status.user.statuses_count,
-                                    is_blue:tweet_info_reply.quoted_status.user.is_blue_verified
+                                    is_blue:tweet_info_reply.quoted_status.user.is_blue_verified,
+                                    location: tweet_info_reply.quoted_status.user.location,
+                                    account_create_date: tweet_info_reply.quoted_status.user.created_at,
+                                    blocked_by: reply_quoted_blocked_by_flag
                                 }
                             }
                         }
@@ -160,13 +169,21 @@ const tweet_obs = new MutationObserver(function(){
                                 user_id: tweet_info_reply.in_reply_to_user.id_str,
                                 scr_name: tweet_info_reply.in_reply_to_user.screen_name,
                                 all_tweet_count: tweet_info_reply.in_reply_to_user.statuses_count,
-                                is_blue:tweet_info_reply.in_reply_to_user.is_blue_verified
+                                is_blue:tweet_info_reply.in_reply_to_user.is_blue_verified,
+                                location: tweet_info_reply.in_reply_to_user.location,
+                                account_create_date: tweet_info_reply.in_reply_to_user.created_at
                             }
                         }
                         if(tweet_info_reply?.card?.binding_values?.domain?.string_value != undefined){
                             reply_twitter_card_obj = {
                                 domain: tweet_info_reply.card.binding_values.domain.string_value
                             }
+                        }
+                        if(tweet_info_reply?.card?.binding_values?.unified_card?.string_value){
+                            reply_twitter_card_unified_obj = JSON.parse(tweet_info_reply?.card?.binding_values?.unified_card?.string_value)
+                        }
+                        if(tweet_info_reply.user.blocked_by){
+                            reply_blocked_by_flag = true;
                         }
                         const tweetinfo_attr_reply = {
                             is_root_tweet: is_reply_root_tweet,
@@ -175,19 +192,24 @@ const tweet_obs = new MutationObserver(function(){
                             tweet_client: tweet_info_reply.source_name,
                             is_reply: is_reply_status,
                             tweet_lang: tweet_info_reply.lang,
+                            is_promoted: is_promo_tweet,
                             user_data:{
                                 name: tweet_info_reply.user.name, 
                                 description: tweet_info_reply.user.description,
                                 user_id: tweet_info_reply.user.id_str,
                                 scr_name: tweet_info_reply.user.screen_name,
                                 all_tweet_count: tweet_info_reply.user.statuses_count,
-                                is_blue: tweet_info_reply.user.is_blue_verified
+                                is_blue: tweet_info_reply.user.is_blue_verified,
+                                location: tweet_info_reply.user.location,
+                                account_create_date: tweet_info_reply.user.created_at,
+                                blocked_by: reply_blocked_by_flag
                             },
                             in_reply_user_data: reply_user_data_status_obj,
                             tweet_video_info: video_info,
                             report_json: report_json_body,
                             "quoted_obj":reply_quoted_obj,
                             "attached_urls":reply_out_urls,
+                            "tw_card_unified_obj": reply_twitter_card_unified_obj,
                             "tw_card_obj": reply_twitter_card_obj
                         };
                         //console.log(tweetinfo_attr_reply)
@@ -313,7 +335,12 @@ const tweet_obs = new MutationObserver(function(){
                         let is_reply_other = false;
                         let reply_user_data_other_obj = null;
                         let other_twitter_card_obj = null;
+                        let other_twitter_card_unified_obj = null;
                         let other_out_urls = null;
+                        let other_blocked_by_flag = false;
+                        let other_quoted_obj = null;
+                        let other_quoted_urls = null;
+                        let other_quoted_blocked_by_flag = false;
                         if(tweet_info_other?.permalink == location.pathname){
                             is_other_root_tweet = true;
                         }
@@ -325,13 +352,46 @@ const tweet_obs = new MutationObserver(function(){
                             }
                         }
                         if(tweet_info_other?.card?.binding_values?.domain?.string_value != undefined){
-                            //console.log(tweet_info_other)
                             other_twitter_card_obj = {
                                 domain: tweet_info_other?.card.binding_values.domain.string_value
                             }
                         }
+                        //twittercard動画付オブジェクト
+                        if(tweet_info_other?.card?.binding_values?.unified_card?.string_value){
+                            other_twitter_card_unified_obj = JSON.parse(tweet_info_other?.card?.binding_values?.unified_card?.string_value)
+                        }
                         if(tweet_info_other?.entities.urls.length != 0){
                             other_out_urls = tweet_info_other?.entities.urls;
+                        }
+                        if(tweet_info_other?.user.blocked_by){
+                            other_blocked_by_flag = true;
+                        }
+                        //引用オブジェクト
+                        if(tweet_info_other?.quoted_status != undefined){
+                            if(tweet_info_other?.quoted_status.entities.urls.length != 0){
+                                other_quoted_urls = tweet_info_other?.quoted_status.entities.urls;
+                            }
+                            if(tweet_info_other?.quoted_status.user.blocked_by){
+                                other_quoted_blocked_by_flag = true;
+                            }
+                            other_quoted_obj = {
+                                text:tweet_info_other?.quoted_status.full_text,
+                                possibly_sensitive:tweet_info_other?.quoted_status.possibly_sensitive,
+                                possibly_sensitive_editable:tweet_info_other?.quoted_status.possibly_sensitive_editable,
+                                "quoted_urls":other_quoted_urls,
+                                tweet_lang: tweet_info_other?.quoted_status.lang,
+                                user_data:{
+                                    name: tweet_info_other?.quoted_status.user.name, 
+                                    description: tweet_info_other?.quoted_status.user.description,
+                                    user_id: tweet_info_other?.quoted_status.user.id_str,
+                                    scr_name: tweet_info_other?.quoted_status.user.screen_name,
+                                    all_tweet_count: tweet_info_other?.quoted_status.user.statuses_count,
+                                    is_blue:tweet_info_other?.quoted_status.user.is_blue_verified,
+                                    location: tweet_info_other?.quoted_status.user.location,
+                                    account_create_date: tweet_info_other?.quoted_status.user.created_at,
+                                    blocked_by: other_quoted_blocked_by_flag
+                                }
+                            }
                         }
                         const tweetinfo_attr_other = {
                             is_root_tweet: is_other_root_tweet,
@@ -340,18 +400,24 @@ const tweet_obs = new MutationObserver(function(){
                             tweet_client: tweet_info_other?.source_name,
                             is_reply: is_reply_other,
                             tweet_lang: tweet_info_other?.lang,
+                            is_promoted: is_promo_tweet,
                             user_data:{
                                 name: tweet_info_other?.user.name, 
                                 description: tweet_info_other?.user.description,
                                 user_id: tweet_info_other?.user.id_str,
                                 scr_name: tweet_info_other?.user.screen_name,
                                 all_tweet_count: tweet_info_other?.user.statuses_count,
-                                is_blue: tweet_info_other?.user.is_blue_verified
+                                is_blue: tweet_info_other?.user.is_blue_verified,
+                                location: tweet_info_other?.user.location,
+                                account_create_date: tweet_info_other?.user.created_at,
+                                blocked_by: other_blocked_by_flag
                             },
                             in_reply_user_data: reply_user_data_other_obj,
                             tweet_video_info: video_info,
                             report_json: report_json_body,
+                            "quoted_obj":other_quoted_obj,
                             "tw_card_obj": other_twitter_card_obj,
+                            "tw_card_unified_obj": other_twitter_card_unified_obj,
                             "attached_urls": other_out_urls,
                         };
                         const target_root_elem_other = tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]');
@@ -407,6 +473,7 @@ const tweet_obs = new MutationObserver(function(){
                         let is_reply_communities = false;
                         let reply_user_data_communities_obj = null;
                         let communities_twitter_card_obj = null;
+                        let communities_twitter_card_unified_obj = null;
                         let communities_out_urls = null;
                         if(tweet_info_communities?.in_reply_to_status_id_str != undefined){
                             is_reply_communities = true;
@@ -415,13 +482,18 @@ const tweet_obs = new MutationObserver(function(){
                                 user_id: tweet_info_communities?.in_reply_to_user.id_str,
                                 scr_name: tweet_info_communities?.in_reply_to_user.screen_name,
                                 all_tweet_count: tweet_info_communities?.in_reply_to_user.statuses_count,
-                                is_blue: tweet_info_communities?.in_reply_to_user.is_blue_verified
+                                is_blue: tweet_info_communities?.in_reply_to_user.is_blue_verified,
+                                location: tweet_info_communities?.in_reply_to_user.location,
+                                account_create_date: tweet_info_communities?.in_reply_to_user.created_at
                             }
                         }
                         if(tweet_info_communities?.card?.binding_values?.domain?.string_value != undefined){
                             communities_twitter_card_obj = {
                                 domain: tweet_info_communities?.card.binding_values.domain.string_value
                             }
+                        }
+                        if(tweet_info_communities?.card?.binding_values?.unified_card?.string_value){
+                            communities_twitter_card_unified_obj = JSON.parse(tweet_info_communities?.card?.binding_values?.unified_card?.string_value)
                         }
                         if(tweet_info_communities?.entities.urls.length != 0){
                             communities_out_urls = tweet_info_communities?.entities.urls;
@@ -438,12 +510,15 @@ const tweet_obs = new MutationObserver(function(){
                                 user_id: tweet_info_communities?.user.id_str,
                                 scr_name: tweet_info_communities?.user.screen_name,
                                 all_tweet_count: tweet_info_communities?.user.statuses_count,
-                                is_blue: tweet_info_communities?.user.is_blue_verified
+                                is_blue: tweet_info_communities?.user.is_blue_verified,
+                                location: tweet_info_communities?.user.location,
+                                account_create_date: tweet_info_communities?.user.created_at
                             },
                             in_reply_user_data: reply_user_data_communities_obj,
                             tweet_video_info: video_info,
                             report_param: report_urlparam,
                             "tw_card_obj": communities_twitter_card_obj,
+                            "tw_card_unified_obj": communities_twitter_card_unified_obj,
                             "attached_urls": communities_out_urls,
                         };
                         const target_root_elem_communities = tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]');

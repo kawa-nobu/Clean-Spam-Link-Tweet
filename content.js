@@ -19,7 +19,6 @@ let user_blocking_word_list_regexp;
 let hide_user_list_regexp;
 let user_whitelist_regexp;
 let cslt_exclusion_css_flag;
-
 let s_key_down = null;
 let debug_block_num_text = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "") + Math.random().toString(32).substring(2);
 let debug_block_num = Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "") + Math.random().toString(32).substring(2);
@@ -335,7 +334,14 @@ function main(filter_url, imp_filter_url) {
                     user_register_word_list: "",
                     user_register_whitelist: [],
                     user_register_hideuser: [],
-                    tw_for_adv_block: false
+                    tw_for_adv_block: false,
+                    register_word_regexp_mode:false,
+                    promotion_hide: false,
+                    blank_profile_hide: false,
+                    blocked_by_hide: false,
+                    recent_created_account_hide: false,
+                    user_hide_words_profile_hide: false,
+                    recent_created_account_hide_range: "1"
                 };
                 if (input_setting.cslp_settings != undefined) {
                     let settings_array = new Object();
@@ -426,18 +432,23 @@ function main(filter_url, imp_filter_url) {
                 }
                 if (cslp_settings.affiliate_spam_block == true) {
                     affiliate_url_regexp = new RegExp(json[1].affiliate_spam_url);
-                }
-                if (cslp_settings.affiliate_spam_block_strict == true) {
                     affiliate_text_regexp = new RegExp(json[1].affiliate_spam_text, 'g');
                 }
+                /*if (cslp_settings.affiliate_spam_block_strict == true) {
+                    
+                }*/
                 if (cslp_settings.user_register_word_list != "") {
-                    user_blocking_word_list_regexp = new RegExp(`(${cslp_settings.user_register_word_list.split(",").join("|")})`, 'g');
+                    if(!cslp_settings.register_word_regexp_mode){
+                        user_blocking_word_list_regexp = array_regexp_escape(cslp_settings.user_register_word_list.split(","), true);
+                    }else{
+                        user_blocking_word_list_regexp = new RegExp(`(${cslp_settings.user_register_word_list.split(",").join("|")})`, 'g');
+                    }
                 }
                 if (cslp_settings.user_register_hideuser.length != 0) {
-                    hide_user_list_regexp = new RegExp(`(${cslp_settings.user_register_hideuser.join("|")})`);
+                    hide_user_list_regexp = array_regexp_escape(cslp_settings.user_register_hideuser, false);
                 }
                 if (cslp_settings.user_register_whitelist.length != 0) {
-                    user_whitelist_regexp = new RegExp(`(${cslp_settings.user_register_whitelist.join("|")})`);
+                    user_whitelist_regexp = array_regexp_escape(cslp_settings.user_register_whitelist, false);
                 }
                 //文字で非表示正規表現作成
                 if (cslp_settings.arabic_reply_block == true) {
@@ -673,8 +684,32 @@ function main(filter_url, imp_filter_url) {
                         /* 非表示処理開始 */
                         if (!cslt_tweet_info_obj.is_root_tweet) {
                             /* 元ツイート以外に適用するにはこの中に記述 */
+                            //ブロックされているアカウント非表示
+                            if(cslp_settings.blocked_by_hide){
+                                if(cslt_tweet_info_obj.user_data.blocked_by){
+                                    //console.log("UserBlocked=>"+cslt_tweet_info_obj.text)
+                                    cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                    cslt_target_tweet_elem.textContent = "";
+                                    continue;
+                                }
+                                //引用チェック
+                                if(cslt_tweet_info_obj.quoted_obj != null && cslt_tweet_info_obj.quoted_obj.user_data.blocked_by){
+                                    //console.log("UserBlockedQuoted=>"+cslt_tweet_info_obj.text)
+                                    cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                    cslt_target_tweet_elem.textContent = "";
+                                    continue;
+                                }
+                            }
                             /* リツイート欄等では非表示機能を無効化 */
                             if (!is_status_rt() && processing_following_user_exclusion_flag) {
+                                //プロモーション非表示
+                                if(cslp_settings.promotion_hide){
+                                    if(cslt_tweet_info_obj.is_promoted){
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                        continue;
+                                    }
+                                }
                                 //ホワイトリスト処理
                                 if (cslp_settings.user_register_whitelist.length != 0) {
                                     if (user_whitelist_regexp.test(cslt_tweet_info_obj.user_data.scr_name)) {
@@ -721,6 +756,24 @@ function main(filter_url, imp_filter_url) {
                                             cslt_target_tweet_elem.textContent = "";
                                             continue;
                                         }
+                                    }
+                                }
+                                //プロフィール文空白アカウント非表示
+                                if(cslp_settings.blank_profile_hide){
+                                    if(cslt_tweet_info_obj.user_data.description == ""){
+                                        //console.log("ProfileDescriptionBlank=>"+cslt_tweet_info_obj.text)
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                        continue;
+                                    }
+                                }
+                                //最近作成されたアカウント非表示
+                                if(cslp_settings.recent_created_account_hide){
+                                    if(is_date_with_month(cslt_tweet_info_obj.user_data.account_create_date, Number(cslp_settings.recent_created_account_hide_range))){
+                                        //console.log("RecentCreateUser=>"+cslt_tweet_info_obj.text)
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                        continue;
                                     }
                                 }
                                 //Blueブロック
@@ -879,6 +932,20 @@ function main(filter_url, imp_filter_url) {
                                 if (cslp_settings.affiliate_spam_block == true && window.location.pathname.match("\/status\/")?.length == 1 && window.location.pathname.split("/")[4] == undefined) {
                                     //厳格化
                                     if (cslp_settings.affiliate_spam_block_strict) {
+                                        //プロフィール文が空白の場合
+                                        if(cslt_tweet_info_obj.user_data.description == ""){
+                                            //console.log("AffiliateProfileDescriptionBlank=>"+cslt_tweet_info_obj.text)
+                                            cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                            cslt_target_tweet_elem.textContent = "";
+                                            continue;
+                                        }
+                                        //1か月以内に作成されたアカウントの場合
+                                        if(is_date_with_month(cslt_tweet_info_obj.user_data.account_create_date, 1)){
+                                            //console.log("AffiliateRecentCreateUser=>"+cslt_tweet_info_obj.text)
+                                            cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                            cslt_target_tweet_elem.textContent = "";
+                                            continue;
+                                        }
                                         //ツイートのlangがzhの場合
                                         if (cslt_tweet_info_obj.tweet_lang == "zh") {
                                             //console.log("AffiliateStrictLangZh=>"+cslt_tweet_info_obj.text)
@@ -886,7 +953,7 @@ function main(filter_url, imp_filter_url) {
                                             cslt_target_tweet_elem.textContent = "";
                                             continue;
                                         }
-                                        //返信本文
+                                        //返信本文チェック
                                         const affiliate_check_text = cslt_tweet_info_obj.text.replace(/@\w+\s*/g, "");
                                         if (affiliate_text_regexp.test(affiliate_check_text)) {
                                             //console.log("AffiliateStrictText=>"+cslt_tweet_info_obj.text)
@@ -894,7 +961,7 @@ function main(filter_url, imp_filter_url) {
                                             cslt_target_tweet_elem.textContent = "";
                                             continue;
                                         }
-                                        //返信本文ユーザー
+                                        //返信本文ユーザープロフィール文チェック
                                         if (affiliate_text_regexp.test(cslt_tweet_info_obj.user_data.description)) {
                                             //console.log("AffiliateStrictUserDescriptionText=>"+cslt_tweet_info_obj.text)
                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
@@ -904,6 +971,20 @@ function main(filter_url, imp_filter_url) {
                                         //引用
                                         if (cslt_tweet_info_obj.quoted_obj != null) {
                                             let affiliate_check_quoted_text = cslt_tweet_info_obj.quoted_obj.text.replace(/@\w+\s*/g, "");
+                                            //引用のプロフィール文が空白の場合
+                                            if(cslt_tweet_info_obj.quoted_obj.user_data.description == ""){
+                                                //console.log("AffiliateStrictQuotedProfileDescriptionBlank=>"+cslt_tweet_info_obj.text)
+                                                cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                                cslt_target_tweet_elem.textContent = "";
+                                                continue;
+                                            }
+                                            //引用の1か月以内に作成されたアカウントの場合
+                                            if(is_date_with_month(cslt_tweet_info_obj.quoted_obj.user_data.account_create_date, 1)){
+                                                //console.log("AffiliateStrictQuotedRecentCreateUser=>"+cslt_tweet_info_obj.text)
+                                                cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                                cslt_target_tweet_elem.textContent = "";
+                                                continue;
+                                            }
                                             //引用のlangがzhの場合
                                             if (cslt_tweet_info_obj.quoted_obj.tweet_lang == "zh") {
                                                 //console.log("AffiliateStrictQuotedLangZh=>"+cslt_tweet_info_obj.text)
@@ -927,7 +1008,7 @@ function main(filter_url, imp_filter_url) {
                                             }
                                         }
                                     }
-                                    //引用の場合
+                                    //引用のURLチェック
                                     if (cslt_tweet_info_obj.quoted_obj != null && cslt_tweet_info_obj.quoted_obj.quoted_urls != null && cslt_tweet_info_obj.quoted_obj.quoted_urls.length != 0) {
                                         let affiliate_quoted_hide_flag = false;
                                         for (let quoted_index = 0; quoted_index < cslt_tweet_info_obj.quoted_obj.quoted_urls.length; quoted_index++) {
@@ -943,7 +1024,23 @@ function main(filter_url, imp_filter_url) {
                                             continue;
                                         }
                                     }
-                                    //ツイート本文の場合
+                                    //引用ユーザーロケーションチェック
+                                    if (cslt_tweet_info_obj.quoted_obj != null) {
+                                        if(affiliate_text_regexp.test(cslt_tweet_info_obj.quoted_obj.user_data.location)){
+                                            //console.log("QuotedAffiliateStrictUserLocation=>"+cslt_tweet_info_obj.text)
+                                            cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                            cslt_target_tweet_elem.textContent = "";
+                                            continue;
+                                        }
+                                    }
+                                    //ツイート本文ユーザーロケーションチェック
+                                    if(affiliate_text_regexp.test(cslt_tweet_info_obj.user_data.location)){
+                                        //console.log("AffiliateStrictUserLocation=>"+cslt_tweet_info_obj.text)
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                        continue;
+                                    }
+                                    //ツイート本文チェック
                                     if (cslt_tweet_info_obj.attached_urls != null && cslt_tweet_info_obj.attached_urls.length != 0) {
                                         let affiliate_reply_hide_flag = false;
                                         for (let attached_urls_index = 0; attached_urls_index < cslt_tweet_info_obj.attached_urls.length; attached_urls_index++) {
@@ -1186,6 +1283,28 @@ function main(filter_url, imp_filter_url) {
                                     }
                                 }
                                 night_spam_processed_flag = true;
+                            }
+                            //TwitterCard動画付処理
+                            if(cslt_tweet_info_obj.tw_card_unified_obj?.destination_objects?.browser_with_docked_media_1?.data?.url_data != undefined){
+                                const video_card_url_data = cslt_tweet_info_obj.tw_card_unified_obj?.destination_objects?.browser_with_docked_media_1?.data?.url_data;
+                                const video_card_url = new URL(video_card_url_data.url);
+                                if(block_regexp.test(video_card_url.host)){
+                                    if (cslp_settings.hit_del == true && !cslt_tweet_info_obj.is_root_tweet) {
+                                        //ヒットツイート非表示有効&元ツイートでない場合非表示
+                                        night_spam_processed_flag = true;
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                    } else {
+                                        const ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 5px 5px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${video_card_url.host}<br>クリックでツイートを開く</p></div>`;
+                                        const night_spam_twitter_card_elem = cslt_target_tweet_elem.querySelector(`div[aria-labelledby][id]`);
+                                        if (night_spam_twitter_card_elem != null) {
+                                            night_spam_twitter_card_elem.insertAdjacentHTML("afterbegin", ins_html);
+                                            if (cslp_settings.hit_url_copy == true) {
+                                                copy_url(cslt_target_tweet_elem);
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             if (night_spam_processed_flag) {
                                 cslt_target_tweet_elem.setAttribute("cslt_night_spam_processed_flag", "true");
@@ -2631,4 +2750,21 @@ function block_mute_io() {
             this.value = '';
         })
     }
+}
+//配列内文字列エスケープ処理&正規表現作成関数
+function array_regexp_escape(input_array, is_group){
+    if(is_group){
+        return new RegExp(`(${input_array.join("|").replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'g');
+    }else{
+        return new RegExp(`(${input_array.join("|").replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`);
+    }
+}
+//任意月以内検出関数
+function is_date_with_month(date, range){
+    const input_date = new Date(date);
+    const now_date = Date.now();
+    const range_date = new Date();
+    range_date.setMonth(range_date.getMonth() - range);
+    const range_start_date = range_date.getTime();
+    return input_date >= range_date && range_start_date <= now_date;
 }
