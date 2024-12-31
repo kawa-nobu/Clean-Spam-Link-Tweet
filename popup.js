@@ -38,6 +38,7 @@ window.addEventListener("load", function(){
             document.getElementById("hiturl_copy_sw").checked = cslp_settings.hit_url_copy;
             document.getElementById("hiturl_copy_opt").value = cslp_settings.hit_url_copy_mode;
             document.getElementById("hitur_copy_text").value = cslp_settings.hit_url_copy_user_text;
+            document.getElementById("hide_word_disable_escape_sw").checked = cslp_settings.register_word_regexp_mode;
             document.getElementById("disable_shorturl_sw").checked = cslp_settings.short_url_hit_disable;
 
             document.getElementById("hiturl_copy_adv_sw").checked = cslp_settings.hit_url_copy_advanced;
@@ -94,6 +95,12 @@ window.addEventListener("load", function(){
             document.getElementById("report_btn_size_selector").value = cslp_settings.oneclick_report_btn_size;
             document.getElementById("report_btn_set_tweetmore_sw").checked = cslp_settings.oneclick_report_btn_set_tweetmore;
             document.getElementById("report_btn_dsp_all_users").checked = cslp_settings.oneclick_report_btn_all_users;
+            //
+            document.getElementById("promotion_hide_sw").checked = cslp_settings.promotion_hide;
+            document.getElementById("blank_profile_account_hide_sw").checked = cslp_settings.blank_profile_hide;
+            document.getElementById("blocked_by_hide_sw").checked = cslp_settings.blocked_by_hide;
+            document.getElementById("recent_created_account_hide_sw").checked = cslp_settings.recent_created_account_hide;
+            document.getElementById("recent_created_account_hide_range_num").value = cslp_settings.recent_created_account_hide_range;
             //報告選択できる項目
             if(cslp_settings.oneclick_report != true){
                 document.querySelector('#click_mute_block_opt option[value="1"]').disabled = true;
@@ -284,6 +291,13 @@ window.addEventListener("load", function(){
     //
     document.getElementById("hiturl_copy_adv_sw").addEventListener("change", function(){
         cslp_settings.hit_url_copy_advanced = document.getElementById("hiturl_copy_adv_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("hide_word_disable_escape_sw").addEventListener("change", function(){
+        cslp_settings.register_word_regexp_mode = document.getElementById("hide_word_disable_escape_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
@@ -553,6 +567,49 @@ window.addEventListener("load", function(){
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
+
+    document.getElementById("promotion_hide_sw").addEventListener("change", function(){
+        cslp_settings.promotion_hide = document.getElementById("promotion_hide_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("blank_profile_account_hide_sw").addEventListener("change", function(){
+        cslp_settings.blank_profile_hide = document.getElementById("blank_profile_account_hide_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("blocked_by_hide_sw").addEventListener("change", function(){
+        cslp_settings.blocked_by_hide = document.getElementById("blocked_by_hide_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("recent_created_account_hide_sw").addEventListener("change", function(){
+        cslp_settings.recent_created_account_hide = document.getElementById("recent_created_account_hide_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("recent_created_account_hide_range_num").addEventListener("change", function(){
+        if(Number(this.value) >= 1){
+            cslp_settings.recent_created_account_hide_range = document.getElementById("recent_created_account_hide_range_num").value;
+            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                console.log(cslp_settings);
+            });
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }else{
+            document.getElementById("recent_created_account_hide_range_num").value = 1;
+            append_alert("<p>1以上の値を入力してください！</p>");
+        }
+        
+    })
+
     document.getElementById("click_report_follow_list_sw").addEventListener("change", function(){
         cslp_settings.oneclick_report_follow_list = document.getElementById("click_report_follow_list_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
@@ -633,13 +690,33 @@ window.addEventListener("load", function(){
         const hide_word_input_area = document.getElementById("hide_words_manager_input");
         hide_word_input_area.value = cslp_settings.user_register_word_list.replaceAll(",", "\n")
         hide_word_input_area.scrollTop = hide_word_input_area.scrollHeight;
-        document.getElementById("append_hide_words_okbtn").addEventListener("click", function(){
-            cslp_settings.user_register_word_list = hide_word_input_area.value.split("\n").filter(line => line.trim() !== '').join(",");
-            chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
-                console.log(cslp_settings);
-            });
-            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
-            document.getElementById("user_hide_words_manager_wrap").remove();
+        document.getElementById("append_hide_words_okbtn").addEventListener("click", function(event){
+            let regexp_mode_validation_flag = true;
+            const input_words = hide_word_input_area.value.split("\n").filter(line => line.trim() !== '');
+            //正規表現モード構文チェック
+            if(cslp_settings.register_word_regexp_mode){
+                try {
+                    console.log(input_words)
+                    const check_words = new RegExp(`(${input_words.join("|")})`, 'g');
+                } catch (error) {
+                    event.preventDefault();
+                    regexp_mode_validation_flag = false;
+                    document.getElementById("user_hide_words_manager_wrap").remove();
+                    if(error instanceof SyntaxError){
+                        append_alert('<p><span style="color:red;font-weight:bold">登録する正規表現の構文にエラーがあります！</span><br>変更は保存されません</p>');
+                    }else{
+                        append_alert('<p><span style="color:red;font-weight:bold">登録ワードの構文にエラーがあります！</span><br>変更は保存されません</p>');
+                    }
+                }
+            }
+            if(regexp_mode_validation_flag){
+                cslp_settings.user_register_word_list = input_words.join(",");
+                chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+                    console.log(cslp_settings);
+                });
+                append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+                document.getElementById("user_hide_words_manager_wrap").remove();
+            }
         })
     })
     //非表示ユーザー設定マネージャー
