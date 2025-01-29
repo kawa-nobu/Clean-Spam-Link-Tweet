@@ -18,7 +18,7 @@ window.addEventListener("load", function(){
         if(value.cslp_settings == undefined || cslp_update_flag == true){
             console.log("Open Twitter");
             if(cslp_update_flag == true){
-                append_alert("<p>Clean-Spam-Link-Tweetバージョンが更新されたため、設定の初期化を行いました。<br>Twitterを開くか再読み込みをしてください。</p>", "window_close");
+                append_alert("<p>Clean-Spam-Link-Tweetバージョンが更新されました！<br>Twitterを開くか再読み込みをしてください。</p>", "window_close");
             }else{
                 append_alert("<p>設定を構築する為、Twitterを開くか再読み込みをしてください。</p>", "window_close");
             }
@@ -67,6 +67,7 @@ window.addEventListener("load", function(){
             document.getElementById("click_report_btn_confirm_sw").checked = cslp_settings.oneclick_report_confirm;
             document.getElementById("one_click_add_cslt_hide_user_list_sw").checked = cslp_settings.oneclick_report_add_cslt_hideuser;
 
+            document.getElementById("click_report_target_opt").value = cslp_settings.oneclick_report_target_mode;
             document.getElementById("click_mute_block_opt").value = cslp_settings.oneclick_report_after_mode;
             document.getElementById("click_report_opt").value = cslp_settings.oneclick_report_option;
             document.getElementById("click_developer_report_sw").checked = cslp_settings.oneclick_developer_report;
@@ -82,6 +83,7 @@ window.addEventListener("load", function(){
             document.getElementById("arabic_block_lang_english").checked = cslp_settings.arabic_reply_block_lang.english;
             //
             document.getElementById("tw_f_adv_block_sw").checked = cslp_settings.tw_for_adv_block;
+            document.getElementById("auto_tweet_tools_block_sw").checked = cslp_settings.auto_tweet_tools_tweet_block;
             //
             document.getElementById("affiliate_block_sw").checked = cslp_settings.affiliate_spam_block;
             document.getElementById("affiliate_strict_block_sw").checked = cslp_settings.affiliate_spam_block_strict;
@@ -101,6 +103,8 @@ window.addEventListener("load", function(){
             document.getElementById("blocked_by_hide_sw").checked = cslp_settings.blocked_by_hide;
             document.getElementById("recent_created_account_hide_sw").checked = cslp_settings.recent_created_account_hide;
             document.getElementById("recent_created_account_hide_range_num").value = cslp_settings.recent_created_account_hide_range;
+            document.getElementById("affiliate_spam_area_opt").value = cslp_settings.affiliate_spam_area_option;
+            document.getElementById("reprint_manga_spam_area_opt").value = cslp_settings.reprint_manga_spam_area_option;
             //報告選択できる項目
             if(cslp_settings.oneclick_report != true){
                 document.querySelector('#click_mute_block_opt option[value="1"]').disabled = true;
@@ -187,6 +191,13 @@ window.addEventListener("load", function(){
     //
     document.getElementById("tw_f_adv_block_sw").addEventListener("change", function(){
         cslp_settings.tw_for_adv_block = document.getElementById("tw_f_adv_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("auto_tweet_tools_block_sw").addEventListener("change", function(){
+        cslp_settings.auto_tweet_tools_tweet_block = document.getElementById("auto_tweet_tools_block_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
@@ -610,6 +621,21 @@ window.addEventListener("load", function(){
         
     })
 
+    document.getElementById("affiliate_spam_area_opt").addEventListener("change", function(){
+        cslp_settings.affiliate_spam_area_option = document.getElementById("affiliate_spam_area_opt").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("reprint_manga_spam_area_opt").addEventListener("change", function(){
+        cslp_settings.reprint_manga_spam_area_option = document.getElementById("reprint_manga_spam_area_opt").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+
     document.getElementById("click_report_follow_list_sw").addEventListener("change", function(){
         cslp_settings.oneclick_report_follow_list = document.getElementById("click_report_follow_list_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
@@ -618,6 +644,18 @@ window.addEventListener("load", function(){
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
 
+    //document.getElementById("click_report_target_opt").value = cslp_settings.oneclick_report_target_mode;
+    document.getElementById("click_report_target_opt").addEventListener("change", function(){
+        cslp_settings.oneclick_report_target_mode = document.getElementById("click_report_target_opt").value;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        if(document.getElementById("click_report_target_opt").value == '2'){
+            append_alert("<p>報告件数が増えるため、レートリミット制限に達する速度が早まる可能性があります。<br>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }else{
+            append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+        }
+    })
     document.getElementById("click_mute_block_opt").addEventListener("change", function(){
         cslp_settings.oneclick_report_after_mode = document.getElementById("click_mute_block_opt").value;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
