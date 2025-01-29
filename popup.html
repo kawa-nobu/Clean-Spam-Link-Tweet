@@ -193,6 +193,13 @@
                 </div>
             </div>
             <div class="blue_block">
+                <h3>投稿自動化ツール使用ツイート非表示</h3>
+                <div class="sw_1 new_mode_sw" title="投稿自動化ツールを使用したツイートを非表示にします">
+                    <input class="sw_1_input" type="checkbox" id="auto_tweet_tools_block_sw"> 
+                    <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div class="blue_block">
                 <h3>Amazonリンク非表示</h3>
                 <div class="sw_1 new_mode_sw" title="amazon.co.jp等のリンクを非表示にします">
                     <input class="sw_1_input" type="checkbox" id="amz_aff_sw"> 
@@ -277,6 +284,26 @@
                     <input id="recent_created_account_hide_range_num" class="setting_input_num" type="number" min="0" value="0">
                 </div>
             </div>
+            <div>
+                <h3>アフィリエイトスパム非表示&nbsp;適用範囲</h3>
+                <div class="mode_selector">
+                    <select id="affiliate_spam_area_opt" title="アフィリエイトスパム非表示機能の適用範囲を設定します">
+                        <option value="0" title="アフィリエイトスパム非表示機能を返信欄のみ適用します">返信</option>
+                        <option value="1" title="アフィリエイトスパム非表示機能を検索のみ適用します">返信・検索</option>
+                        <option value="2" title="アフィリエイトスパム非表示機能をすべてのページで適用します">すべて</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <h3>無断転載漫画スパム非表示&nbsp;適用範囲</h3>
+                <div class="mode_selector">
+                    <select id="reprint_manga_spam_area_opt" title="無断転載漫画スパム非表示機能の適用範囲を設定します">
+                        <option value="0" title="無断転載漫画スパム非表示機能を返信欄のみ適用します">返信</option>
+                        <option value="1" title="無断転載漫画スパム非表示機能を検索のみ適用します">返信・検索</option>
+                        <option value="2" title="無断転載漫画スパム非表示機能をすべてのページで適用します">すべて</option>
+                    </select>
+                </div>
+            </div>
             <div class="blue_block op_setting_manager_btn_wrap" id="op_user_words_register_sw" title="任意の非表示ワードを設定します">
                 <h3>非表示ワード設定</h3>
                 <span class="settings_manager_icon"></span>
@@ -350,6 +377,16 @@
                 <div class="sw_1 new_mode_sw" title="インプレフィルタ精度向上のために開発者へ情報提供します。">
                     <input class="sw_1_input" type="checkbox" id="click_developer_report_sw"> 
                     <label for="sw_1" class="sw_1_label"></label>
+                </div>
+            </div>
+            <div>
+                <h3>返信/ツイート&nbsp;報告対象設定</h3>
+                <div class="mode_selector">
+                    <select id="click_report_target_opt" title="報告する対象を設定します">
+                        <option value="0" title="返信やツイートのみを報告します">返信/ツイートのみ</option>
+                        <option value="1" title="返信やツイートしているユーザーのみを報告します">ユーザーのみ</option>
+                        <option value="2" title="返信やツイートとユーザー両方を報告します">返信/ツイートとユーザー両方</option>
+                    </select>
                 </div>
             </div>
             <div>
@@ -494,6 +531,7 @@
                 <div title="ドメインフィルタの作成協力者情報"><h3>URLフィルタ作成協力者</h3><span class="about_text" id="filter_thanks"></span></div>
                 <div class="op_other_link_btn_no_decoration" title="ドメインフィルタ参考元リスト"><span class="about_text" id="filter_list"></span></div>
                 <div class="op_other_link_btn_no_decoration" title="拡張機能のGitHubリポジトリ"><a class="about_text" href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet" target="_blank" rel="noopener noreferrer"><div class="op_other_link_btn_wrap"><h3>拡張機能リポジトリ(GitHub)</h3><span class="other_link_icon"></span></div></a></div>
+                <div class="op_other_link_btn_no_decoration" title="リリースノート"><a class="about_text" href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet/releases/" target="_blank" rel="noopener noreferrer"><div class="op_other_link_btn_wrap"><h3>リリースノート(GitHub)</h3><span class="other_link_icon"></span></div></a></div>
                 <div class="op_other_link_btn_no_decoration" title="拡張機能ヘルプページ"><a class="about_text" href="https://github.com/kawa-nobu/Clean-Spam-Link-Tweet/wiki" target="_blank" rel="noopener noreferrer"><div class="op_other_link_btn_wrap"><h3>拡張機能ヘルプ(公式Wiki)</h3><span class="other_link_icon"></span></div></a></div>
                 <div class="op_other_link_btn_no_decoration" title="拡張機能の開発者へ直接フィードバック"><a class="about_text" href="https://forms.gle/pnha22jrmy478xau9" target="_blank" rel="noopener noreferrer"><div class="op_other_link_btn_wrap"><h3>フィードバック(Googleフォーム)</h3><span class="other_link_icon"></span></div></a></div>
             </div>
