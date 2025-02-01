@@ -88,7 +88,7 @@ const tweet_obs = new MutationObserver(function(){
                     //console.log("status")
                     const tweet_info_reply = get_tw_userdata(tweet_elem[tweet_index], "reply");
 
-                    //console.dir(tweet_info_reply)
+                    console.dir(tweet_info_reply)
 
                     if(tweet_info_reply != undefined){
                         //報告用JSON生成
@@ -100,7 +100,7 @@ const tweet_obs = new MutationObserver(function(){
                         if(tweet_info_reply.promoted_content != undefined){
                             is_promo_tweet = true;
                         }
-                        //動画情報取り出し
+                        //動画・GIF情報取り出し
                         if(is_media_tweet){
                             const media_info_obj = tweet_info_reply.entities.media;
                             //console.log(media_info_obj)
@@ -123,9 +123,19 @@ const tweet_obs = new MutationObserver(function(){
                                         }
                                     }
                                     const media_info = {
+                                        type: media_info_obj[index].type,
                                         duration_ms: media_info_obj[index].video_info.duration_millis,
                                         video_raw: media_info_obj[index].video_info.variants.at(-1),
                                         video_source_user_info:media_source_user_data
+                                    }
+                                    video_info.push(media_info);
+                                }
+                                if(media_info_obj[index].type == "animated_gif"){
+                                    const media_info = {
+                                        type: media_info_obj[index].type,
+                                        duration_ms: null,
+                                        video_raw: media_info_obj[index].video_info.variants.at(-1),
+                                        video_source_user_info: null
                                     }
                                     video_info.push(media_info);
                                 }
@@ -394,9 +404,19 @@ const tweet_obs = new MutationObserver(function(){
                                         }
                                     }
                                     const media_info = {
+                                        type: media_info_obj[index].type,
                                         duration_ms: media_info_obj[index].video_info.duration_millis,
                                         video_raw: media_info_obj[index].video_info.variants.at(-1),
                                         video_source_user_info:media_source_user_data
+                                    }
+                                    video_info.push(media_info);
+                                }
+                                if(media_info_obj[index].type == "animated_gif"){
+                                    const media_info = {
+                                        type: media_info_obj[index].type,
+                                        duration_ms: null,
+                                        video_raw: media_info_obj[index].video_info.variants.at(-1),
+                                        video_source_user_info: null
                                     }
                                     video_info.push(media_info);
                                 }
@@ -552,9 +572,19 @@ const tweet_obs = new MutationObserver(function(){
                                         }
                                     }
                                     const media_info = {
+                                        type: media_info_obj[index].type,
                                         duration_ms: media_info_obj[index].video_info.duration_millis,
                                         video_raw: media_info_obj[index].video_info.variants.at(-1),
                                         video_source_user_info:media_source_user_data
+                                    }
+                                    video_info.push(media_info);
+                                }
+                                if(media_info_obj[index].type == "animated_gif"){
+                                    const media_info = {
+                                        type: media_info_obj[index].type,
+                                        duration_ms: null,
+                                        video_raw: media_info_obj[index].video_info.variants.at(-1),
+                                        video_source_user_info: null
                                     }
                                     video_info.push(media_info);
                                 }

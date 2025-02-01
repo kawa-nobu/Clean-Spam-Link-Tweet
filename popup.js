@@ -52,6 +52,7 @@ window.addEventListener("load", function(){
             document.getElementById("emoji_block_sw").checked = cslp_settings.hide_emoji_text;
             document.getElementById("follow_list_find_impuser_sw").checked = cslp_settings.follow_list_imp_find_user;
 
+            document.getElementById("animated_gif_block_sw").checked = cslp_settings.animated_gif_block;
             document.getElementById("short_video_block_sw").checked = cslp_settings.short_video_block;
             document.getElementById("short_video_block_tl_disable_sw").checked = cslp_settings.short_video_block_disable_tl;
             document.getElementById("short_video_block_val_num").value = Number(cslp_settings.short_video_block_ms)/1000;
@@ -63,6 +64,7 @@ window.addEventListener("load", function(){
             document.getElementById("click_report_sw").checked = cslp_settings.oneclick_report;
             document.getElementById("click_report_follow_list_sw").checked = cslp_settings.oneclick_report_follow_list;
             document.getElementById("click_report_btn_tl_disable_sw").checked = cslp_settings.oneclick_report_timeline_disable;
+            document.getElementById("click_report_btn_notification_disable_sw").checked = cslp_settings.oneclick_report_notification_page_disable;
 
             document.getElementById("click_report_btn_confirm_sw").checked = cslp_settings.oneclick_report_confirm;
             document.getElementById("one_click_add_cslt_hide_user_list_sw").checked = cslp_settings.oneclick_report_add_cslt_hideuser;
@@ -486,6 +488,13 @@ window.addEventListener("load", function(){
         }
     })
     //
+    document.getElementById("animated_gif_block_sw").addEventListener("change", function(){
+        cslp_settings.animated_gif_block = document.getElementById("animated_gif_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
     document.getElementById("short_video_block_sw").addEventListener("change", function(){
         cslp_settings.short_video_block = document.getElementById("short_video_block_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
@@ -516,6 +525,14 @@ window.addEventListener("load", function(){
 //
     document.getElementById("click_report_btn_tl_disable_sw").addEventListener("change", function(){
         cslp_settings.oneclick_report_timeline_disable = document.getElementById("click_report_btn_tl_disable_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+
+    document.getElementById("click_report_btn_notification_disable_sw").addEventListener("change", function(){
+        cslp_settings.oneclick_report_notification_page_disable = document.getElementById("click_report_btn_notification_disable_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
