@@ -316,6 +316,7 @@ function main(filter_url, imp_filter_url) {
                     short_video_block: false,
                     short_video_block_ms: "2000",
                     short_video_block_disable_tl: true,
+                    animated_gif_block: false,
                     version: chrome.runtime.getManifest().version,
                     filter_update: json[0].developer_update,
                     filter_link: json[0].thanks_link,
@@ -330,6 +331,7 @@ function main(filter_url, imp_filter_url) {
                     oneclick_report_target_mode: "0",
                     oneclick_report_after_mode: "0",
                     oneclick_report_option: "5",
+                    oneclick_report_notification_page_disable: false,
                     oneclick_report_add_cslt_hideuser: false,
                     oneclick_developer_report: false,
                     oneclick_developer_reportsrv_url: "kwdev-sys.com/api/cslt/imp_report_sys/pub_reporter/",
@@ -677,6 +679,10 @@ function main(filter_url, imp_filter_url) {
                     //ブロック・ミュートリストページ機能追加
                     if (window.location.pathname.match("\/settings\/blocked|\/settings\/muted/")?.length == 1) {
                         block_mute_io();
+                    }
+                    /* 報告ボタン通知欄非表示時動作無効化 */
+                    if(cslp_settings.oneclick_report_notification_page_disable && window.location.pathname.match(/^\/notifications$/)?.length == 1 || cslp_settings.oneclick_report_after_mode == "5" && window.location.pathname.match(/^\/notifications$/)?.length == 1){
+                        return;
                     }
                     /*以下、スパム対策と報告用機能付加処理*/
                     //元ツイートスクリーンネーム取得
@@ -1153,20 +1159,33 @@ function main(filter_url, imp_filter_url) {
                                         }
                                     }
                                 }
-                                //短い秒数の動画
-                                if (cslp_settings.short_video_block == true && cslp_settings.short_video_block_disable_tl == false || cslp_settings.short_video_block == true && cslp_settings.short_video_block_disable_tl == true && is_timeline_follow() == false && is_user_page() == false && is_bookmark_page() == false) {
+                                //アニメーションGIF・短い秒数の動画非表示
+                                if(cslp_settings.animated_gif_block || cslp_settings.short_video_block){
                                     if (cslt_tweet_info_obj.tweet_video_info != null) {
-                                        let short_video_hide_flag = false;
+                                        let short_video_gif_hide_flag = false;
                                         for (let video_index = 0; video_index < cslt_tweet_info_obj.tweet_video_info.length; video_index++) {
-                                            if (cslt_tweet_info_obj.tweet_video_info[video_index].duration_ms <= Number(cslp_settings.short_video_block_ms)) {
-                                                //console.log("ShortVideo=>"+cslt_tweet_info_obj.text)
-                                                short_video_hide_flag = true;
+                                            //アニメーションGIF
+                                            if(cslp_settings.animated_gif_block && cslt_tweet_info_obj.tweet_video_info[video_index].type == 'animated_gif'){
+                                                //console.log("AnimatedGIF=>"+cslt_tweet_info_obj.text)
+                                                short_video_gif_hide_flag = true;
                                                 cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                                 cslt_target_tweet_elem.textContent = "";
                                                 break;
                                             }
+                                            //短い秒数の動画
+                                            if(cslp_settings.short_video_block && cslp_settings.short_video_block_disable_tl == false || cslp_settings.short_video_block && cslp_settings.short_video_block_disable_tl && is_timeline_follow() == false && is_user_page() == false && is_bookmark_page() == false){
+                                                if(cslt_tweet_info_obj.tweet_video_info[video_index].type == 'video'){
+                                                    if (cslt_tweet_info_obj.tweet_video_info[video_index].duration_ms <= Number(cslp_settings.short_video_block_ms)) {
+                                                        //console.log("ShortVideo=>"+cslt_tweet_info_obj.text)
+                                                        short_video_gif_hide_flag = true;
+                                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                                        cslt_target_tweet_elem.textContent = "";
+                                                        break;
+                                                    }
+                                                }
+                                            }
                                         }
-                                        if (short_video_hide_flag) {
+                                        if (short_video_gif_hide_flag) {
                                             continue;
                                         }
                                     }
@@ -1783,7 +1802,7 @@ function main(filter_url, imp_filter_url) {
                                     if (get_cookie_twid != tweet_info.user_data.user_id) {
                                         if (cslp_settings.oneclick_developer_report == true) {
                                             //開発者情報提供
-                                            if (is_follow_page() == false) {
+                                            if (!tweet_info?.is_user_data_only && btn_mode != "notification" && is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
                                                 cslt_message_display("情報提供の処理を行いました", "message");
                                             }
@@ -1814,7 +1833,7 @@ function main(filter_url, imp_filter_url) {
                                     if (get_cookie_twid != tweet_info.user_data.user_id) {
                                         if (cslp_settings.oneclick_developer_report == true) {
                                             //開発者情報提供
-                                            if (is_follow_page() == false) {
+                                            if (!tweet_info?.is_user_data_only && btn_mode != "notification" && is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
                                                 cslt_message_display("情報提供の処理を行いました", "message");
                                             }
