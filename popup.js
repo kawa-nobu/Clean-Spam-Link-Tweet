@@ -89,6 +89,7 @@ window.addEventListener("load", function(){
             //
             document.getElementById("affiliate_block_sw").checked = cslp_settings.affiliate_spam_block;
             document.getElementById("affiliate_strict_block_sw").checked = cslp_settings.affiliate_spam_block_strict;
+            document.getElementById("scam_induction_spam_block_sw").checked = cslp_settings.scam_induction_spam_block;
             document.getElementById("look_profile_delete_sw").checked = cslp_settings.look_profile_spam_block;
             document.getElementById("reprint_manga_delete_sw").checked = cslp_settings.reprint_manga_spam_block;
             document.getElementById("reprint_manga_delete_strict_sw").checked = cslp_settings.reprint_manga_spam_block_strict;
@@ -223,6 +224,13 @@ window.addEventListener("load", function(){
     })
     document.getElementById("affiliate_strict_block_sw").addEventListener("change", function(){
         cslp_settings.affiliate_spam_block_strict = document.getElementById("affiliate_strict_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("scam_induction_spam_block_sw").addEventListener("change", function(){
+        cslp_settings.scam_induction_spam_block = document.getElementById("scam_induction_spam_block_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });

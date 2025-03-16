@@ -18,6 +18,8 @@ let affiliate_user_text_regexp;
 let amazon_link_regexp;
 let auto_tweet_tools_client_name_regexp;
 let user_blocking_word_list_regexp;
+let scam_induction_spam_block_regexp;
+let scam_induction_spam_user_text_regexp = null;
 let hide_user_list_regexp;
 let user_whitelist_regexp;
 let cslt_exclusion_css_flag;
@@ -345,6 +347,7 @@ function main(filter_url, imp_filter_url) {
                     affiliate_spam_block: false,
                     affiliate_spam_block_strict: false,
                     affiliate_spam_area_option: "0",
+                    scam_induction_spam_block: false,
                     following_user_exclusion: true,
                     user_register_word_hide_profile: false,
                     user_register_word_list: "",
@@ -463,6 +466,12 @@ function main(filter_url, imp_filter_url) {
                         user_blocking_word_list_regexp = new RegExp(`(${cslp_settings.user_register_word_list.split(",").join("|")})`);
                         //console.log(user_blocking_word_list_regexp)
                     }
+                }
+                if(cslp_settings.scam_induction_spam_block){
+                    scam_induction_spam_block_regexp = new RegExp(json[1].scam_induction_spam_text);
+                }
+                if(json[1].scam_induction_spam_user_text){
+                    scam_induction_spam_user_text_regexp = new RegExp(json[1].scam_induction_spam_user_text);
                 }
                 if (cslp_settings.user_register_hideuser.length != 0) {
                     hide_user_list_regexp = array_regexp_escape(cslp_settings.user_register_hideuser, false);
@@ -811,6 +820,25 @@ function main(filter_url, imp_filter_url) {
                                         cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                         cslt_target_tweet_elem.textContent = "";
                                         continue;
+                                    }
+                                }
+                                //誘導系スパム非表示
+                                if(cslp_settings.scam_induction_spam_block){
+                                    //ツイートチェック
+                                    if(scam_induction_spam_block_regexp.test(cslt_tweet_info_obj.text)){
+                                        //console.log("ScamInductionText=>"+cslt_tweet_info_obj.text)
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                        continue;
+                                    }
+                                    //ユーザープロフィール文チェック
+                                    if(scam_induction_spam_user_text_regexp){
+                                        if(scam_induction_spam_user_text_regexp.test(cslt_tweet_info_obj.user_data.description)){
+                                            //console.log("ScamInductionDescription=>"+cslt_tweet_info_obj.text)
+                                            cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                            cslt_target_tweet_elem.textContent = "";
+                                            continue;
+                                        }
                                     }
                                 }
                                 //プロフィール文空白アカウント非表示
