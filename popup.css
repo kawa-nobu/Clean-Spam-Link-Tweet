@@ -6,7 +6,7 @@ html{
   color-scheme: light dark;
 }
 body{
-  width: 250px;
+  width: 260px;
   height: auto;
 }
 summary{
@@ -60,6 +60,9 @@ h1{
 h3{
   font-size: 0.55rem;
   margin-left: 2%;
+}
+summary{
+  font-size: 0.8rem;
 }
 .text_bold{
   font-weight: bold;

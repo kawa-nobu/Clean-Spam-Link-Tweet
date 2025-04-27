@@ -98,6 +98,19 @@ function is_apple_device() {
         return false;
     }
 }
+//ブラウザ判定
+function is_use_cookie_mode() {
+    const userAgent = navigator.userAgent;
+    if (userAgent.includes("Edg/") || userAgent.includes("OPR/") || userAgent.includes("Chrome/") || userAgent.includes("Chromium/") || userAgent.includes("CriOS")) {
+        return false;
+    } else if (userAgent.includes("Firefox/") || userAgent.includes("FxiOS")) {
+        return true;
+    } else if (userAgent.includes("Safari/") && !userAgent.includes("Chrome/") && !userAgent.includes("Chromium/")) {
+        return true;
+    } else {
+        return true;
+    }
+}
 //汎用ランダムID作成
 function generate_random_id() {
     return Math.random().toString(32).substring(2).replaceAll(/[0-9]/g, "") + Math.random().toString(32).substring(2);
@@ -1584,7 +1597,7 @@ function main(filter_url, imp_filter_url) {
                     document.getElementById(random_id)?.addEventListener("click", async function () {
                         let get_cookie_twid = null;
                         //ログインユーザーID取得
-                        if (is_apple_device()) {
+                        if (is_use_cookie_mode()) {
                             get_cookie_twid = decodeURIComponent(document.cookie.split(";").find(cookie => /twid=/.test(cookie))).replace("twid=u=", "");
                         } else {
                             get_cookie_twid = await new Promise((resolve) => {
@@ -2808,20 +2821,13 @@ async function get_block_mute_list(mode, host_mode, cursor_id) {
 
                 const api_json = await lists_api_access.json();
                 let user_lists = null;
-                if (cursor_str == null) {
-                    if (mode == "block") {
-                        user_lists = await api_json.data.viewer.timeline.timeline.instructions[2].entries;
-                    } else {
-                        user_lists = await api_json.data.viewer.muting_timeline.timeline.instructions[2].entries;
-                    }
-                } else {
-                    if (mode == "block") {
-                        user_lists = await api_json.data.viewer.timeline.timeline.instructions[1].entries;
-                    } else {
-                        user_lists = await api_json.data.viewer.muting_timeline.timeline.instructions[1].entries;
-                    }
+                if (mode == "block") {
+                    user_lists = await (api_json?.data?.viewer?.timeline?.timeline?.instructions?.find(i => i?.entries))?.entries;
+                }else{
+                    user_lists = await (api_json?.data?.viewer?.muting_timeline?.timeline?.instructions?.find(i => i?.entries))?.entries;
                 }
-                const user_list_cursor = await user_lists[user_lists.length - 2].content.value;
+                console.log(user_lists)
+                const user_list_cursor = user_lists[user_lists.length - 2].content.value;
                 if (user_list_cursor.match(/^0\|/g) == null) {
                     //console.log("continue")
                     user_lists_concat = user_lists_concat.concat(user_lists.slice(0, user_lists.length - 2));
@@ -2918,9 +2924,9 @@ function ctid_create() {
 async function ct0_token_get(host_mode) {
     return await new Promise(async (resolve) => {
         const is_private_mode = chrome.extension.inIncognitoContext;
-        //console.log(is_apple_device())
-        if (is_private_mode || is_apple_device()) {
-            const doc_cookie_ct0 = document.cookie.match(/(?<=ct0=)(.*?)(?=;)/g);
+        //console.log(is_use_cookie_mode())
+        if (is_private_mode || is_use_cookie_mode()) {
+            const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)[1];
             resolve(doc_cookie_ct0);
         } else {
             const get_broswer_api_ct0 = await new Promise((api_resolve) => {
@@ -2933,7 +2939,7 @@ async function ct0_token_get(host_mode) {
                 resolve(get_broswer_api_ct0);
             } else {
                 //console.log("DocumentMode")
-                const doc_cookie_ct0 = document.cookie.match(/(?<=ct0=)(.*?)(?=;)/g);
+                const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)[1];
                 resolve(doc_cookie_ct0);
             }
         }

@@ -1,8 +1,10 @@
 window.addEventListener("load", function(){
     //iPadサイズ調整
-    if(new RegExp('(iPad|Macintosh)', 'g').test(navigator.userAgent) && !new RegExp('(Chrome|FireFox)', 'g').test(navigator.userAgent)){
-        console.log("iPad_Mode")
-        document.body.style.width = "450px";
+    if(new RegExp('(iPad|Macintosh)', 'g').test(navigator.userAgent) && !new RegExp('(Chrome|Firefox)', 'g').test(navigator.userAgent)){
+        if(!new RegExp('(Chrome|FireFox)', 'g').test(navigator.userAgent)){
+            console.log("iPad_Mode")
+            document.body.style.width = "450px";
+        }
     }
     let cslp_settings = null;
     chrome.storage.local.get("cslp_settings", function(value){
@@ -291,7 +293,7 @@ window.addEventListener("load", function(){
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
-        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p><p>URLをコピー(レガシー)するには[Ctrl]キーを、ツイート情報は[Alt]+[L]キー押してブラックアウトされたツイートをクリックしてください。</p>");
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p><p>URLをコピー(レガシー)するには[Ctrl]キーを、ツイート情報は[Alt(option)]+[L]キー押してブラックアウトされたツイートをクリックしてください。</p>");
     })
     document.getElementById("hiturl_copy_opt").addEventListener("change", function(){
         cslp_settings.hit_url_copy_mode = document.getElementById("hiturl_copy_opt").value;
