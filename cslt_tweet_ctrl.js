@@ -28,7 +28,7 @@ function get_tw_userdata(input_element, mode){
 const root_elem = document.querySelector('#react-root');
 //ログインユーザーID出力関数
 function login_userid(){
-    return document.querySelector('script[type="text/javascript"][charset="utf-8"][nonce]').textContent.match(/(?<="screen_name":")(.*)(?=","statuses_count")/g);
+    return document.querySelector('script[type="text/javascript"][charset="utf-8"][nonce]').textContent.match(/"screen_name":"(.*?)"/)[1];
 }
 const tweet_obs = new MutationObserver(function(){
     //console.log("obs_load");
@@ -251,8 +251,7 @@ const tweet_obs = new MutationObserver(function(){
                             target_root_elem_reply.setAttribute("cslt_tweet_info_following_flag", "true");
                         }
                         //自分のツイートフラグ付加
-                        //console.log(login_userid()[0])
-                        if(login_userid()[0] == tweet_info_reply.user.screen_name){
+                        if(login_userid() == tweet_info_reply.user.screen_name){
                             target_root_elem_reply.setAttribute("cslt_tweet_info_mytweet_flag", "true");
                         }
                         //Blue認証付きフラグ
@@ -266,7 +265,7 @@ const tweet_obs = new MutationObserver(function(){
                     const view_user = window.location.pathname.split("/")[1];
                     const now_follow_mode = window.location.pathname.split("/")[2];
                     //console.log("follws_run")
-                    if(login_userid()[0] == view_user && now_follow_mode == "followers"){
+                    if(login_userid() == view_user && now_follow_mode == "followers"){
                         const tweet_info_follow = get_tw_userdata(tweet_elem[tweet_index], "user_page");
                         //console.log(tweet_info_follow)
                         if(tweet_info_follow != undefined){
@@ -528,7 +527,7 @@ const tweet_obs = new MutationObserver(function(){
                             target_root_elem_other.setAttribute("cslt_tweet_info_following_flag", "true");
                         }
                         //自分のツイートフラグ付加
-                        if(login_userid()[0] == tweet_info_other.user.screen_name){
+                        if(login_userid() == tweet_info_other.user.screen_name){
                             target_root_elem_other.setAttribute("cslt_tweet_info_mytweet_flag", "true");
                         }
                         //Blue認証付きフラグ
@@ -658,7 +657,7 @@ const tweet_obs = new MutationObserver(function(){
                             target_root_elem_communities.setAttribute("cslt_tweet_info_following_flag", "true");
                         }
                         //自分のツイートフラグ付加
-                        if(login_userid()[0] == tweet_info_communities?.user.screen_name){
+                        if(login_userid() == tweet_info_communities?.user.screen_name){
                             target_root_elem_communities.setAttribute("cslt_tweet_info_mytweet_flag", "true");
                         }
                         //Blue認証付きフラグ
