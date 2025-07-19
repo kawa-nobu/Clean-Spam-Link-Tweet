@@ -88,7 +88,7 @@ const tweet_obs = new MutationObserver(function(){
                     //console.log("status")
                     const tweet_info_reply = get_tw_userdata(tweet_elem[tweet_index], "reply");
 
-                    console.dir(tweet_info_reply)
+                    //console.dir(tweet_info_reply)
 
                     if(tweet_info_reply != undefined){
                         //報告用JSON生成
@@ -171,6 +171,7 @@ const tweet_obs = new MutationObserver(function(){
                             }
                             reply_quoted_obj = {
                                 text:tweet_info_reply.quoted_status.full_text,
+                                mentions: tweet_info_reply.quoted_status.entities?.user_mentions ?? null,
                                 possibly_sensitive:tweet_info_reply.quoted_status.possibly_sensitive,
                                 possibly_sensitive_editable:tweet_info_reply.quoted_status.possibly_sensitive_editable,
                                 "quoted_urls":quoted_urls,
@@ -216,6 +217,7 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         const tweetinfo_attr_reply = {
                             is_root_tweet: is_reply_root_tweet,
+                            mentions: tweet_info_reply.entities?.user_mentions ?? null,
                             text: tweet_info_reply.text,
                             tweet_id: tweet_info_reply.id_str, 
                             tweet_client: tweet_info_reply.source_name,
@@ -223,6 +225,7 @@ const tweet_obs = new MutationObserver(function(){
                             is_user_data_only: false,
                             tweet_lang: tweet_info_reply.lang,
                             is_promoted: is_promo_tweet,
+                            grok_share_attachment: tweet_info_reply?.grok_share_attachment ?? null,
                             user_data:{
                                 name: tweet_info_reply.user.name, 
                                 description: tweet_info_reply.user.description,
@@ -474,6 +477,7 @@ const tweet_obs = new MutationObserver(function(){
                             }
                             other_quoted_obj = {
                                 text:tweet_info_other?.quoted_status.full_text,
+                                mentions: tweet_info_other?.quoted_status.entities?.user_mentions ?? null,
                                 possibly_sensitive:tweet_info_other?.quoted_status.possibly_sensitive,
                                 possibly_sensitive_editable:tweet_info_other?.quoted_status.possibly_sensitive_editable,
                                 "quoted_urls":other_quoted_urls,
@@ -493,6 +497,7 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         const tweetinfo_attr_other = {
                             is_root_tweet: is_other_root_tweet,
+                            mentions: tweet_info_other?.entities?.user_mentions ?? null,
                             text: tweet_info_other?.text,
                             tweet_id: tweet_info_other?.id_str, 
                             tweet_client: tweet_info_other?.source_name,
@@ -500,6 +505,7 @@ const tweet_obs = new MutationObserver(function(){
                             is_user_data_only: false,
                             tweet_lang: tweet_info_other?.lang,
                             is_promoted: is_promo_tweet,
+                            grok_share_attachment: tweet_info_other?.grok_share_attachment ?? null,
                             user_data:{
                                 name: tweet_info_other?.user.name, 
                                 description: tweet_info_other?.user.description,
@@ -627,12 +633,14 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         const tweetinfo_attr_communities = {
                             is_root_tweet: false,
+                            mentions: tweet_info_communities?.entities?.user_mentions ?? null,
                             text: tweet_info_communities?.text,
                             tweet_id: tweet_info_communities?.id_str, 
                             tweet_client: tweet_info_communities?.source_name,
                             is_promoted: is_promo_tweet,
                             is_reply: is_reply_communities,
                             is_user_data_only: false,
+                            grok_share_attachment: tweet_info_communities?.grok_share_attachment ?? null,
                             user_data:{
                                 name: tweet_info_communities?.user.name, 
                                 user_id: tweet_info_communities?.user.id_str,
@@ -669,7 +677,7 @@ const tweet_obs = new MutationObserver(function(){
                 case 'settings_block_mute':
                     const block_mute_list_userid = get_tw_userdata(tweet_elem[tweet_index], "settings_block_mute_user_id");
                     tweet_elem[tweet_index].setAttribute("cslt_block_mute_list_user_id", block_mute_list_userid);
-                    console.log(block_mute_list_userid)
+                    //console.log(block_mute_list_userid)
                     break;
                 default:
                     tweet_elem[tweet_index].closest('[data-testid="cellInnerDiv"]').setAttribute("cslt_tweet_info", JSON.stringify({status:null}));

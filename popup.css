@@ -270,6 +270,13 @@ input:checked + label:after {
     font-size: 2.5rem;
     margin-bottom: 5px;
   }
+  body.ios details > summary{
+    font-size: 1.1rem;
+  }
+  summary{
+    font-size: 3rem;
+  }
+
   .adv_set_content{
     margin-bottom: 5px;
     margin-bottom: 50px;
@@ -403,7 +410,7 @@ input:checked + label:after {
     position: fixed;
     z-index: 1000;
     width: 101vw;
-    height: 120vh;
+    /*height: 120vh;*/
     background: rgba(0, 0, 0, 0.45);
     top: 0;
     left: 0;

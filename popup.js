@@ -1,10 +1,16 @@
 window.addEventListener("load", function(){
+    const user_agent = navigator.userAgent;
     //iPadサイズ調整
-    if(new RegExp('(iPad|Macintosh)', 'g').test(navigator.userAgent) && !new RegExp('(Chrome|Firefox)', 'g').test(navigator.userAgent)){
-        if(!new RegExp('(Chrome|FireFox)', 'g').test(navigator.userAgent)){
+    if(new RegExp('(iPad|Macintosh)', 'g').test(user_agent) && !new RegExp('(Chrome|Firefox)', 'g').test(user_agent)){
+        if(!new RegExp('(Chrome|FireFox)', 'g').test(user_agent)){
             console.log("iPad_Mode")
             document.body.style.width = "450px";
         }
+    }
+    if (/iPhone|iPad|iPod|iOS/i.test(user_agent)) {
+        document.body.classList.add('ios');
+    } else if (/Android/i.test(user_agent)) {
+        document.body.classList.add('android');
     }
     let cslp_settings = null;
     chrome.storage.local.get("cslp_settings", function(value){
@@ -88,6 +94,8 @@ window.addEventListener("load", function(){
             //
             document.getElementById("tw_f_adv_block_sw").checked = cslp_settings.tw_for_adv_block;
             document.getElementById("auto_tweet_tools_block_sw").checked = cslp_settings.auto_tweet_tools_tweet_block;
+            document.getElementById("grok_called_response_block_sw").checked = cslp_settings.grok_called_response_block;
+            document.getElementById("grok_share_block_sw").checked = cslp_settings.grok_share_block;
             //
             document.getElementById("affiliate_block_sw").checked = cslp_settings.affiliate_spam_block;
             document.getElementById("affiliate_strict_block_sw").checked = cslp_settings.affiliate_spam_block_strict;
@@ -203,6 +211,21 @@ window.addEventListener("load", function(){
     })
     document.getElementById("auto_tweet_tools_block_sw").addEventListener("change", function(){
         cslp_settings.auto_tweet_tools_tweet_block = document.getElementById("auto_tweet_tools_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+
+    document.getElementById("grok_called_response_block_sw").addEventListener("change", function(){
+        cslp_settings.grok_called_response_block = document.getElementById("grok_called_response_block_sw").checked;
+        chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
+            console.log(cslp_settings);
+        });
+        append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
+    })
+    document.getElementById("grok_share_block_sw").addEventListener("change", function(){
+        cslp_settings.grok_share_block = document.getElementById("grok_share_block_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
