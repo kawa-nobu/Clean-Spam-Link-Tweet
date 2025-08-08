@@ -393,11 +393,20 @@ function main(filter_url, imp_filter_url) {
                                 if (Object.keys(cslp_default_settings)[index] == 'oneclick_report_option') {
                                     /* 報告オプション置き換え */
                                     const option_data = JSON.parse(input_setting.cslp_settings)[Object.keys(cslp_default_settings)[index]];
-                                    //console.log(option_data)
-                                    if (option_data == "3" || option_data == "4" || option_data == "6" || option_data == "8") {
-                                        console.log("報告オプションをスパムに置き換えました")
-                                        settings_array[Object.keys(cslp_default_settings)[index]] = "5";
-                                    }
+                                    const reportValueMap = {
+                                        0: 0,
+                                        1: 1,
+                                        2: 2,
+                                        3: 6,
+                                        4: 6,
+                                        5: 6,
+                                        6: 6,
+                                        7: 8,
+                                        8: 6,
+                                        9: 10,
+                                    };
+                                    console.log("報告オプションを置き換えました")
+                                    settings_array[Object.keys(cslp_default_settings)[index]] = String(reportValueMap[option_data]);
                                 }
                                 if (Object.keys(cslp_default_settings)[index] == 'arabic_reply_block_lang') {
                                     /* アラビア文字等項目同期 */
@@ -2468,16 +2477,32 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
         return new Promise((resolve) => {
             let now_steps = 1;
             let report_finalize = false;
+            let user_choice = report_mode_conv;
+            let choice_convert_flag = false;
+            
             send_srv(response_obj);
             function send_srv(input_response) {
                 const input_token_convert = decodeURIComponent(input_response.flow_token).replaceAll("=", "");
                 let report_second_stage_body = null;
+                if(!choice_convert_flag && now_steps === 1 &&input_response.subtasks[0].choice_selection?.choices[8]?.id !== "ShownSensitiveDisturbingMediaOption"){
+                    if(user_choice === 8){
+                        //ステップ1の項目が10種類の場合、「攻撃的な行為や嫌がらせ」にセンシティブが含まれているので切り替える
+                        user_choice = 1;
+                        choice_convert_flag = true;
+                    }
+                }
                 if (now_steps == 1) {
-                    report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[report_mode_conv].id}\"]}}]}`;
+                    report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[user_choice].id}\"]}}]}`;
                 } else {
                     if (report_finalize != true) {
-                        const choice_def = [4, 5, 2, null, null, null, null, 0, null, null];
-                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[choice_def[report_mode_conv]].id}\"]}}]}`;
+                        //報告種別が10種類のものもあれば、11種類のものもあるので、センシティブの項目を判別してマップを切り替える
+                        let choice_def = [];
+                        if(!choice_convert_flag){
+                            choice_def = [4, 5, 2, null, null, null, null, null, 0, null, null];
+                        }else{
+                            choice_def = [4, 0, 2, null, null, null, null, null, null, null];
+                        }
+                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[choice_def[user_choice]].id}\"]}}]}`;
                     } else {
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"${input_response.subtasks[0].subtask_id}\",\"settings_list\":{\"setting_responses\":[],\"link\":\"next_link\"}}]}`;
                     }
