@@ -1,0 +1,43 @@
+{
+  "name": "Clean-Spam-Link-Tweet",
+  "version": "1.9.9.1",
+  "manifest_version": 2,
+  "description": "ツイート(返信)から悪質なリンクが記載されたツイートを可視化してナイト系スパム等のリンクを踏む事を阻止します。",
+  "icons" : {
+    "128" : "icon.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "kwnobu@gmail.com",
+      "strict_min_version": "113.0"
+    },
+    "gecko_android": {
+      "id": "kwnobu@gmail.com",
+      "strict_min_version": "113.0"
+    }
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "web_accessible_resources": [
+    "cslt_tweet_ctrl.js",
+    "filter.json",
+    "imp_filter.json",
+    "report_icon.svg",
+    "report_fail_icon.svg"
+  ],
+  "background" : {
+    "scripts": ["background.js"]
+  },
+  "permissions" : [
+    "storage",
+    "cookies",
+    "<all_urls>"
+  ],
+  "content_scripts": [{
+    "matches": ["https://twitter.com/*", "https://x.com/*"],
+    "js": ["content.js"],
+    "all_frames": true
+    }]
+  }
