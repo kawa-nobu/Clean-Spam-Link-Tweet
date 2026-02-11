@@ -2479,7 +2479,6 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
             let report_finalize = false;
             let user_choice = report_mode_conv;
             let choice_convert_flag = false;
-            let is_simple_option = false;
             
             send_srv(response_obj);
             function send_srv(input_response) {
@@ -2510,7 +2509,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                 if (now_steps == 1) {
                     //新しい報告種別「SimpleOption」に対応させる(これはスパム報告が最初に上がっているかどうかで判定させている)
                     if(input_response.subtasks[0].choice_selection.choices[0].id === "SpamSimpleOption"){
-                        const simple_option_map = [1, 1, 3, null, null, null, 0, null, 1, null, 1, null]
+                        const simple_option_map = [1, 1, 3, null, null, null, 0, null, 1, null, 1, null];
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[simple_option_map[user_choice]].id}\"]}}]}`;
                     }else{
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[user_choice].id}\"]}}]}`;
