@@ -2509,11 +2509,12 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                 if (now_steps == 1) {
                     report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[user_choice].id}\"]}}]}`;
                 } else {
-                    if (report_finalize != true) {
+                    if (report_finalize != true && user_choice != 6) {
                         //報告種別が10種類のものもあれば、11種類のものもあるので、センシティブの項目を判別してマップを切り替える
+                        //報告種別が「スパム」では第二ステップの選択肢はないのでパスする
                         let choice_def = [];
                         if(!choice_convert_flag){
-                            choice_def = [4, 5, 2, null, null, null, null, null, 0, null, null];
+                            choice_def = [4, 5, 2, null, null, null, null, null, 0, null, null, null];
                         }else{
                             choice_def = [4, 0, 2, null, null, null, null, null, null, null];
                         }
