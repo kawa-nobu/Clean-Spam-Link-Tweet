@@ -21,6 +21,9 @@ select{
 hr{
   margin: 0;
 }
+option[disabled] {
+  display: none;
+}
 .main{
   display: flex;
   flex-direction: column;
