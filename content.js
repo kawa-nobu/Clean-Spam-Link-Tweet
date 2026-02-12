@@ -346,7 +346,7 @@ function main(filter_url, imp_filter_url) {
                     oneclick_report_timeline_disable: false,
                     oneclick_report_target_mode: "0",
                     oneclick_report_after_mode: "0",
-                    oneclick_report_option: "5",
+                    oneclick_report_option: "6",
                     oneclick_report_notification_page_disable: false,
                     oneclick_report_add_cslt_hideuser: false,
                     oneclick_developer_report: false,
