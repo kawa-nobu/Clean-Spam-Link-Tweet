@@ -390,6 +390,11 @@ input:checked + label:after {
     display: flex;
     justify-content: center;
   }
+  #debug_info_dump_sw {
+    margin-top: 30px;
+    font-size: 3rem;
+    width: 50%;
+  }
   #settings_reset_sw {
     margin-top: 30px;
     font-size: 3rem;
