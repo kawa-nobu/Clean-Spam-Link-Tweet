@@ -32,12 +32,12 @@ New-Item -ItemType Directory -Force -Path $OutputDir | Out-Null
 Remove-Item -Recurse -Force -ErrorAction Ignore $TmpDir
 New-Item -ItemType Directory -Force -Path $TmpDir | Out-Null
 
-# フォルダ除外
+# ディレクトリ除外
 $ExcludeDirs = @(
     ".git",
+    ".github",
     "package_tmp",
-    "package",
-    "node_modules"
+    "package"
 )
 
 # ファイル除外
