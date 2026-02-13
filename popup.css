@@ -21,6 +21,9 @@ select{
 hr{
   margin: 0;
 }
+option[disabled] {
+  display: none;
+}
 .main{
   display: flex;
   flex-direction: column;
@@ -389,6 +392,11 @@ input:checked + label:after {
   .reset_sw_center{
     display: flex;
     justify-content: center;
+  }
+  #debug_info_dump_sw {
+    margin-top: 30px;
+    font-size: 3rem;
+    width: 50%;
   }
   #settings_reset_sw {
     margin-top: 30px;

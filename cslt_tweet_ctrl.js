@@ -22,7 +22,7 @@ function get_tw_userdata(input_element, mode){
         case "settings_block_mute_user_id":
             return props_data?.children[0][1]?.props?.children[0]?.props?.children[1]?.props?.userId;
         case "notification_like_rt":
-            return props_data?.children[0][1]?.props?.children[0]?.props?.children?.props?.users;
+            return props_data?.children[0][1]?.props?.children?.props?.children[0]?.props?.children?.props?.users
     }
 }
 const root_elem = document.querySelector('#react-root');

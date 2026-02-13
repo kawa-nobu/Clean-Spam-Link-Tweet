@@ -1,0 +1,3 @@
+# パッケージディレクトリを除外する
+package_tmp/*
+package/*

@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: '作成するタグ名 (例: v1.0.0.0)'
+        required: true
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 一旦、履歴をすべて取得する
+
+      - name: Create ZIP File
+        run: |
+          # 念の為、実行権限を与えておく
+          chmod +x ./package.sh
+          ./package.sh
+
+      - name: Fetch Latest Merged PR Infomation
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # 最新のマージ済みPRのタイトルと本文を取得して書き出す
+          # 最新の1件を取得
+          gh pr list --state merged --limit 1 --json title,body --template \
+            '# {{.title}}{{"\n\n"}}{{.body}}' > release_notes.md
+
+      - name: Create Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.event.inputs.tag_name }}
+        run: |
+          gh release create "$TAG_NAME" \
+            ./package/*.zip \
+            --title "Release $TAG_NAME" \
+            --notes-file release_notes.md \
+            --draft

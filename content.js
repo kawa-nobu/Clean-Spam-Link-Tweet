@@ -346,7 +346,7 @@ function main(filter_url, imp_filter_url) {
                     oneclick_report_timeline_disable: false,
                     oneclick_report_target_mode: "0",
                     oneclick_report_after_mode: "0",
-                    oneclick_report_option: "5",
+                    oneclick_report_option: "6",
                     oneclick_report_notification_page_disable: false,
                     oneclick_report_add_cslt_hideuser: false,
                     oneclick_developer_report: false,
@@ -2484,21 +2484,43 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
             function send_srv(input_response) {
                 const input_token_convert = decodeURIComponent(input_response.flow_token).replaceAll("=", "");
                 let report_second_stage_body = null;
-                if(!choice_convert_flag && now_steps === 1 &&input_response.subtasks[0].choice_selection?.choices[8]?.id !== "ShownSensitiveDisturbingMediaOption"){
+                if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[8]?.id !== "ShownSensitiveDisturbingMediaOption"){
                     if(user_choice === 8){
+                        //この条件が古くなっている可能性があるが、ページンによって項目が変わってくる仕様のため、念の為残しておく
                         //ステップ1の項目が10種類の場合、「攻撃的な行為や嫌がらせ」にセンシティブが含まれているので切り替える
                         user_choice = 1;
                         choice_convert_flag = true;
                     }
                 }
+                if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[8]?.id === "DeceptiveIdentitiesOption"){
+                    if(user_choice === 8){
+                        //ステップ1の項目の8番目が「なりすまし」になっている場合、センシティブの項目が存在しないため「攻撃的な行為や嫌がらせ」に切り替える
+                        user_choice = 1;
+                        choice_convert_flag = true;
+                    }
+                }
+                if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[10]?.id === "CivicIntegrityOption"){
+                    if(user_choice === 10){
+                        //ユーザーページなどでステップ1の項目が11種類の場合、「暴力行為やヘイト行為の主体」が9番目にあるので切り替える
+                        user_choice = 9;
+                        choice_convert_flag = true;
+                    }
+                }
                 if (now_steps == 1) {
-                    report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[user_choice].id}\"]}}]}`;
+                    //新しい報告種別「SimpleOption」に対応させる(これはスパム報告が最初に上がっているかどうかで判定させている)
+                    if(input_response.subtasks[0].choice_selection.choices[0].id === "SpamSimpleOption"){
+                        const simple_option_map = [1, 1, 3, null, null, null, 0, null, 1, null, 1, null];
+                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[simple_option_map[user_choice]].id}\"]}}]}`;
+                    }else{
+                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[user_choice].id}\"]}}]}`;
+                    }
                 } else {
-                    if (report_finalize != true) {
+                    if (report_finalize != true && user_choice != 6) {
                         //報告種別が10種類のものもあれば、11種類のものもあるので、センシティブの項目を判別してマップを切り替える
+                        //報告種別が「スパム」では第二ステップの選択肢はないのでパスする
                         let choice_def = [];
                         if(!choice_convert_flag){
-                            choice_def = [4, 5, 2, null, null, null, null, null, 0, null, null];
+                            choice_def = [4, 5, 2, null, null, null, null, null, 0, null, null, null];
                         }else{
                             choice_def = [4, 0, 2, null, null, null, null, null, null, null];
                         }
