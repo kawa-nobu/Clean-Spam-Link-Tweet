@@ -32,8 +32,8 @@ jobs:
         run: |
           # 最新のマージ済みPRのタイトルと本文を取得して書き出す
           # 最新の1件を取得
-          gh pr list --state merged --limit 1 --json title,body --template \
-            '# {{.title}}{{"\n\n"}}{{.body}}' > release_notes.md
+          gh pr list --state merged --base Release --limit 1 --json title,body --template \
+          '{{ range . }}# {{ .title }}{{ "\n\n" }}{{ .body }}{{ end }}' > release_notes.md
 
       - name: Create Release
         env:
