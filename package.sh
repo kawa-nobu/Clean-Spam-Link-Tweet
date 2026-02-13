@@ -36,6 +36,7 @@ mkdir -p "$TMP_DIR"
 # 除外ルール
 RSYNC_EXCLUDES=(
   --exclude=".git"
+  --exclude=".github"
   --exclude=".gitignore"
   --exclude="README.md"
   --exclude=".DS_Store"
