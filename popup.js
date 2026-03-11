@@ -111,10 +111,10 @@ window.addEventListener("load", function(){
             document.getElementById("report_btn_set_tweetmore_sw").checked = cslp_settings.oneclick_report_btn_set_tweetmore;
             document.getElementById("report_btn_dsp_all_users").checked = cslp_settings.oneclick_report_btn_all_users;
             //
-            document.getElementById("ai_generated_flag_post_block_sw").checked = cslp_settings.block_advertising_flag;
-            document.getElementById("ai_generated_flag_on_quoted_post_block_sw").checked = cslp_settings.block_advertising_flag_on_quoted_post;
-            document.getElementById("advertising_flag_post_block_sw").checked = cslp_settings.block_ai_generated_flag;
-            document.getElementById("advertising_flag_on_quoted_post_block_sw").checked = cslp_settings.block_ai_generated_flag_on_quoted_post;
+            document.getElementById("ai_generated_flag_post_block_sw").checked = cslp_settings.block_ai_generated_flag;
+            document.getElementById("ai_generated_flag_on_quoted_post_block_sw").checked = cslp_settings.block_ai_generated_flag_on_quoted_post;
+            document.getElementById("advertising_flag_post_block_sw").checked = cslp_settings.block_advertising_flag;
+            document.getElementById("advertising_flag_on_quoted_post_block_sw").checked = cslp_settings.block_advertising_flag_on_quoted_post;
             //
             document.getElementById("promotion_hide_sw").checked = cslp_settings.promotion_hide;
             document.getElementById("blank_profile_account_hide_sw").checked = cslp_settings.blank_profile_hide;
@@ -635,28 +635,28 @@ window.addEventListener("load", function(){
     })
 
     document.getElementById("ai_generated_flag_post_block_sw").addEventListener("change", function(){
-        cslp_settings.block_advertising_flag = document.getElementById("ai_generated_flag_post_block_sw").checked;
+        cslp_settings.block_ai_generated_flag = document.getElementById("ai_generated_flag_post_block_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
     document.getElementById("ai_generated_flag_on_quoted_post_block_sw").addEventListener("change", function(){
-        cslp_settings.block_advertising_flag_on_quoted_post = document.getElementById("ai_generated_flag_on_quoted_post_block_sw").checked;
+        cslp_settings.block_ai_generated_flag_on_quoted_post = document.getElementById("ai_generated_flag_on_quoted_post_block_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
     document.getElementById("advertising_flag_post_block_sw").addEventListener("change", function(){
-        cslp_settings.block_ai_generated_flag = document.getElementById("advertising_flag_post_block_sw").checked;
+        cslp_settings.block_advertising_flag = document.getElementById("advertising_flag_post_block_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
         append_alert("<p>設定を適用するには<br>Twitterの再読み込みを行ってください。</p>");
     })
     document.getElementById("advertising_flag_on_quoted_post_block_sw").addEventListener("change", function(){
-        cslp_settings.block_ai_generated_flag_on_quoted_post = document.getElementById("advertising_flag_on_quoted_post_block_sw").checked;
+        cslp_settings.block_advertising_flag_on_quoted_post = document.getElementById("advertising_flag_on_quoted_post_block_sw").checked;
         chrome.storage.local.set({'cslp_settings': JSON.stringify(cslp_settings)}, function () {
             console.log(cslp_settings);
         });
