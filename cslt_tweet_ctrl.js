@@ -176,6 +176,7 @@ const tweet_obs = new MutationObserver(function(){
                                 possibly_sensitive_editable:tweet_info_reply.quoted_status.possibly_sensitive_editable,
                                 "quoted_urls":quoted_urls,
                                 tweet_lang: tweet_info_reply.quoted_status.lang,
+                                content_disclosure: tweet_info_reply.quoted_status?.content_disclosure ?? null,
                                 user_data:{
                                     name: tweet_info_reply.quoted_status.user.name, 
                                     description: tweet_info_reply.quoted_status.user.description,
@@ -226,6 +227,7 @@ const tweet_obs = new MutationObserver(function(){
                             tweet_lang: tweet_info_reply.lang,
                             is_promoted: is_promo_tweet,
                             grok_share_attachment: tweet_info_reply?.grok_share_attachment ?? null,
+                            content_disclosure: tweet_info_reply?.content_disclosure ?? null,
                             user_data:{
                                 name: tweet_info_reply.user.name, 
                                 description: tweet_info_reply.user.description,
@@ -482,6 +484,7 @@ const tweet_obs = new MutationObserver(function(){
                                 possibly_sensitive_editable:tweet_info_other?.quoted_status.possibly_sensitive_editable,
                                 "quoted_urls":other_quoted_urls,
                                 tweet_lang: tweet_info_other?.quoted_status.lang,
+                                content_disclosure: tweet_info_other?.quoted_status?.content_disclosure ?? null,
                                 user_data:{
                                     name: tweet_info_other?.quoted_status.user.name, 
                                     description: tweet_info_other?.quoted_status.user.description,
@@ -506,6 +509,7 @@ const tweet_obs = new MutationObserver(function(){
                             tweet_lang: tweet_info_other?.lang,
                             is_promoted: is_promo_tweet,
                             grok_share_attachment: tweet_info_other?.grok_share_attachment ?? null,
+                            content_disclosure: tweet_info_other?.content_disclosure ?? null,
                             user_data:{
                                 name: tweet_info_other?.user.name, 
                                 description: tweet_info_other?.user.description,
@@ -641,6 +645,7 @@ const tweet_obs = new MutationObserver(function(){
                             is_reply: is_reply_communities,
                             is_user_data_only: false,
                             grok_share_attachment: tweet_info_communities?.grok_share_attachment ?? null,
+                            content_disclosure: tweet_info_communities?.content_disclosure ?? null,
                             user_data:{
                                 name: tweet_info_communities?.user.name, 
                                 user_id: tweet_info_communities?.user.id_str,

@@ -369,6 +369,10 @@ function main(filter_url, imp_filter_url) {
                     user_register_word_list: "",
                     user_register_whitelist: [],
                     user_register_hideuser: [],
+                    block_advertising_flag: false,
+                    block_advertising_flag_on_quoted_post: false,
+                    block_ai_generated_flag: false,
+                    block_ai_generated_flag_on_quoted_post: false,
                     tw_for_adv_block: false,
                     register_word_regexp_mode:false,
                     promotion_hide: false,
@@ -824,6 +828,42 @@ function main(filter_url, imp_filter_url) {
                                 //プロモーション非表示
                                 if(cslp_settings.promotion_hide){
                                     if(cslt_tweet_info_obj.is_promoted){
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                        continue;
+                                    }
+                                }
+                                //AI生成フラグ投稿非表示
+                                if(cslp_settings.block_ai_generated_flag){
+                                    if(cslt_tweet_info_obj.content_disclosure?.ai_generated_disclosure?.has_ai_generated_media){
+                                        //console.log("AIGeneratedFlag=>"+cslt_tweet_info_obj.text)
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                        continue;
+                                    }
+                                }
+                                //AI生成フラグ投稿非表示(引用)
+                                if(cslp_settings.block_ai_generated_flag_on_quoted_post){
+                                    if(cslt_tweet_info_obj.quoted_obj?.content_disclosure?.ai_generated_disclosure?.has_ai_generated_media){
+                                        //console.log("AIGeneratedFlagQuoted=>"+cslt_tweet_info_obj.text)
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                        continue;
+                                    }
+                                }
+                                //プロモーションフラグ投稿非表示
+                                if(cslp_settings.block_advertising_flag){
+                                    if(cslt_tweet_info_obj.content_disclosure?.advertising_disclosure?.is_paid_promotion){
+                                        //console.log("AdvertisingFlag=>"+cslt_tweet_info_obj.text)
+                                        cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                        cslt_target_tweet_elem.textContent = "";
+                                        continue;
+                                    }
+                                }
+                                //プロモーションフラグ投稿非表示(引用)
+                                if(cslp_settings.block_advertising_flag_on_quoted_post){
+                                    if(cslt_tweet_info_obj.quoted_obj?.content_disclosure?.advertising_disclosure?.is_paid_promotion){
+                                        //console.log("AdvertisingFlagQuoted=>"+cslt_tweet_info_obj.text)
                                         cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                         cslt_target_tweet_elem.textContent = "";
                                         continue;
