@@ -652,7 +652,7 @@ function main(filter_url, imp_filter_url) {
                 /* ページ検出関連関数 */
                 //タイムライン検出用
                 function is_timeline_follow() {
-                    const tl_tab_elem = document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="presentation"] a[role="tab"]');
+                    const tl_tab_elem = document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="tab"]');
                     if (tl_tab_elem[1]?.getAttribute('aria-selected') != undefined) {
                         if (window.location.pathname.match("\/home")?.length == 1 && tl_tab_elem[1]?.getAttribute('aria-selected') == "true") {
                             return true;
@@ -697,7 +697,7 @@ function main(filter_url, imp_filter_url) {
                 }
                 //報告用タイムライン検出関数
                 function is_timeline_follow_report() {
-                    if (cslp_settings.oneclick_report_timeline_disable == true && window.location.pathname.match("\/home")?.length == 1 && document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="presentation"] a[role="tab"]')[1]?.getAttribute('aria-selected') == "true") {
+                    if (cslp_settings.oneclick_report_timeline_disable == true && window.location.pathname.match("\/home")?.length == 1 && document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="tab"]')[1]?.getAttribute('aria-selected') == "true") {
                         return true;
                     } else {
                         return false;
