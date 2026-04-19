@@ -2637,7 +2637,12 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                     }
                 }).catch(error => {
                     console.log("Report 2nd stage error");
-                    cslt_message_display(`通報の${now_steps}ステップ目失敗(${error.message})`, "error");
+                    //連続報告を行った際に発生するエラーを判定する
+                    if(now_steps === 2 && error.message.includes("(reading 'subtasks')")){
+                        cslt_message_display(`通報の${now_steps}ステップ目失敗(連続報告により一時的に制限された可能性)`, "error");
+                    }else{
+                        cslt_message_display(`通報の${now_steps}ステップ目失敗(${error.message})`, "error");
+                    }
                     report_ids_temp(report_twid, "fail_report");
                     console.log(error);
                 });
