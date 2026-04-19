@@ -2549,8 +2549,21 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                 if (now_steps == 1) {
                     //新しい報告種別「SimpleOption」に対応させる(これはスパム報告が最初に上がっているかどうかで判定させている)
                     if(input_response.subtasks[0].choice_selection.choices[0].id === "SpamSimpleOption"){
-                        const simple_option_map = [1, 1, 3, null, null, null, 0, null, 1, null, 1, null];
-                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[simple_option_map[user_choice]].id}\"]}}]}`;
+                        const simple_option_map = [
+                          "HateOrAbuseSimpleOption",
+                          "HateOrAbuseSimpleOption",
+                          "ViolentSpeechSimpleOption",
+                          null,
+                          null,
+                          null,
+                          "SpamSimpleOption",
+                          null,
+                          "HateOrAbuseSimpleOption",
+                          null,
+                          "HateOrAbuseSimpleOption",
+                          null,
+                        ];
+                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${simple_option_map[user_choice]}\"]}}]}`;
                     }else{
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[user_choice].id}\"]}}]}`;
                     }
