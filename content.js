@@ -2553,6 +2553,8 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                 if (now_steps == 1) {
                     //新しい報告種別「SimpleOption」に対応させる(これはスパム報告が最初に上がっているかどうかで判定させている)
                     if(input_response.subtasks[0].choice_selection.choices[0].id === "SpamSimpleOption"){
+                        //新UI報告オプション
+                        let report_type = "SpamSimpleOption";
                         const simple_option_map = [
                           "HateOrAbuseSimpleOption",
                           "HateOrAbuseSimpleOption",
@@ -2567,7 +2569,14 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                           "ViolentSpeechSimpleOption",
                           null,
                         ];
-                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${simple_option_map[user_choice]}\"]}}]}`;
+                        //指定された報告種別がない場合はスパム報告にフォールバックする
+                        //特にユーザーページで ViolentMediaSimpleOption が選択できない事が多い
+                        if(input_response.subtasks[0].choice_selection.choices.some(option => option.id === simple_option_map[user_choice])){
+                            report_type = simple_option_map[user_choice];
+                        }else{
+                            cslt_message_display('設定された報告種別を選択できませんでした。スパムとして報告を行います', "message");
+                        }
+                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${report_type}\"]}}]}`;
                     }else{
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[user_choice].id}\"]}}]}`;
                     }
