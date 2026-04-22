@@ -652,7 +652,7 @@ function main(filter_url, imp_filter_url) {
                 /* ページ検出関連関数 */
                 //タイムライン検出用
                 function is_timeline_follow() {
-                    const tl_tab_elem = document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="presentation"] a[role="tab"]');
+                    const tl_tab_elem = document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="tab"]');
                     if (tl_tab_elem[1]?.getAttribute('aria-selected') != undefined) {
                         if (window.location.pathname.match("\/home")?.length == 1 && tl_tab_elem[1]?.getAttribute('aria-selected') == "true") {
                             return true;
@@ -697,7 +697,7 @@ function main(filter_url, imp_filter_url) {
                 }
                 //報告用タイムライン検出関数
                 function is_timeline_follow_report() {
-                    if (cslp_settings.oneclick_report_timeline_disable == true && window.location.pathname.match("\/home")?.length == 1 && document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="presentation"] a[role="tab"]')[1]?.getAttribute('aria-selected') == "true") {
+                    if (cslp_settings.oneclick_report_timeline_disable == true && window.location.pathname.match("\/home")?.length == 1 && document.querySelectorAll('div[data-testid="ScrollSnap-List"] div[role="tab"]')[1]?.getAttribute('aria-selected') == "true") {
                         return true;
                     } else {
                         return false;
@@ -2524,41 +2524,69 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
             function send_srv(input_response) {
                 const input_token_convert = decodeURIComponent(input_response.flow_token).replaceAll("=", "");
                 let report_second_stage_body = null;
-                if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[8]?.id !== "ShownSensitiveDisturbingMediaOption"){
-                    if(user_choice === 8){
-                        //この条件が古くなっている可能性があるが、ページンによって項目が変わってくる仕様のため、念の為残しておく
-                        //ステップ1の項目が10種類の場合、「攻撃的な行為や嫌がらせ」にセンシティブが含まれているので切り替える
-                        user_choice = 1;
-                        choice_convert_flag = true;
+
+                //旧報告UI向けのオプションをフォールバックする
+                if(now_steps === 1 && input_response.subtasks[0].choice_selection.choices[0].id !== "SpamSimpleOption"){
+                    if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[8]?.id !== "ShownSensitiveDisturbingMediaOption"){
+                        if(user_choice === 8){
+                            //この条件が古くなっている可能性があるが、ページによって項目が変わってくる仕様のため、念の為残しておく
+                            //ステップ1の項目が10種類の場合、「攻撃的な行為や嫌がらせ」にセンシティブが含まれているので切り替える
+                            user_choice = 1;
+                            choice_convert_flag = true;
+                        }
                     }
-                }
-                if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[8]?.id === "DeceptiveIdentitiesOption"){
-                    if(user_choice === 8){
-                        //ステップ1の項目の8番目が「なりすまし」になっている場合、センシティブの項目が存在しないため「攻撃的な行為や嫌がらせ」に切り替える
-                        user_choice = 1;
-                        choice_convert_flag = true;
+                    if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[8]?.id === "DeceptiveIdentitiesOption"){
+                        if(user_choice === 8){
+                            //ステップ1の項目の8番目が「なりすまし」になっている場合、センシティブの項目が存在しないため「攻撃的な行為や嫌がらせ」に切り替える
+                            user_choice = 1;
+                            choice_convert_flag = true;
+                        }
                     }
-                }
-                if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[10]?.id === "CivicIntegrityOption"){
-                    if(user_choice === 10){
-                        //ユーザーページなどでステップ1の項目が11種類の場合、「暴力行為やヘイト行為の主体」が9番目にあるので切り替える
-                        user_choice = 9;
-                        choice_convert_flag = true;
+                    if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[10]?.id === "CivicIntegrityOption"){
+                        if(user_choice === 10){
+                            //ユーザーページなどでステップ1の項目が11種類の場合、「暴力行為やヘイト行為の主体」が9番目にあるので切り替える
+                            user_choice = 9;
+                            choice_convert_flag = true;
+                        }
                     }
                 }
                 if (now_steps == 1) {
                     //新しい報告種別「SimpleOption」に対応させる(これはスパム報告が最初に上がっているかどうかで判定させている)
                     if(input_response.subtasks[0].choice_selection.choices[0].id === "SpamSimpleOption"){
-                        const simple_option_map = [1, 1, 3, null, null, null, 0, null, 1, null, 1, null];
-                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[simple_option_map[user_choice]].id}\"]}}]}`;
+                        //新UI報告オプション
+                        let report_type = "SpamSimpleOption";
+                        const simple_option_map = [
+                          "HateOrAbuseSimpleOption",
+                          "HateOrAbuseSimpleOption",
+                          "TerrorismSimpleOption",
+                          null,
+                          null,
+                          null,
+                          "SpamSimpleOption",
+                          null,
+                          "ViolentMediaSimpleOption",
+                          null,
+                          "ViolentSpeechSimpleOption",
+                          null,
+                        ];
+                        //指定された報告種別がない場合はスパム報告にフォールバックする
+                        //特にユーザーページで ViolentMediaSimpleOption が選択できない事が多い
+                        if(input_response.subtasks[0].choice_selection.choices.some(option => option.id === simple_option_map[user_choice])){
+                            report_type = simple_option_map[user_choice];
+                        }else{
+                            cslt_message_display('設定された報告種別を選択できませんでした。スパムとして報告を行います', "message");
+                        }
+                        report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${report_type}\"]}}]}`;
                     }else{
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[user_choice].id}\"]}}]}`;
                     }
                 } else {
                     if (report_finalize != true && user_choice != 6) {
+                        //主に旧報告UI向け。新UIでは進捗100%になるため、ここはスルーされる
                         //報告種別が10種類のものもあれば、11種類のものもあるので、センシティブの項目を判別してマップを切り替える
                         //報告種別が「スパム」では第二ステップの選択肢はないのでパスする
                         let choice_def = [];
+                        //第2ステップの選択項目
                         if(!choice_convert_flag){
                             choice_def = [4, 5, 2, null, null, null, null, null, 0, null, null, null];
                         }else{
@@ -2566,6 +2594,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                         }
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${input_response.subtasks[0].choice_selection.choices[choice_def[user_choice]].id}\"]}}]}`;
                     } else {
+                        //進捗100%の場合など、一連のフローが終了したということを送信する
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"${input_response.subtasks[0].subtask_id}\",\"settings_list\":{\"setting_responses\":[],\"link\":\"next_link\"}}]}`;
                     }
                 }
@@ -2637,7 +2666,12 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                     }
                 }).catch(error => {
                     console.log("Report 2nd stage error");
-                    cslt_message_display(`通報の${now_steps}ステップ目失敗(${error.message})`, "error");
+                    //連続報告を行った際に発生するエラーを判定する
+                    if(now_steps === 2 && error.message.includes("(reading 'subtasks')")){
+                        cslt_message_display(`通報の${now_steps}ステップ目失敗(連続報告により一時的に制限された可能性)`, "error");
+                    }else{
+                        cslt_message_display(`通報の${now_steps}ステップ目失敗(${error.message})`, "error");
+                    }
                     report_ids_temp(report_twid, "fail_report");
                     console.log(error);
                 });
