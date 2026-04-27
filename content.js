@@ -2551,8 +2551,8 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                     }
                 }
                 if (now_steps == 1) {
-                    //新しい報告種別「SimpleOption」に対応させる(これはスパム報告が最初に上がっているかどうかで判定させている)
-                    if(input_response.subtasks[0].choice_selection.choices[0].id === "SpamSimpleOption"){
+                    //新しい報告種別「SimpleOption」に対応させる
+                    if(input_response.subtasks[0].choice_selection.choices.some(option => option.id === "SpamSimpleOption")){
                         //新UI報告オプション
                         let report_type = "SpamSimpleOption";
                         const simple_option_map = [
