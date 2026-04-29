@@ -2526,7 +2526,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                 let report_second_stage_body = null;
 
                 //旧報告UI向けのオプションをフォールバックする
-                if(now_steps === 1 && input_response.subtasks[0].choice_selection.choices[0].id !== "SpamSimpleOption"){
+                if(now_steps === 1 && !input_response.subtasks[0].choice_selection.choices.some(option => option.id === "SpamSimpleOption")){
                     if(!choice_convert_flag && now_steps === 1 && input_response.subtasks[0].choice_selection?.choices[8]?.id !== "ShownSensitiveDisturbingMediaOption"){
                         if(user_choice === 8){
                             //この条件が古くなっている可能性があるが、ページによって項目が変わってくる仕様のため、念の為残しておく
@@ -2551,8 +2551,8 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                     }
                 }
                 if (now_steps == 1) {
-                    //新しい報告種別「SimpleOption」に対応させる(これはスパム報告が最初に上がっているかどうかで判定させている)
-                    if(input_response.subtasks[0].choice_selection.choices[0].id === "SpamSimpleOption"){
+                    //新しい報告種別「SimpleOption」に対応させる
+                    if(input_response.subtasks[0].choice_selection.choices.some(option => option.id === "SpamSimpleOption")){
                         //新UI報告オプション
                         let report_type = "SpamSimpleOption";
                         const simple_option_map = [
