@@ -102,7 +102,7 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         //動画・GIF情報取り出し
                         if(is_media_tweet){
-                            const media_info_obj = tweet_info_reply.entities.media;
+                            const media_info_obj = tweet_info_reply.entities?.media;
                             //console.log(media_info_obj)
                             for (let index = 0; index < media_info_obj.length; index++) {
                                 if(media_info_obj[index].type == "video"){
@@ -163,7 +163,7 @@ const tweet_obs = new MutationObserver(function(){
                             is_reply_root_tweet = true;
                         }
                         if(tweet_info_reply.quoted_status != undefined){
-                            if(tweet_info_reply.quoted_status.entities.urls.length != 0){
+                            if(tweet_info_reply.quoted_status?.entities?.urls?.length != 0){
                                 quoted_urls = tweet_info_reply.quoted_status.entities.urls;
                             }
                             if(tweet_info_reply.quoted_status.user.blocked_by){
@@ -190,7 +190,7 @@ const tweet_obs = new MutationObserver(function(){
                                 }
                             }
                         }
-                        if(tweet_info_reply.entities.urls.length != 0){
+                        if(tweet_info_reply.entities?.urls?.length != 0){
                             reply_out_urls = tweet_info_reply.entities.urls;
                         }
                         if(tweet_info_reply.in_reply_to_status_id_str != undefined){
@@ -387,7 +387,7 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         //動画情報取り出し
                         if(is_media_tweet){
-                            const media_info_obj = tweet_info_other.entities.media;
+                            const media_info_obj = tweet_info_other.entities?.media;
                             //console.log(media_info_obj)
                             for (let index = 0; index < media_info_obj.length; index++) {
                                 if(media_info_obj[index].type == "video"){
@@ -463,7 +463,7 @@ const tweet_obs = new MutationObserver(function(){
                         if(tweet_info_other?.card?.binding_values?.unified_card?.string_value){
                             other_twitter_card_unified_obj = JSON.parse(tweet_info_other?.card?.binding_values?.unified_card?.string_value)
                         }
-                        if(tweet_info_other?.entities.urls.length != 0){
+                        if(tweet_info_other?.entities?.urls?.length != 0){
                             other_out_urls = tweet_info_other?.entities.urls;
                         }
                         if(tweet_info_other?.user.blocked_by){
@@ -471,7 +471,7 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         //引用オブジェクト
                         if(tweet_info_other?.quoted_status != undefined){
-                            if(tweet_info_other?.quoted_status.entities.urls.length != 0){
+                            if(tweet_info_other?.quoted_status?.entities?.urls?.length != 0){
                                 other_quoted_urls = tweet_info_other?.quoted_status.entities.urls;
                             }
                             if(tweet_info_other?.quoted_status.user.blocked_by){
@@ -560,7 +560,7 @@ const tweet_obs = new MutationObserver(function(){
                         }
                         //動画情報取り出し
                         if(is_media_tweet){
-                            const media_info_obj = tweet_info_communities.entities.media;
+                            const media_info_obj = tweet_info_communities.entities?.media;
                             //console.log(media_info_obj)
                             for (let index = 0; index < media_info_obj.length; index++) {
                                 if(media_info_obj[index].type == "video"){
@@ -632,7 +632,7 @@ const tweet_obs = new MutationObserver(function(){
                         if(tweet_info_communities?.card?.binding_values?.unified_card?.string_value){
                             communities_twitter_card_unified_obj = JSON.parse(tweet_info_communities?.card?.binding_values?.unified_card?.string_value)
                         }
-                        if(tweet_info_communities?.entities.urls.length != 0){
+                        if(tweet_info_communities?.entities?.urls?.length != 0){
                             communities_out_urls = tweet_info_communities?.entities.urls;
                         }
                         const tweetinfo_attr_communities = {
