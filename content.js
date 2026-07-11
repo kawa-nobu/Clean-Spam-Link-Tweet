@@ -231,9 +231,17 @@ document.head.insertAdjacentHTML("beforeend", `
 }
 </style>
 `);
+
+//新クライアント向け情報抽出スクリプト
+const new_tweet_info_script = document.createElement('script');
+new_tweet_info_script.src = chrome.runtime.getURL("cslt_tweet_ctrl_relay.js");
+document.head.appendChild(new_tweet_info_script);
+
+//従来の情報抽出スクリプト
 const tweet_info_script = document.createElement('script');
 tweet_info_script.src = chrome.runtime.getURL("cslt_tweet_ctrl.js");
 document.head.appendChild(tweet_info_script);
+
 //メッセージパネル挿入
 document.body.insertAdjacentHTML("afterbegin", '<div class="cslt_message_wrap"><div class="cslt_message_content"><span class="cslt_message_span">CSLTメッセージ</span></div></div>');
 //
