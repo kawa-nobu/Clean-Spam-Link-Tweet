@@ -45,6 +45,9 @@ let fail_report_tweet_status_ids_regex = /a^/;
 //ブロック・ミュート失敗ID格納
 let fail_block_mute_user_ids = [];
 let fail_block_mute_user_ids_regex = /a^/;
+//新クライアント検出フラグ
+let is_new_client = false;
+
 //報告情報一時保管関数
 function report_ids_temp(id, mode) {
     if (id == null || id == undefined) {
@@ -244,6 +247,7 @@ document.head.appendChild(tweet_info_script);
 
 //メッセージパネル挿入
 document.body.insertAdjacentHTML("afterbegin", '<div class="cslt_message_wrap"><div class="cslt_message_content"><span class="cslt_message_span">CSLTメッセージ</span></div></div>');
+const systemMessagePanel = cslt_message_display_init();
 //
 chrome.storage.local.get("cslp_settings", function (value) {
     if (value.cslp_settings != undefined) {
@@ -466,7 +470,14 @@ function main(filter_url, imp_filter_url) {
             } else {
                 console.log("CSLT Settings Found!");
                 cslp_settings = JSON.parse(cslp_settings.cslp_settings);
-                const target_elem = document.getElementById("react-root");
+                //クライアントのルートを取得する
+                let target_elem = document.getElementById("react-root");
+                if(!target_elem){
+                    //新クライアントの場合
+                    target_elem = document.querySelector('main');
+                    is_new_client = true;
+                }
+                console.log(target_elem)
                 //Write Latest Version
                 cslp_settings.filter_update = json[0].developer_update;
                 cslp_settings.filter_link = json[0].thanks_link;
@@ -736,8 +747,10 @@ function main(filter_url, imp_filter_url) {
                     const tweet_root_user_scrname = get_tweet_status_root_user();
                     const target_tweet_ids = [];
                     //ターゲット要素取得(任意のフラグは「:not()」内にOR条件で追加しましょう)
-                    const target_selector = `div[data-testid="cellInnerDiv"][cslt_tweet_info]:not([cslt_tweet_info_mytweet_flag="true"],[cslt_white_list_user],[cslt_hide_flag="true"],[cslt_blue_bypass_flag="true"],[cslt_night_spam_processed_flag="true"],[cslt_process_ok="true"],[cslt_temp_fail_report_flag="fail_tweet"])`;//,[cslt_report_btn_set_flag="true"] ${cslt_exclusion_css_flag}
+                    const not_selector = `:not([cslt_tweet_info_mytweet_flag="true"],[cslt_white_list_user],[cslt_hide_flag="true"],[cslt_blue_bypass_flag="true"],[cslt_night_spam_processed_flag="true"],[cslt_process_ok="true"],[cslt_temp_fail_report_flag="fail_tweet"])`;
+                    const target_selector = `div[data-testid="cellInnerDiv"][cslt_tweet_info]${not_selector},li[cslt_tweet_info]${not_selector}`;//,[cslt_report_btn_set_flag="true"] ${cslt_exclusion_css_flag}
                     const target_tweet_element = target_elem.querySelectorAll(target_selector);
+                    console.log(target_tweet_element)
                     /* 非表示等動作 */
                     /* TIPS:新しい非表示機能付けたけど画面が固まってしまう場合、フラグが立っていない可能性があります！
                     非表示処理後は「cslt_hide_flag」の値を「true」にしたフラグを立てましょう。
@@ -1741,24 +1754,42 @@ function main(filter_url, imp_filter_url) {
                         }
                         input_element.querySelector('[data-testid="UserCell"]')?.insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
                     } else {
+                        const is_input_elem_li = input_element.tagName === 'LI';
                         //"follow"
                         switch (btn_mode) {
                             case "follow":
-                                input_element.querySelector('[data-testid="UserCell"]').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                //新クライアントは現状、調査ができないので一旦無効にしておく
+                                if (!is_new_client){
+                                    input_element.querySelector('[data-testid="UserCell"]').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                }
                                 break;
                             case "share":
                                 //従来のボタン配置
-                                input_element.querySelector('div[role="group"]:not([cslt_flag="report_ok"])').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                if(is_input_elem_li){
+                                    input_element.querySelector('button[id^="base-ui-"]:not([cslt_flag="report_ok"])').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                }else{
+                                    input_element.querySelector('div[role="group"]:not([cslt_flag="report_ok"])').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                }
                                 break;
                             case "more":
                                 //もっと見る付近に配置
-                                input_element.querySelector('article').insertAdjacentHTML("beforeend", `<div class="cslt_report_icon_tweetmore_wrap"><a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a></div>`);
+                                if(is_input_elem_li){
+                                    input_element.querySelector('button[aria-haspopup="dialog"]:has(svg[data-icon="icon-more"])').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                }else{
+                                    input_element.querySelector('article').insertAdjacentHTML("beforeend", `<div class="cslt_report_icon_tweetmore_wrap"><a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a></div>`);
+                                }
                                 break;
                             case "notification":
-                                input_element.querySelector('.cslt_report_icon_notification_wrap').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="${notification_user_page_data.user_data.name}(@${notification_user_page_data.user_data.scr_name})を報告"></a>`);
+                                //新クライアントは現状、調査ができないので一旦無効にしておく
+                                if (!is_new_client){
+                                    input_element.querySelector('.cslt_report_icon_notification_wrap').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="${notification_user_page_data.user_data.name}(@${notification_user_page_data.user_data.scr_name})を報告"></a>`);
+                                }
                                 break;
                             case "user_page":
-                                input_element.closest('div[aria-label][tabindex="0"]').querySelector('button[data-testid="userActions"][aria-haspopup="menu"][role="button"]').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_user_page" title="このユーザーを報告"><div class="cslt_report_icon"></div></a>`);
+                                //新クライアントは現状、調査ができないので一旦無効にしておく
+                                if (!is_new_client){
+                                    input_element.closest('div[aria-label][tabindex="0"]').querySelector('button[data-testid="userActions"][aria-haspopup="menu"][role="button"]').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_user_page" title="このユーザーを報告"><div class="cslt_report_icon"></div></a>`);
+                                }
                                 break;
                             default:
 
@@ -1779,6 +1810,13 @@ function main(filter_url, imp_filter_url) {
                     }
                     //報告ボタン動作
                     document.getElementById(random_id)?.addEventListener("click", async function () {
+                        //非ログイン状態では報告機能諸々は利用できないので早期にreturnしておく
+                        const ct0 = await ct0_token_get(location.host)
+                        if (!ct0){
+                            systemMessagePanel.setMessage(`ログインされていないため報告ボタンは機能しません`, "error");
+                            return;
+                        };
+
                         let get_cookie_twid = null;
                         //ログインユーザーID取得
                         if (is_use_cookie_mode()) {
@@ -1802,7 +1840,7 @@ function main(filter_url, imp_filter_url) {
                         if (report_confirm == true) {
                             const report_srvurl = cslp_settings.oneclick_developer_reportsrv_url;
                             //console.log(random_id);
-                            const target_element = this.closest('[data-testid="cellInnerDiv"]');
+                            const target_element = this.closest('[data-testid="cellInnerDiv"], li[cslt_tweet_info]');
                             //console.log(target_element)
                             let tweet_info = null;
                             switch (btn_mode) {
@@ -3126,6 +3164,64 @@ function developer_spam_user_share(report_srv, spam_element) {
     //console.log({tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length})
     chrome.runtime.sendMessage({ message: { mode: "developer_report_share", target: { report_srv_url: report_srv, tweet_user_id: tweet_user_id, tweet_user_name: tweet_uesr_name, tweet_text: tweet_text, tweet_length: tweet_text_length, report_json_data: report_json_del_privacy } } }, (response) => { });
 }
+//ユーザーメッセージ表示領域初期化関数
+function cslt_message_display_init() {
+    //カラーを定義
+    const colors = {
+        info:    "#1d9bf0",
+        warning: "#f0721d",
+        error:   "#f01d47",
+    };
+    //メッセージラッパーを設定
+    const wrap = document.createElement("div");
+    Object.assign(wrap.style, {
+        display: "none",
+        position: "fixed",
+        bottom: "4rem",
+        width: "100vw",
+        height: "2rem",
+        zIndex: "9999",
+        alignItems: "center",
+        justifyContent: "center",
+    });
+    //メッセージ本体を設定
+    const content = document.createElement("div");
+    Object.assign(content.style, {
+        display: "flex",
+        height: "100%",
+        padding: "10px",
+        color: "white",
+        borderRadius: "5px",
+        textAlign: "center",
+        alignContent: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        fontFamily: "system-ui",
+    });
+
+    const text = document.createElement("span");
+    content.append(text);
+    wrap.append(content);
+    document.body.prepend(wrap);
+
+    let timer = null;
+
+    return {
+        //メッセージ設定の関数を返す
+        setMessage(message, mode = "info", autoCloseMs = 3000){
+            if (!document.contains(wrap)) document.body.prepend(wrap);
+
+            text.textContent = message;
+            content.style.backgroundColor = colors[mode] || colors.info;
+            wrap.style.display = "flex";
+            if (timer) clearTimeout(timer);
+            if (autoCloseMs > 0) {
+                timer = setTimeout(() => { wrap.style.display = "none"; }, autoCloseMs);
+            }
+        },
+    };
+}
+
 //ユーザーメッセージ表示関数
 async function cslt_message_display(message, mode) {
     new Promise(() => {
@@ -3178,12 +3274,12 @@ function ctid_create() {
     return btoa(String.fromCharCode.apply(null, crypto.getRandomValues(new Uint8Array(70)))).replaceAll("=", "");
 }
 async function ct0_token_get(host_mode) {
-    return await new Promise(async (resolve) => {
+    return await new Promise(async (resolve, reject) => {
         const is_private_mode = chrome.extension.inIncognitoContext;
         //console.log(is_use_cookie_mode())
         if (is_private_mode || is_use_cookie_mode()) {
-            const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)[1];
-            resolve(doc_cookie_ct0);
+            const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)?.[1];
+            resolve(doc_cookie_ct0 || false);
         } else {
             const get_broswer_api_ct0 = await new Promise((api_resolve) => {
                 chrome.runtime.sendMessage({ message: { mode: "ct0_token_get", target: { target_host_mode: host_mode } } }, (response) => {
@@ -3195,8 +3291,8 @@ async function ct0_token_get(host_mode) {
                 resolve(get_broswer_api_ct0);
             } else {
                 //console.log("DocumentMode")
-                const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)[1];
-                resolve(doc_cookie_ct0);
+                const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)?.[1];
+                resolve(doc_cookie_ct0 || false);
             }
         }
     })
