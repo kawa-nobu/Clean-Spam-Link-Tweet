@@ -450,7 +450,6 @@ function main(filter_url, imp_filter_url) {
                     target_elem = document.querySelector('main');
                     is_new_client = true;
                 }
-                console.log(target_elem)
                 //Write Latest Version
                 cslp_settings.filter_update = json[0].developer_update;
                 cslp_settings.filter_link = json[0].thanks_link;
