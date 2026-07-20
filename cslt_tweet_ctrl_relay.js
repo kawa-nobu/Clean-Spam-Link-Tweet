@@ -976,7 +976,7 @@
     const closeFlag = localStorage.getItem("cslt_2607_ref_msg_read");
     if (closeFlag === "true") return;
 
-    class ExtBanner extends HTMLElement {
+    class CsltCompatibleModeUserMessage extends HTMLElement {
       constructor() {
         super();
         this.alive = true;
@@ -1031,7 +1031,7 @@
       }
     }
 
-    customElements.define("ext-banner", ExtBanner);
-    document.body.prepend(new ExtBanner());
+    customElements.define("cslt-compatible-message-banner", CsltCompatibleModeUserMessage);
+    document.body.prepend(new CsltCompatibleModeUserMessage());
   }
 })();
