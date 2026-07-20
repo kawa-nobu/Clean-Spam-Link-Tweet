@@ -169,32 +169,6 @@ document.head.insertAdjacentHTML("beforeend", `
 .cslt_report_fail:hover{
     filter: brightness(0) saturate(100%) invert(46%) sepia(95%) saturate(2856%) hue-rotate(1deg) brightness(93%) contrast(102%);
 }
-.cslt_message_wrap{
-    display: none;
-    position: fixed;
-    bottom: 4rem;
-    width: 100vw;
-    height: 2rem;
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-}
-.cslt_message_content{
-    display: flex;
-    height: 100%;
-    background: #1d9bf0;
-    color: white;
-    border-radius: 5px;
-    text-align: center;
-    vertical-align: middle;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
-    font-family: system-ui;
-}
-.cslt_message_content span{
-    margin: 0 1rem 0 1rem;
-}
 .cslt_block_mute_list_func_btn{
     display: flex;
     height: 3rem;
@@ -245,8 +219,7 @@ const tweet_info_script = document.createElement('script');
 tweet_info_script.src = chrome.runtime.getURL("cslt_tweet_ctrl.js");
 document.head.appendChild(tweet_info_script);
 
-//メッセージパネル挿入
-document.body.insertAdjacentHTML("afterbegin", '<div class="cslt_message_wrap"><div class="cslt_message_content"><span class="cslt_message_span">CSLTメッセージ</span></div></div>');
+//メッセージパネル初期化
 const systemMessagePanel = cslt_message_display_init();
 //
 chrome.storage.local.get("cslp_settings", function (value) {
