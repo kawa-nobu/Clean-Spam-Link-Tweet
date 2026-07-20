@@ -1896,12 +1896,12 @@ function main(filter_url, imp_filter_url) {
                                                                 case "0":
                                                                     if(tweet_info?.is_user_data_only != undefined){
                                                                         if(!tweet_info.is_user_data_only){
-                                                                            cslt_message_display("投稿の報告のみを行います", "message");
+                                                                            systemMessagePanel.setMessage("投稿の報告のみを行います", "info");
                                                                             report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.tweet_id, location.host,"none", false, null).then((report_status) => {
                                                                                 resolve(report_status);
                                                                             });
                                                                         }else{
-                                                                            cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                                            systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                                             report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                                 resolve(report_status);
                                                                             });
@@ -1910,7 +1910,7 @@ function main(filter_url, imp_filter_url) {
                                                                     
                                                                     break;
                                                                 case "1":
-                                                                    cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                                    systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                                     report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                         resolve(report_status);
                                                                     });
@@ -1920,14 +1920,14 @@ function main(filter_url, imp_filter_url) {
                                                                         if(!tweet_info.is_user_data_only){
                                                                             //返信報告
                                                                             report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.tweet_id, location.host,"none", false, null).then((report_status) => {
-                                                                                cslt_message_display("ユーザーの報告を行います", "message");
+                                                                                systemMessagePanel.setMessage("ユーザーの報告を行います", "info");
                                                                                 //ユーザー報告
                                                                                 report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                                     resolve(report_status);
                                                                                 });
                                                                             });
                                                                         }else{
-                                                                            cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                                            systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                                             report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                                 resolve(report_status);
                                                                             });
@@ -1946,7 +1946,7 @@ function main(filter_url, imp_filter_url) {
                                                     }
                                                 } else {
                                                     //フォロー欄などのユーザーを報告した場合
-                                                    cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                    systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                     report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                         resolve(report_status);
                                                     });
@@ -1963,13 +1963,13 @@ function main(filter_url, imp_filter_url) {
                                                 //
                                                 switch (cslp_settings.oneclick_report_target_mode) {
                                                     case "0":
-                                                        cslt_message_display("投稿の報告のみを行います", "message");
+                                                        systemMessagePanel.setMessage("投稿の報告のみを行います", "info");
                                                             report_tweet_community(cslp_settings.oneclick_report_option, target_element, tweet_info.tweet_id, location.host).then((report_status) => {
                                                                 resolve(report_status);
                                                             });
                                                         break;
                                                     case "1":
-                                                        cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                        systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                         report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                             resolve(report_status);
                                                         });
@@ -1984,7 +1984,7 @@ function main(filter_url, imp_filter_url) {
                                                                     });
                                                                 });
                                                             }else{
-                                                                cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                                systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                                 report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                     resolve(report_status);
                                                                 });
@@ -2055,7 +2055,7 @@ function main(filter_url, imp_filter_url) {
                                             //開発者情報提供
                                             if (!tweet_info?.is_user_data_only && btn_mode != "notification" && is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
-                                                cslt_message_display("情報提供の処理を行いました", "message");
+                                                systemMessagePanel.setMessage("情報提供の処理を行いました", "info");
                                             }
                                         }
                                         //this.classList.add("cslt_report_complete");
@@ -2067,7 +2067,7 @@ function main(filter_url, imp_filter_url) {
                                             //開発者情報提供
                                             if (!tweet_info?.is_user_data_only && btn_mode != "notification" && is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
-                                                cslt_message_display("情報提供の処理を行いました", "message");
+                                                systemMessagePanel.setMessage("情報提供の処理を行いました", "info");
                                             }
                                         }
                                         //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
@@ -2089,7 +2089,7 @@ function main(filter_url, imp_filter_url) {
                                         //
                                     } else {
                                         document.querySelector('[id="layers"] div[role="group"] div div')?.click();
-                                        cslt_message_display("自身のツイートにこの操作はできません", "error");
+                                        systemMessagePanel.setMessage("自身のツイートにこの操作はできません", "error");
                                     }
                                 }
                                 if (cslp_settings.oneclick_report_after_mode == '4') {
@@ -2098,7 +2098,7 @@ function main(filter_url, imp_filter_url) {
                                             //開発者情報提供
                                             if (!tweet_info?.is_user_data_only && btn_mode != "notification" && is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
-                                                cslt_message_display("情報提供の処理を行いました", "message");
+                                                systemMessagePanel.setMessage("情報提供の処理を行いました", "info");
                                             }
                                         }
                                         //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
@@ -2123,7 +2123,7 @@ function main(filter_url, imp_filter_url) {
                                         //
                                     } else {
                                         document.querySelector('[id="layers"] div[role="group"] div div')?.click();
-                                        cslt_message_display("自身のツイートにこの操作はできません", "error");
+                                        systemMessagePanel.setMessage("自身のツイートにこの操作はできません", "error");
                                     }
                                 }
                                 //開発者情報提供は通知とユーザーページでは無効とする
@@ -2136,12 +2136,12 @@ function main(filter_url, imp_filter_url) {
                                             if (is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
                                                 tweet_area_clear(target_element, "report_only");
-                                                cslt_message_display("情報提供の処理を行いました", "message");
+                                                systemMessagePanel.setMessage("情報提供の処理を行いました", "info");
                                             }
                                             //this.classList.add("cslt_report_complete");
                                         } else {
                                             document.querySelector('[id="layers"] div[role="group"] div div')?.click();
-                                            cslt_message_display("自身のツイートにこの操作はできません", "error");
+                                            systemMessagePanel.setMessage("自身のツイートにこの操作はできません", "error");
                                         }
                                     }
                                 }
@@ -2158,10 +2158,10 @@ function main(filter_url, imp_filter_url) {
                                         //console.log(fail_report_tweet_status_ids_regex.test(tweet_info.tweet_id));
                                         switch (btn_mode) {
                                             case "notification":
-                                                cslt_message_display("通知のため、非表示処理はスキップされます", "message");
+                                                systemMessagePanel.setMessage("通知のため、非表示処理はスキップされます", "info");
                                                 break;
                                             case "user_page":
-                                                cslt_message_display("ブロック/ミュート処理は、再読み込みで反映を確認可能です", "message");
+                                                systemMessagePanel.setMessage("ブロック/ミュート処理は、再読み込みで反映を確認可能です", "info");
                                                 break;
                                             default:
                                                 if (cslp_settings.oneclick_report == true && cslp_settings.oneclick_report_after_mode == '0') {
@@ -2183,7 +2183,7 @@ function main(filter_url, imp_filter_url) {
                                 //this.classList.add("cslt_report_complete");
                             } else {
                                 document.querySelector('[id="layers"] div[role="group"] div div')?.click();
-                                cslt_message_display("自身のツイートにこの操作はできません", "error");
+                                systemMessagePanel.setMessage("自身のツイートにこの操作はできません", "error");
                             }
                         }
                     })
@@ -2499,7 +2499,7 @@ function main(filter_url, imp_filter_url) {
                     const copy_json = JSON.stringify(copy_obj);
                     navigator.clipboard.writeText(copy_json).then(() => {
                         //console.log(copy_json)
-                        cslt_message_display("クリップボードにJSONをコピーしました", "message");
+                        systemMessagePanel.setMessage("クリップボードにJSONをコピーしました", "info");
                     });
                 });
             }
@@ -2545,7 +2545,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
     //console.log(report_req_obj)
     //プロモーションの場合関数終了
     if (report_req_obj.is_promoted == true) {
-        cslt_message_display(`広告のため報告はスキップされます`, "warning");
+        systemMessagePanel.setMessage(`広告のため報告はスキップされます`, "warning");
         return true;
     }
     const get_ct0_token = await new Promise((resolve) => {
@@ -2620,7 +2620,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                         if(input_response.subtasks[0].choice_selection.choices.some(option => option.id === simple_option_map[user_choice])){
                             report_type = simple_option_map[user_choice];
                         }else{
-                            cslt_message_display('設定された報告種別を選択できませんでした。スパムとして報告を行います', "message");
+                            systemMessagePanel.setMessage('設定された報告種別を選択できませんでした。スパムとして報告を行います', "info");
                         }
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${report_type}\"]}}]}`;
                     }else{
@@ -2661,37 +2661,37 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                     if (response.status != 200) {
                         switch (response.status) {
                             case 429:
-                                cslt_message_display(`通報の${now_steps}ステップ目失敗(レートリミット)`, "error");
+                                systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(レートリミット)`, "error");
                                 console.error(response.status);
                                 resolve(false);
                                 //throw new Error(response.status);
                                 break;
                             case 304:
-                                cslt_message_display(`通報の${now_steps}ステップ目失敗(レートリミットの可能性)(Res:${response.status})`, "error");
+                                systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(レートリミットの可能性)(Res:${response.status})`, "error");
                                 console.error(response.status);
                                 resolve(false);
                                 //throw new Error(response.status);
                                 break;
                             default:
-                                cslt_message_display(`通報の${now_steps}ステップ目失敗(Res:${response.status})`, "error");
+                                systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(Res:${response.status})`, "error");
                                 console.error(response.status);
                                 resolve(false);
                                 //throw new Error(response.status);
                                 break;
                         }
                         /*if (response.status == 429) {
-                            cslt_message_display(`通報の${now_steps}ステップ目失敗(レートリミット)`, "error");
+                            systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(レートリミット)`, "error");
                             console.error(response.status);
                             resolve(false);
                             //throw new Error(response.status);
                         } else {
-                            cslt_message_display(`通報の${now_steps}ステップ目失敗(Res:${response.status})`, "error");
+                            systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(Res:${response.status})`, "error");
                             console.error(response.status);
                             resolve(false);
                             //throw new Error(response.status);
                         }*/
                     } else {
-                        cslt_message_display(`通報の${now_steps}ステップ目成功(Res:${response.status})`, "message");
+                        systemMessagePanel.setMessage(`通報の${now_steps}ステップ目成功(Res:${response.status})`, "info");
                         return response.json();
                     }
                 }).then((resp_json_secondstep) => {
@@ -2703,7 +2703,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                             report_finalize = true;
                             send_srv(resp_json_secondstep);
                         } else {
-                            cslt_message_display(`通報の最終ステップ成功`, "message");
+                            systemMessagePanel.setMessage(`通報の最終ステップ成功`, "info");
                             if (fail_report_tweet_status_ids_regex != null && fail_report_tweet_status_ids_regex.test(report_twid) == true) {
                                 report_ids_temp(report_twid, "fail_report_delete");
                             }
@@ -2714,9 +2714,9 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                     console.log("Report 2nd stage error");
                     //連続報告を行った際に発生するエラーを判定する
                     if(now_steps === 2 && error.message.includes("(reading 'subtasks')")){
-                        cslt_message_display(`通報の${now_steps}ステップ目失敗(連続報告により一時的に制限された可能性)`, "error");
+                        systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(連続報告により一時的に制限された可能性)`, "error");
                     }else{
-                        cslt_message_display(`通報の${now_steps}ステップ目失敗(${error.message})`, "error");
+                        systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(${error.message})`, "error");
                     }
                     report_ids_temp(report_twid, "fail_report");
                     console.log(error);
@@ -2742,14 +2742,14 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
         }).then(response => {
             if (response.status != 200) {
                 if (response.status == 429) {
-                    cslt_message_display(`通報の初期ステップ失敗(レートリミット)`, "error");
+                    systemMessagePanel.setMessage(`通報の初期ステップ失敗(レートリミット)`, "error");
                     throw new Error(response.status);
                 } else {
-                    cslt_message_display(`通報の初期ステップ失敗(Res:${response.status})`, "error");
+                    systemMessagePanel.setMessage(`通報の初期ステップ失敗(Res:${response.status})`, "error");
                     throw new Error(response.status);
                 }
             } else {
-                cslt_message_display(`通報の初期ステップ成功(Res:${response.status})`, "message");
+                systemMessagePanel.setMessage(`通報の初期ステップ成功(Res:${response.status})`, "info");
                 return response.json();
             }
         }).then((resp_json_firststep) => {
@@ -2760,7 +2760,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
             });
         }).catch(error => {
             console.log("Report 1st stage error");
-            cslt_message_display(`通報の初期ステップ失敗(${error.message})`, "error");
+            systemMessagePanel.setMessage(`通報の初期ステップ失敗(${error.message})`, "error");
             report_ids_temp(report_twid, "fail_report");
             resolve(false);
             console.log(error);
@@ -2782,7 +2782,7 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
     let old_send_url = `https://${access_host}/i/report/status/${report_twid}`;
     //プロモーションの場合関数終了
     if (tweet_info_obj.is_promoted == true) {
-        cslt_message_display(`広告のため報告はスキップされます`, "warning");
+        systemMessagePanel.setMessage(`広告のため報告はスキップされます`, "warning");
         return true;
     }
     switch (report_mode_conv) {
@@ -2847,17 +2847,17 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
                 }).then(response => {
                     if (response.status != 200 && response.status != 302) {
                         if (response.status == 429) {
-                            cslt_message_display(`通報の${now_steps}ステップ目失敗(コミュニティ/レートリミット)`, "error");
+                            systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(コミュニティ/レートリミット)`, "error");
                             console.error(response.status);
                             resolve(false);
                         } else {
-                            cslt_message_display(`通報の${now_steps}ステップ目失敗(コミュニティ/Res:${response.status})`, "error");
+                            systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(コミュニティ/Res:${response.status})`, "error");
                             console.error(response.status);
                             resolve(false);
                         }
                     } else {
                         old_send_url = response.url;
-                        cslt_message_display(`通報の${now_steps}ステップ目成功(コミュニティ/Res:${response.status})`, "message");
+                        systemMessagePanel.setMessage(`通報の${now_steps}ステップ目成功(コミュニティ/Res:${response.status})`, "info");
                         return response.text();
                     }
                 }).then((resp_text_firststep) => {
@@ -2867,7 +2867,7 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
                         send_srv(resp_text_firststep);
                     } else {
                         //console.log("community report end!");
-                        cslt_message_display(`通報の最終ステップ成功(コミュニティ)`, "message");
+                        systemMessagePanel.setMessage(`通報の最終ステップ成功(コミュニティ)`, "info");
                         if (fail_report_tweet_status_ids_regex != null && fail_report_tweet_status_ids_regex.test(report_twid) == true) {
                             report_ids_temp(report_twid, "fail_report_delete");
                         }
@@ -2876,7 +2876,7 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
                 }).catch(error => {
                     console.log("Community Report 2nd stage error");
                     report_ids_temp(report_twid, "fail_report");
-                    cslt_message_display(`通報の${now_steps}ステップ目失敗(コミュニティ/${error.message})`, "error");
+                    systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(コミュニティ/${error.message})`, "error");
                     resolve(false);
                     console.log(error);
                 });
@@ -2899,15 +2899,15 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
             //console.log(response.ok)
             if (response.status != 200) {
                 if (response.status == 429) {
-                    cslt_message_display(`通報の初期ステップ失敗(コミュニティ/レートリミット)`, "error");
+                    systemMessagePanel.setMessage(`通報の初期ステップ失敗(コミュニティ/レートリミット)`, "error");
                     throw new Error(response.status);
                 } else {
-                    cslt_message_display(`通報の初期ステップ失敗(コミュニティ/Res:${response.status})`, "error");
+                    systemMessagePanel.setMessage(`通報の初期ステップ失敗(コミュニティ/Res:${response.status})`, "error");
                     throw new Error(response.status);
                 }
             } else {
                 old_send_url = response.url;
-                cslt_message_display(`通報の初期ステップ成功(コミュニティ/Res:${response.status})`, "message");
+                systemMessagePanel.setMessage(`通報の初期ステップ成功(コミュニティ/Res:${response.status})`, "info");
                 return response.text();
             }
         }).then((resp_text_firststep) => {
@@ -2918,7 +2918,7 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
             });
         }).catch(error => {
             console.log("Community Report 1st stage error");
-            cslt_message_display(`通報の初期ステップ失敗(コミュニティ/${error.message})`, "error");
+            systemMessagePanel.setMessage(`通報の初期ステップ失敗(コミュニティ/${error.message})`, "error");
             report_ids_temp(report_twid, "fail_report");
             resolve(false);
             console.log(error);
@@ -2951,11 +2951,11 @@ async function block_user(user_id, screen_name, host_mode) {
             }).then((resp) => {
                 if (resp.status != 200) {
                     if (resp.status == 429) {
-                        cslt_message_display("ブロックできません(レートリミット)", "error");
+                        systemMessagePanel.setMessage("ブロックできません(レートリミット)", "error");
                     }
                     throw new Error(resp.status);
                 } else {
-                    cslt_message_display("ブロックしました", "message");
+                    systemMessagePanel.setMessage("ブロックしました", "info");
                     if (fail_block_mute_user_ids_regex != null && fail_block_mute_user_ids_regex.test(user_id) == true) {
                         report_ids_temp(user_id, "fail_block_mute_delete");
                         //console.log(fail_block_mute_user_ids)
@@ -2969,7 +2969,7 @@ async function block_user(user_id, screen_name, host_mode) {
                 console.log("fail block");
                 console.log(error);
                 report_ids_temp(user_id, "fail_block_mute");
-                cslt_message_display(`ブロックできません(${error.message})`, "error");
+                systemMessagePanel.setMessage(`ブロックできません(${error.message})`, "error");
                 resolve(false);
             });
         });
@@ -3005,11 +3005,11 @@ async function mute_user(user_id, screen_name, host_mode) {
             }).then((resp) => {
                 if (resp.status != 200) {
                     if (resp.status == 429) {
-                        cslt_message_display("ミュートできません(レートリミット)", "error");
+                        systemMessagePanel.setMessage("ミュートできません(レートリミット)", "error");
                     }
                     throw new Error(resp.status);
                 } else {
-                    cslt_message_display("ミュートしました", "message");
+                    systemMessagePanel.setMessage("ミュートしました", "info");
                     if (fail_block_mute_user_ids_regex != null && fail_block_mute_user_ids_regex.test(user_id) == true) {
                         report_ids_temp(user_id, "fail_block_mute_delete");
                     }
@@ -3022,7 +3022,7 @@ async function mute_user(user_id, screen_name, host_mode) {
                 console.log("fail mute");
                 console.log(error);
                 report_ids_temp(user_id, "fail_block_mute");
-                cslt_message_display(`ミュートできません(${error.message})`, "error");
+                systemMessagePanel.setMessage(`ミュートできません(${error.message})`, "error");
                 resolve(false);
             });
         });
@@ -3101,7 +3101,7 @@ async function get_block_mute_list(mode, host_mode, cursor_id) {
 
                 if (lists_api_access.status != 200) {
                     if (lists_api_access.status == 429) {
-                        cslt_message_display("リストが取得できません(レートリミット)", "error");
+                        systemMessagePanel.setMessage("リストが取得できません(レートリミット)", "error");
                         if (cursor_str == null) {
                             //console.log(lists_api_access)
                             const limit_date = new Date(lists_api_access.headers.get("x-rate-limit-reset") * 1000);
@@ -3132,7 +3132,7 @@ async function get_block_mute_list(mode, host_mode, cursor_id) {
                     resolve(user_lists_concat);
                 }
             } catch (error) {
-                cslt_message_display(`リストが取得できません(${error.message})`, "error");
+                systemMessagePanel.setMessage(`リストが取得できません(${error.message})`, "error");
                 console.error(error)
                 if (user_lists_concat.length == 0) {
                     resolve(null);
@@ -3189,7 +3189,7 @@ function cslt_message_display_init() {
     Object.assign(content.style, {
         display: "flex",
         height: "100%",
-        padding: "10px",
+        padding: "0 10px",
         color: "white",
         borderRadius: "5px",
         textAlign: "center",
@@ -3208,7 +3208,7 @@ function cslt_message_display_init() {
 
     return {
         //メッセージ設定の関数を返す
-        setMessage(message, mode = "info", autoCloseMs = 3000){
+        setMessage(message, mode = "info", autoCloseMs = 5000){
             if (!document.contains(wrap)) document.body.prepend(wrap);
 
             text.textContent = message;
@@ -3222,28 +3222,6 @@ function cslt_message_display_init() {
     };
 }
 
-//ユーザーメッセージ表示関数
-async function cslt_message_display(message, mode) {
-    new Promise(() => {
-        document.querySelector(".cslt_message_wrap").style.display = "flex";
-        document.querySelector(".cslt_message_span").textContent = message;
-        switch (mode) {
-            case "warning":
-                document.querySelector(".cslt_message_content").style.backgroundColor = "#f0721d";
-                break;
-            case "error":
-                document.querySelector(".cslt_message_content").style.backgroundColor = "#f01d47";
-                break;
-
-            default:
-                document.querySelector(".cslt_message_content").style.backgroundColor = "#1d9bf0";
-                break;
-        }
-        setTimeout(function () {
-            document.querySelector(".cslt_message_wrap").style.display = "none";
-        }, 5000);
-    });
-}
 async function tweet_area_clear(target_element, mode) {
     new Promise(() => {
         const target_tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
@@ -3338,7 +3316,7 @@ function block_mute_io() {
                 } else {
                     user_list = await get_block_mute_list("block", location.host, null);
                 }
-                cslt_message_display("ユーザーリストの取得中", "message");
+                systemMessagePanel.setMessage("ユーザーリストの取得中", "info");
                 user_list.forEach((user_data) => {
                     if (user_data.content.itemContent?.user_results != undefined) {
                         //console.log(user_data.content.itemContent.user_results.result.legacy.name)
@@ -3358,13 +3336,13 @@ function block_mute_io() {
                 } else {
                     user_list = await get_block_mute_list("mute", location.host, null);
                 }
-                cslt_message_display("ユーザーリストの取得中", "message");
+                systemMessagePanel.setMessage("ユーザーリストの取得中", "info");
                 user_list.forEach((user_data) => {
                     if (user_data.content.itemContent?.user_results != undefined) {
                         export_user_list.push(user_data.content.itemContent.user_results.result);
                     }
                 });
-                cslt_message_display("ユーザーリストのダウンロードを行います", "message");
+                systemMessagePanel.setMessage("ユーザーリストのダウンロードを行います", "info");
                 download_list(export_user_list, "Mute");
             }
         })
@@ -3392,9 +3370,9 @@ function block_mute_io() {
                     if (confirm(`${input_user_list.length}件のユーザーを現在のリストに追加しますか？`)) {
                         if (window.location.pathname.split("/")[2] == 'blocked') {
                             let now_status_num = 1;
-                            cslt_message_display("処理を開始します", "message");
+                            systemMessagePanel.setMessage("処理を開始します", "info");
                             for (const user_data of input_user_list) {
-                                cslt_message_display(`${now_status_num}/${input_user_list.length}処理中-${user_data.legacy.name}`, "message");
+                                systemMessagePanel.setMessage(`${now_status_num}/${input_user_list.length}処理中-${user_data.legacy.name}`, "info");
                                 //console.log(user_data.rest_id)
                                 //console.log(user_data.legacy.name)
                                 const block_run = await new Promise((resolve) => {
@@ -3415,14 +3393,14 @@ function block_mute_io() {
                                     break;
                                 }
                                 if (now_status_num > input_user_list.length) {
-                                    cslt_message_display("処理が完了しました", "message");
+                                    systemMessagePanel.setMessage("処理が完了しました", "info");
                                 }
                             }
                         } else {
                             let now_status_num = 1;
-                            cslt_message_display("処理を開始します", "message");
+                            systemMessagePanel.setMessage("処理を開始します", "info");
                             for (const user_data of input_user_list) {
-                                cslt_message_display(`${now_status_num}/${input_user_list.length}処理中-${user_data.legacy.name}`, "message");
+                                systemMessagePanel.setMessage(`${now_status_num}/${input_user_list.length}処理中-${user_data.legacy.name}`, "info");
                                 //console.log(user_data.rest_id)
                                 //console.log(user_data.legacy.name)
                                 const mute_run = await new Promise((resolve) => {
@@ -3443,14 +3421,14 @@ function block_mute_io() {
                                     break;
                                 }
                                 if (now_status_num > input_user_list.length) {
-                                    cslt_message_display("処理が完了しました！リストを開き直してください", "message");
+                                    systemMessagePanel.setMessage("処理が完了しました！リストを開き直してください", "info");
                                 }
                             }
                         }
                     }
                 }
                 file_reader.onerror = function () {
-                    cslt_message_display("ファイルの読み込みに失敗しました", "error");
+                    systemMessagePanel.setMessage("ファイルの読み込みに失敗しました", "error");
                 }
             }
             this.value = '';
