@@ -723,7 +723,6 @@ function main(filter_url, imp_filter_url) {
                     const not_selector = `:not([cslt_tweet_info_mytweet_flag="true"],[cslt_white_list_user],[cslt_hide_flag="true"],[cslt_blue_bypass_flag="true"],[cslt_night_spam_processed_flag="true"],[cslt_process_ok="true"],[cslt_temp_fail_report_flag="fail_tweet"])`;
                     const target_selector = `div[data-testid="cellInnerDiv"][cslt_tweet_info]${not_selector},li[cslt_tweet_info]${not_selector}`;//,[cslt_report_btn_set_flag="true"] ${cslt_exclusion_css_flag}
                     const target_tweet_element = target_elem.querySelectorAll(target_selector);
-                    console.log(target_tweet_element)
                     /* 非表示等動作 */
                     /* TIPS:新しい非表示機能付けたけど画面が固まってしまう場合、フラグが立っていない可能性があります！
                     非表示処理後は「cslt_hide_flag」の値を「true」にしたフラグを立てましょう。
@@ -769,7 +768,7 @@ function main(filter_url, imp_filter_url) {
                                     continue;
                                 }
                             }
-                            /* リツイート欄等では非表示機能を無効化 */
+                            /* リツイートやフォロー欄等では非表示機能を無効化 */
                             if (!is_status_rt() && processing_following_user_exclusion_flag) {
                                 //ホワイトリスト処理
                                 if (cslp_settings.user_register_whitelist.length != 0) {
@@ -1717,6 +1716,7 @@ function main(filter_url, imp_filter_url) {
                     if (is_follow_page() || is_status_rt() && cslp_settings.oneclick_report_follow_list == true || window.location.search.match(/f=user/g)?.length == 1 && cslp_settings.oneclick_report_follow_list == true) {
                         if (cslp_settings.imp_user_block == true && cslp_settings.follow_list_imp_find_user == true) {
                             const follower_user_id = input_element.querySelector('[data-testid="UserCell"] a[role="link"]')?.href.replace(/(https:\/\/x.com\/|https:\/\/twitter.com\/)/g, "");
+                            //TODO: 新クライアントの通知とフォロー画面が確認できていないので、今後対応させる
                             if (imp_user_block_list_regexp.test(follower_user_id) && input_element.querySelector('[data-testid="UserCell"]').getAttribute("cslt_flag") != "follower_imp_ok") {
                                 input_element.querySelector('[data-testid="UserCell"]').setAttribute("cslt_flag", "follower_imp_ok");
                                 input_element.querySelector('[data-testid="UserCell"]').style.backgroundColor = "#ffb9ad";
