@@ -1673,14 +1673,14 @@ function main(filter_url, imp_filter_url) {
 
                 /* MutationObserverによる監視 */
                 if (JSON.parse(cslp_settings.filter) == true) {
-                    const observer = new MutationObserver(run)
+                    const observer = new MutationObserver(run);
                     observer.observe(target_elem, {
                         childList: true,
                         attributes: true,
                         characterData: true,
                         subtree: true,
-                        attributeOldValue: true,
-                        characterDataOldValue: true
+                        attributeOldValue: false,
+                        characterDataOldValue: false
                     });
                 }
                 /* 以下非表示以外の機能用関数 */
