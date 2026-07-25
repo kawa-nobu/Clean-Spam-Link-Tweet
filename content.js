@@ -711,15 +711,6 @@ function main(filter_url, imp_filter_url) {
                         return false;
                     }
                 }
-                //要素検証用関数
-                function target_element_num(input_element_num, input_selector){
-                    const target_verifi_element = target_elem.querySelectorAll(input_selector);
-                    if(input_element_num == target_verifi_element.length){
-                        return true;
-                    }else{
-                        return false;
-                    }
-                }
                 /* メイン動作関数 */
                 function run() {
                     //const cslt_performance_logging_start = performance.now();
@@ -744,11 +735,12 @@ function main(filter_url, imp_filter_url) {
                     非表示処理後は「cslt_hide_flag」の値を「true」にしたフラグを立てましょう。
                     非表示以外の機能追加の場合は分かりやすい任意のフラグを追加してください！*/
                     for (let target_index = 0; target_index < target_tweet_element.length; target_index++) {
-                        //要素取りこぼし検証
-                        if (!target_element_num(target_tweet_element.length, target_selector)) {
-                            break;
-                        }
                         const cslt_target_tweet_elem = target_tweet_element[target_index];
+                        //要素がまだDOM上に残っているかチェックする
+                        if (!cslt_target_tweet_elem.isConnected) continue;
+                        //処理の対象であるかどうかチェックする
+                        if (!cslt_target_tweet_elem.matches(target_selector)) continue;
+                        
                         const cslt_tweet_info_obj = JSON.parse(cslt_target_tweet_elem.getAttribute('cslt_tweet_info'));
                         //フォロー中ユーザー除外設定フラグ
                         let processing_following_user_exclusion_flag = true;
