@@ -456,9 +456,16 @@
                             }
                             if(tweet_info_other?.in_reply_to_status_id_str != undefined){
                                 is_reply_other = true;
-                                reply_user_data_other_obj = {
-                                    user_id: tweet_info_other?.in_reply_to_user.id_str,
-                                    scr_name: tweet_info_other?.in_reply_to_user.screen_name
+                                if(tweet_info_other?.in_reply_to_user){
+                                    reply_user_data_other_obj = {
+                                        user_id: tweet_info_other?.in_reply_to_user.id_str,
+                                        scr_name: tweet_info_other?.in_reply_to_user.screen_name,
+                                    }
+                                }else{
+                                    reply_user_data_other_obj = {
+                                        user_id: tweet_info_other?.in_reply_to_user_id_str,
+                                        scr_name: tweet_info_other?.in_reply_to_screen_name,
+                                    }
                                 }
                             }
                             if(tweet_info_other?.card?.binding_values?.domain?.string_value != undefined){
