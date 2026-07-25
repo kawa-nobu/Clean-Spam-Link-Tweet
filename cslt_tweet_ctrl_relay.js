@@ -19,6 +19,15 @@
   //Relay Environmentキャッシュ
   let _env = null;
 
+  //各種ツイートキープレフィックス
+  const TWEET_KEY_PREFIXES = [
+    "tweet-",
+    "promoted-tweet-",
+    "profile-conversation-",
+    "conversationthread-",
+    "tweetdetailrelatedtweets-",
+  ];
+
   //ReactFiber取得
   function getFiber(element) {
     const key = Object.keys(element).find((k) => k.startsWith("__reactFiber$"));
@@ -231,16 +240,12 @@
 
     // TwitterCrad周りの情報を取得
     let tw_card_obj = null;
-    if (bindings.domain) {
-      const domainValue = bindings.domain;
-      // domainが文字列ならそのまま、オブジェクトならstring_valueを取り出す
-      if (typeof domainValue === "string") {
-        tw_card_obj = { domain: domainValue };
-      } else if (domainValue.string_value) {
-        tw_card_obj = { domain: domainValue.string_value };
-      } else {
-        tw_card_obj = { domain: domainValue };
-      }
+    if (bindings) {
+      tw_card_obj = {
+        domain: bindings.domain ?? null,
+        card_url: bindings.card_url ?? null,
+        description: bindings.description ?? null,
+      };
     }
 
     // unified_card周りの情報を取得
@@ -757,11 +762,12 @@
     if (!fiber) return null;
 
     const key = fiber.memoizedProps?.children?.key;
-    if (!key) return null;
+    if (typeof key !== "string") return null;
 
-    if (!key.startsWith("tweet-")) return null;
+    const prefix = TWEET_KEY_PREFIXES.find((p) => key.startsWith(p));
+    if (!prefix) return null;
 
-    return key.replace("tweet-", "");
+    return key.slice(prefix.length);
   }
 
   /* ログインユーザー情報を取得 */
@@ -783,7 +789,7 @@
     */
     //初期化スクリプトからscreen_nameを取得
     try {
-        //このセレクタは従来のもののため、新しいものでは確実に動かないと思われる
+      //このセレクタは従来のもののため、新しいものでは確実に動かないと思われる
       const script = document.querySelector(
         'script[type="text/javascript"][charset="utf-8"][nonce]',
       );
@@ -1031,7 +1037,10 @@
       }
     }
 
-    customElements.define("cslt-compatible-message-banner", CsltCompatibleModeUserMessage);
+    customElements.define(
+      "cslt-compatible-message-banner",
+      CsltCompatibleModeUserMessage,
+    );
     document.body.prepend(new CsltCompatibleModeUserMessage());
   }
 })();
