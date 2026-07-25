@@ -206,6 +206,23 @@ document.head.insertAdjacentHTML("beforeend", `
 .cslt_report_icon_notification_wrap .cslt_report_icon{
     margin-left: 10px;
 }
+
+.cslt_spam_link_found{
+    position: absolute;
+    z-index: 19;
+    display: inline-flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    background-color: rgba(0,0,0,0.75);
+    color: #fff;
+    font-size: 16px;
+    font-family: system-ui;
+    cursor: default;
+}
+a[data-cslt-is-spam]{
+    pointer-events: none;
+}
 </style>
 `);
 
@@ -447,7 +464,7 @@ function main(filter_url, imp_filter_url) {
                 let target_elem = document.getElementById("react-root");
                 if(!target_elem){
                     //新クライアントの場合
-                    target_elem = document.querySelector('main');
+                    target_elem = document.body;
                     is_new_client = true;
                 }
                 //Write Latest Version
@@ -1538,45 +1555,11 @@ function main(filter_url, imp_filter_url) {
                         /*元ツイート以外にも適用するにはここから記述*/
                         //ナイト系スパム対策
                         if (cslp_settings.night_spam_block == true && !is_follow_page() && !is_status_rt() && processing_following_user_exclusion_flag && window.location.search.match(/f=user/g) == null) {
+                            cslt_target_tweet_elem.setAttribute("cslt_night_spam_processed_flag", "true");
                             //テキスト内のURLチェック
                             const night_spam_text_urls = cslt_tweet_info_obj.text.replaceAll('\n', ' ').match(/((https?:\/\/|www\.)[^\s/$.?#].[^\s]*)/gi);
                             let night_spam_processed_flag = false;
                             //console.log(night_spam_text_urls)
-                            if (night_spam_text_urls != null && cslt_tweet_info_obj.attached_urls != null) {
-                                for (let text_urls_index = 0; text_urls_index < cslt_tweet_info_obj.attached_urls.length; text_urls_index++) {
-                                    const expanded_url = cslt_tweet_info_obj.attached_urls[text_urls_index].expanded_url;
-                                    const tco_url = cslt_tweet_info_obj.attached_urls[text_urls_index].url;
-                                    if (night_spam_text_urls[text_urls_index] == tco_url) {
-                                        if (block_regexp.test(expanded_url)) {
-                                            //console.log("NightSpamText=>"+cslt_tweet_info_obj.text)
-                                            if (cslp_settings.hit_del == true && !cslt_tweet_info_obj.is_root_tweet) {
-                                                //ヒットツイート非表示有効&元ツイートでない場合非表示
-                                                night_spam_processed_flag = true;
-                                                cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
-                                                cslt_target_tweet_elem.textContent = "";
-                                                break;
-                                            } else {
-                                                //ヒットツイート非表示無効
-                                                const night_spam_text_url_nodelist = cslt_target_tweet_elem.querySelectorAll(`div[data-testid="tweetText"] a[href="${tco_url}"]`);
-                                                let ins_html;
-                                                for (let spam_link_index = 0; spam_link_index < night_spam_text_url_nodelist.length; spam_link_index++) {
-                                                    if (night_spam_text_url_nodelist[spam_link_index].offsetWidth < 230) {
-                                                        ins_html = `<div style="position: absolute;z-index: 99999;width: ${night_spam_text_url_nodelist[spam_link_index].offsetWidth + 1}px;height: ${night_spam_text_url_nodelist[spam_link_index].offsetHeight + 5}px;max-height:25px;display: inline-flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;font-size: 0.5rem;"><p>スパム</p></div>`;
-                                                    } else {
-                                                        ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: ${night_spam_text_url_nodelist[spam_link_index].offsetWidth + 1}px;height: ${night_spam_text_url_nodelist[spam_link_index].offsetHeight + 5}px;max-height:25px;display: inline-flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;"><p>スパムを検出!&nbsp;(${night_spam_text_url_nodelist[spam_link_index].textContent.match(/\/\/([^/]*)/)[1]})</p></div>`;
-                                                    }
-                                                    night_spam_text_url_nodelist[spam_link_index].style.whiteSpace = "nowrap";
-                                                    night_spam_text_url_nodelist[spam_link_index].insertAdjacentHTML("beforebegin", ins_html);
-                                                    if (cslp_settings.hit_url_copy == true) {
-                                                        copy_url(cslt_target_tweet_elem);
-                                                    }
-                                                }
-                                                night_spam_processed_flag = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                             //TwitterCard処理
                             if (cslt_tweet_info_obj.tw_card_obj != null) {
                                 if (block_regexp.test(cslt_tweet_info_obj.tw_card_obj.domain)) {
@@ -1586,10 +1569,23 @@ function main(filter_url, imp_filter_url) {
                                         cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                         cslt_target_tweet_elem.textContent = "";
                                     } else {
-                                        const ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 5px 5px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${cslt_tweet_info_obj.tw_card_obj.domain}<br>クリックでツイートを開く</p></div>`;
+                                        let ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 5px 5px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${cslt_tweet_info_obj.tw_card_obj.domain}<br>クリックでツイートを開く</p></div>`;
                                         //cslt_target_tweet_elem.querySelector(`div[data-testid="card.wrapper"]`).insertAdjacentHTML("beforebegin", ins_html);
-                                        const night_spam_twitter_card_elem = cslt_target_tweet_elem.querySelector(`div[aria-labelledby][id]`);
+                                        let night_spam_twitter_card_elem = cslt_target_tweet_elem.querySelector(`div[aria-labelledby][id], a[href="${cslt_tweet_info_obj.tw_card_obj.card_url}"], button:has(img[src*="card_img"])`);
                                         if (night_spam_twitter_card_elem != null) {
+                                            night_spam_twitter_card_elem.dataset.csltIsSpam = true;
+                                            if (is_new_client) {
+                                                //ボタンのタイプのCardでクリックしても動作しないようにする
+                                                if(night_spam_twitter_card_elem.tagName === "BUTTON") {
+                                                    night_spam_twitter_card_elem.disabled = true;
+                                                }
+                                                //通常タイプのCard(カード本体と提供元リンクが兄弟の場合のみ親へ繰り上げる)
+                                                if (night_spam_twitter_card_elem.tagName === "A" && night_spam_twitter_card_elem.parentElement.querySelectorAll(`a[href="${cslt_tweet_info_obj.tw_card_obj.card_url}"]`).length > 1) {
+                                                    night_spam_twitter_card_elem = night_spam_twitter_card_elem.parentElement;
+                                                }
+                                                night_spam_twitter_card_elem.style.position = "relative";
+                                                ins_html = `<div class="cslt_spam_link_found" style="inset:0;border-radius:5px;"><p>スパムを検出!<br>ヒットしたURL:${cslt_tweet_info_obj.tw_card_obj.domain}<br>クリックでツイートを開く</p></div>`;
+                                            }
                                             night_spam_twitter_card_elem.insertAdjacentHTML("afterbegin", ins_html);
                                             if (cslp_settings.hit_url_copy == true) {
                                                 copy_url(cslt_target_tweet_elem);
@@ -1610,9 +1606,18 @@ function main(filter_url, imp_filter_url) {
                                         cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                         cslt_target_tweet_elem.textContent = "";
                                     } else {
-                                        const ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 5px 5px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${video_card_url.host}<br>クリックでツイートを開く</p></div>`;
-                                        const night_spam_twitter_card_elem = cslt_target_tweet_elem.querySelector(`div[aria-labelledby][id]`);
+                                        let ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 5px 5px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${video_card_url.host}<br>クリックでツイートを開く</p></div>`;
+                                        let night_spam_twitter_card_elem = cslt_target_tweet_elem.querySelector(`div[aria-labelledby][id], a[href="${video_card_url_data.url}"]`);
                                         if (night_spam_twitter_card_elem != null) {
+                                            night_spam_twitter_card_elem.dataset.csltIsSpam = true;
+                                            if (is_new_client) {
+                                                //カード本体と提供元リンクが兄弟なので親へ繰り上げる
+                                                if (night_spam_twitter_card_elem.tagName === "A") {
+                                                    night_spam_twitter_card_elem = night_spam_twitter_card_elem.parentElement;
+                                                }
+                                                night_spam_twitter_card_elem.style.position = "relative";
+                                                ins_html = `<div class="cslt_spam_link_found" style="inset:0;border-radius:5px;"><p>スパムを検出!<br>ヒットしたURL:${video_card_url.host}<br>クリックでツイートを開く</p></div>`;
+                                            }
                                             night_spam_twitter_card_elem.insertAdjacentHTML("afterbegin", ins_html);
                                             if (cslp_settings.hit_url_copy == true) {
                                                 copy_url(cslt_target_tweet_elem);
@@ -1620,9 +1625,50 @@ function main(filter_url, imp_filter_url) {
                                         }
                                     }
                                 }
+                                night_spam_processed_flag = true;
+                            }
+                            //通常のリンク
+                            if (night_spam_text_urls != null && cslt_tweet_info_obj.attached_urls != null) {
+                                for (let text_urls_index = 0; text_urls_index < cslt_tweet_info_obj.attached_urls.length; text_urls_index++) {
+                                    const expanded_url = cslt_tweet_info_obj.attached_urls[text_urls_index].expanded_url;
+                                    const tco_url = cslt_tweet_info_obj.attached_urls[text_urls_index].url;
+                                    if (night_spam_text_urls[text_urls_index] == tco_url) {
+                                        if (block_regexp.test(expanded_url)) {
+                                            //console.log("NightSpamText=>"+cslt_tweet_info_obj.text)
+                                            if (cslp_settings.hit_del == true && !cslt_tweet_info_obj.is_root_tweet) {
+                                                //ヒットツイート非表示有効&元ツイートでない場合非表示
+                                                night_spam_processed_flag = true;
+                                                cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                                cslt_target_tweet_elem.textContent = "";
+                                                break;
+                                            } else {
+                                                //ヒットツイート非表示無効
+                                                const night_spam_text_url_nodelist = cslt_target_tweet_elem.querySelectorAll(`div[data-testid="tweetText"] a[href="${tco_url}"], a[href="${tco_url}"], a[href="${expanded_url}"]`);
+                                                let ins_html;
+                                                const host = expanded_url.match(/\/\/([^/]*)/)?.[1] ?? "不明";
+                                                for (let spam_link_index = 0; spam_link_index < night_spam_text_url_nodelist.length; spam_link_index++) {
+                                                    if (night_spam_text_url_nodelist[spam_link_index].closest("[data-cslt-is-spam]")) continue;
+                                                    night_spam_text_url_nodelist[spam_link_index].dataset.csltIsSpam = true;
+                                                    const rect = night_spam_text_url_nodelist[spam_link_index].getClientRects()[0];
+                                                    if (rect == null) continue;
+                                                    if (rect.width < 230) {
+                                                        ins_html = `<div class="cslt_spam_link_found" style="inset:0;font-size:0.5rem;"><p>スパム</p></div>`;
+                                                    } else {
+                                                        ins_html = `<div class="cslt_spam_link_found" style="inset:0;"><p>スパムを検出!&nbsp;(${host})</p></div>`;
+                                                    }
+                                                    night_spam_text_url_nodelist[spam_link_index].style.position = "relative";
+                                                    night_spam_text_url_nodelist[spam_link_index].insertAdjacentHTML("afterbegin", ins_html);
+                                                }
+                                                if (cslp_settings.hit_url_copy == true) {
+                                                    copy_url(cslt_target_tweet_elem);
+                                                }
+                                                night_spam_processed_flag = true;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             if (night_spam_processed_flag) {
-                                cslt_target_tweet_elem.setAttribute("cslt_night_spam_processed_flag", "true");
                                 continue;
                             }
                         }
