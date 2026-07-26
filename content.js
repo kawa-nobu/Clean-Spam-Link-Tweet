@@ -223,6 +223,31 @@ document.head.insertAdjacentHTML("beforeend", `
 a[data-cslt-is-spam]{
     pointer-events: none;
 }
+
+/* 旧クライアント向けのCard警告 */
+[data-cslt-is-spam] > [data-testid="card.wrapper"] {
+    position: relative;
+}
+[data-cslt-is-spam] > [data-testid="card.wrapper"]::before {
+    content: "スパムを検出!\\Aヒットしたリンク: " var(--cslt-spam-host) "\\Aクリックでツイートを開く";
+    position: absolute;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    line-height: 1.3;
+}
+[data-cslt-is-spam]:has(> [data-testid="card.wrapper"]) {
+    pointer-events: none;
+}
 </style>
 `);
 
@@ -1577,6 +1602,9 @@ function main(filter_url, imp_filter_url) {
                                                 }
                                                 night_spam_twitter_card_elem.style.position = "relative";
                                                 ins_html = `<div class="cslt_spam_link_found" style="inset:0;border-radius:5px;"><p>スパムを検出!<br>ヒットしたURL:${cslt_tweet_info_obj.tw_card_obj.domain}<br>クリックでツイートを開く</p></div>`;
+                                            }else{
+                                                night_spam_twitter_card_elem.style.setProperty("--cslt-spam-host", JSON.stringify(cslt_tweet_info_obj.tw_card_obj.domain));
+                                                ins_html = "";
                                             }
                                             night_spam_twitter_card_elem.insertAdjacentHTML("afterbegin", ins_html);
                                             if (cslp_settings.hit_url_copy == true) {
