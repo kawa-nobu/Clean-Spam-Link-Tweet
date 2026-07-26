@@ -512,10 +512,10 @@ function main(filter_url, imp_filter_url) {
                     scam_induction_spam_user_text_regexp = new RegExp(json[1].scam_induction_spam_user_text);
                 }
                 if (cslp_settings.user_register_hideuser.length != 0) {
-                    hide_user_list_regexp = array_regexp_escape(cslp_settings.user_register_hideuser, false);
+                    hide_user_list_regexp = array_regexp_escape(cslp_settings.user_register_hideuser, false, true);
                 }
                 if (cslp_settings.user_register_whitelist.length != 0) {
-                    user_whitelist_regexp = array_regexp_escape(cslp_settings.user_register_whitelist, false);
+                    user_whitelist_regexp = array_regexp_escape(cslp_settings.user_register_whitelist, false, true);
                 }
                 //投稿自動化ツールクライアント正規表現作成
                 if(cslp_settings.auto_tweet_tools_tweet_block){
@@ -3446,12 +3446,12 @@ function block_mute_io() {
     }
 }
 //配列内文字列エスケープ処理&正規表現作成関数
-function array_regexp_escape(input_array, is_group){
-    if(is_group){
-        return new RegExp(`(${input_array.join("<-NO_RP->").replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/<-NO_RP->/g, "|")})`, 'g');
-    }else{
-        return new RegExp(`(${input_array.join("<-NO_RP->").replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/<-NO_RP->/g, "|")})`);
-    }
+function array_regexp_escape(input_array, is_group, anchor=false){
+    let pattern = `(${input_array.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("|")})`;
+
+    if(anchor) pattern = `^${pattern}$`;
+
+    return new RegExp(pattern, is_group ? "g" : "");
 }
 //任意月以内検出関数
 function is_date_with_month(date, range){
