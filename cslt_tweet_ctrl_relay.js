@@ -5,7 +5,8 @@
 
 (function () {
   //新しいクライアント上で動作させているかを検出する
-  if (!window.__TSR_ROUTER__) {
+  const isNewClient = !!window.__TSR_ROUTER__ || !document.getElementById('react-root');
+  if (!isNewClient) {
     console.log("Use old client");
     return;
   }
