@@ -1637,6 +1637,9 @@ function main(filter_url, imp_filter_url) {
                                                 }
                                                 night_spam_twitter_card_elem.style.position = "relative";
                                                 ins_html = `<div class="cslt_spam_link_found" style="inset:0;border-radius:5px;"><p>スパムを検出!<br>ヒットしたURL:${video_card_url.host}<br>クリックでツイートを開く</p></div>`;
+                                            }else{
+                                                night_spam_twitter_card_elem.style.setProperty("--cslt-spam-host", `"${video_card_url.host}"`);
+                                                ins_html = "";
                                             }
                                             night_spam_twitter_card_elem.insertAdjacentHTML("afterbegin", ins_html);
                                             if (cslp_settings.hit_url_copy == true) {
