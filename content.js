@@ -2436,7 +2436,7 @@ function main(filter_url, imp_filter_url) {
                             }
                             //アドバンスド解析ベースモードからのt.coリンク取得部分移植
                             function get_tco_new(input_element) {
-                                let target_element_a = input_element.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a');
+                                let target_element_a = input_element.parentElement.querySelectorAll('[data-testid="card.wrapper"] a,  div[aria-labelledby] a, [data-testid="tweetText"] a');
                                 let target_url = null;
                                 if (input_element.parentElement.querySelectorAll('[data-testid="tweetText"] a').length != 0) {
                                     target_element_a = input_element.parentElement.querySelectorAll('[data-testid="tweetText"] a');
