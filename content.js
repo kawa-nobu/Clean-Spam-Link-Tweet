@@ -2548,6 +2548,7 @@ function main(filter_url, imp_filter_url) {
             function copy_tweet_data(element_json, target_id) {
                 document.getElementById(target_id).addEventListener("click", function () {
                     const copy_obj = JSON.parse(element_json);
+                    delete copy_obj.user_report_json;
                     delete copy_obj.report_json;
                     const copy_json = JSON.stringify(copy_obj);
                     navigator.clipboard.writeText(copy_json).then(() => {
@@ -3203,16 +3204,17 @@ async function get_block_mute_list(mode, host_mode, cursor_id) {
 //開発者提供用関数
 function developer_spam_user_share(report_srv, spam_element) {
     const report_json_del_privacy = JSON.parse(spam_element.getAttribute('cslt_tweet_info'));
-    //提供者情報を含むデータを削除
+    //不要なデータを削除
+    delete report_json_del_privacy.user_report_json;
     delete report_json_del_privacy.report_json;
     //console.log(report_json_del_privacy)
     let tweet_user_id = null;
     let tweet_uesr_name = null;
     let tweet_text = null;
     let tweet_text_length = null;
-    tweet_user_id = spam_element.querySelector('[data-testid="User-Name"]  a').href.replace(/(https:\/\/x.com\/|https:\/\/twitter.com\/)/g, "");
-    tweet_uesr_name = spam_element.querySelector('article [data-testid="User-Name"] a').textContent;
-    tweet_text = `${spam_element.querySelector('article[data-testid="tweet"] [aria-labelledby]')?.innerText}%and%${spam_element.querySelector('[aria-labelledby] div[data-testid="tweetText"]')?.innerText}`;
+    tweet_user_id = report_json_del_privacy.user_data.scr_name;
+    tweet_uesr_name = report_json_del_privacy.user_data.name
+    tweet_text = report_json_del_privacy.text;
     tweet_text_length = tweet_text.length;
     //console.log({tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length})
     chrome.runtime.sendMessage({ message: { mode: "developer_report_share", target: { report_srv_url: report_srv, tweet_user_id: tweet_user_id, tweet_user_name: tweet_uesr_name, tweet_text: tweet_text, tweet_length: tweet_text_length, report_json_data: report_json_del_privacy } } }, (response) => { });
