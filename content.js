@@ -248,6 +248,11 @@ a[data-cslt-is-spam]{
 [data-cslt-is-spam]:has(> [data-testid="card.wrapper"]) {
     pointer-events: none;
 }
+
+/* 新クライアント向けの投稿情報コピーパネル */
+li[cslt_tweet_info]:has(.cslt_tweetdata_copy) {
+  position: relative;
+}
 </style>
 `);
 
@@ -1844,10 +1849,14 @@ function main(filter_url, imp_filter_url) {
                     if (cslp_settings.hit_url_copy == true && btn_mode != "notification") {
                         //URLコピー用要素追加
                         let tweet_info_copy_ins_html = `<div id="cslt_tweet_info_copy_${random_id}" class="cslt_tweetdata_copy" style="width: 100%;height: 100%;position: absolute;z-index: 100;display: flex;align-items: center;text-align: center;justify-content: center;font-weight:bold;background-color: rgba(0,0,0,0.75);color: #fff;outline:solid 5px #1173ff;outline-offset:-5px;cursor:copy;visibility:hidden;">クリックで情報をコピー</div>`;
-                        const reply_elem_user_cell_copy = input_element.closest('[data-testid="cellInnerDiv"], [data-testid="UserCell"]:not([cslt_copy_tweet_data_success])');
-                        reply_elem_user_cell_copy.insertAdjacentHTML("afterbegin", tweet_info_copy_ins_html);
-                        copy_tweet_data(reply_elem_user_cell_copy.getAttribute("cslt_tweet_info"), `cslt_tweet_info_copy_${random_id}`);
-                        reply_elem_user_cell_copy.setAttribute('cslt_copy_tweet_data_success', '');
+                        const reply_elem_user_cell_copy = input_element.closest('li[cslt_tweet_info], [data-testid="cellInnerDiv"], [data-testid="UserCell"]:not([cslt_copy_tweet_data_success])');
+                        
+                        //ターゲットとなる投稿本体の存在状態によって追加を決定する
+                        if(reply_elem_user_cell_copy){
+                            reply_elem_user_cell_copy.insertAdjacentHTML("afterbegin", tweet_info_copy_ins_html);
+                            copy_tweet_data(reply_elem_user_cell_copy.getAttribute("cslt_tweet_info"), `cslt_tweet_info_copy_${random_id}`);
+                            reply_elem_user_cell_copy.setAttribute('cslt_copy_tweet_data_success', '');
+                        }
                     }
                     //報告ボタン動作
                     document.getElementById(random_id)?.addEventListener("click", async function () {
@@ -2231,6 +2240,9 @@ function main(filter_url, imp_filter_url) {
                 }
                 //URLコピー関数(ナイト系スパム関連。レガシー)
                 function copy_url(input_element) {
+                    //レガシー機能のため、新クライアントでは無効にする
+                    if(is_new_client) return;
+
                     //コピー変数
                     let copy_tw_id = null;
                     let copy_tw_date = null;
