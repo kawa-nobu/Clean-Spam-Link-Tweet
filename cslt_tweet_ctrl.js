@@ -203,14 +203,26 @@
                             }
                             if(tweet_info_reply.in_reply_to_status_id_str != undefined){
                                 is_reply_status = true;
-                                reply_user_data_status_obj = {
-                                    name: tweet_info_reply.in_reply_to_user.name, 
-                                    user_id: tweet_info_reply.in_reply_to_user.id_str,
-                                    scr_name: tweet_info_reply.in_reply_to_user.screen_name,
-                                    all_tweet_count: tweet_info_reply.in_reply_to_user.statuses_count,
-                                    is_blue:tweet_info_reply.in_reply_to_user.is_blue_verified,
-                                    location: tweet_info_reply.in_reply_to_user.location,
-                                    account_create_date: tweet_info_reply.in_reply_to_user.created_at
+                                if(tweet_info_reply?.in_reply_to_user){
+                                    reply_user_data_status_obj = {
+                                        name: tweet_info_reply?.in_reply_to_user.name, 
+                                        user_id: tweet_info_reply?.in_reply_to_user.id_str,
+                                        scr_name: tweet_info_reply?.in_reply_to_user.screen_name,
+                                        all_tweet_count: tweet_info_reply?.in_reply_to_user.statuses_count,
+                                        is_blue:tweet_info_reply?.in_reply_to_user.is_blue_verified,
+                                        location: tweet_info_reply?.in_reply_to_user.location,
+                                        account_create_date: tweet_info_reply?.in_reply_to_user.created_at
+                                    }
+                                }else{
+                                    reply_user_data_status_obj = {
+                                        name: null, 
+                                        user_id: tweet_info_reply?.in_reply_to_status_id_str,
+                                        scr_name: tweet_info_reply?.in_reply_to_screen_name,
+                                        all_tweet_count: null,
+                                        is_blue:null,
+                                        location: null,
+                                        account_create_date: null
+                                    }
                                 }
                             }
                             if(tweet_info_reply?.card?.binding_values?.domain?.string_value != undefined){
