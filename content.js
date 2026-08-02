@@ -2257,7 +2257,7 @@ function main(filter_url, imp_filter_url) {
                     document.getElementById(copy_btn_random_id).addEventListener("click", function () {
                         //console.log(this)
                         //ツイート情報取得
-                        const get_tw_id_url = new URL(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"]  a[dir="ltr"], div[dir="ltr"] [aria-describedby][role="link"]').href);
+                        const get_tw_id_url = new URL(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"]  a[dir="ltr"], div[dir="ltr"] [aria-describedby][role="link"], div[id][aria-labelledby] a').href);
                         const get_tw_date = new Date(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"] a[dir="ltr"] time, div[dir="ltr"] [aria-describedby][role="link"] time').getAttribute("datetime"));
                         copy_tw_id = get_tw_id_url.pathname.match("/status/(\\d+)")[1];
                         copy_tw_date = `${get_tw_date.getFullYear()}_${(get_tw_date.getMonth() + 1).toString().padStart(2, '0')}_${get_tw_date.getDate().toString().padStart(2, '0')}_${get_tw_date.getHours()}_${get_tw_date.getMinutes()}_${get_tw_date.getSeconds()}`;
