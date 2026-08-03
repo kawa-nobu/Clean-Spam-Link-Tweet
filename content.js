@@ -831,7 +831,7 @@ function main(filter_url, imp_filter_url) {
                                 //ユーザー非表示ワードリスト
                                 if (cslp_settings.user_register_word_list != "") {
                                     //ユーザープロフィール文チェック
-                                    if (cslp_settings.user_register_word_hide_profile) {
+                                    if (cslp_settings.user_register_word_hide_profile && typeof cslt_tweet_info_obj.user_data.description === "string") {
                                         if (user_blocking_word_list_regexp.test(cslt_tweet_info_obj.user_data.description)) {
                                             //console.log("UserWordListProfile=>"+cslt_tweet_info_obj.text)
                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
@@ -1043,7 +1043,7 @@ function main(filter_url, imp_filter_url) {
                                         continue;
                                     }
                                     //ユーザープロフィール文チェック
-                                    if(scam_induction_spam_user_text_regexp){
+                                    if(scam_induction_spam_user_text_regexp && typeof cslt_tweet_info_obj.user_data.description === "string"){
                                         if(scam_induction_spam_user_text_regexp.test(cslt_tweet_info_obj.user_data.description)){
                                             //console.log("ScamInductionDescription=>"+cslt_tweet_info_obj.text)
                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
@@ -1054,7 +1054,7 @@ function main(filter_url, imp_filter_url) {
                                 }
                                 //プロフィール文空白アカウント非表示
                                 if(cslp_settings.blank_profile_hide){
-                                    if(cslt_tweet_info_obj.user_data.description == ""){
+                                    if(cslt_tweet_info_obj.user_data.description === ""){
                                         //console.log("ProfileDescriptionBlank=>"+cslt_tweet_info_obj.text)
                                         cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                         cslt_target_tweet_elem.textContent = "";
@@ -1293,7 +1293,8 @@ function main(filter_url, imp_filter_url) {
                                                 }
                                             }
                                             //返信本文ユーザープロフィール文チェック
-                                            if (affiliate_text_regexp.test(cslt_tweet_info_obj.user_data.description) || affiliate_user_text_regexp.test(cslt_tweet_info_obj.user_data.description)) {
+                                            const user_desc = cslt_tweet_info_obj.user_data.description;
+                                            if (typeof user_desc === "string" && (affiliate_text_regexp.test(user_desc) || affiliate_user_text_regexp.test(user_desc))) {
                                                 //console.log("AffiliateStrictUserDescriptionText=>"+cslt_tweet_info_obj.text)
                                                 cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                                 cslt_target_tweet_elem.textContent = "";
@@ -1303,7 +1304,7 @@ function main(filter_url, imp_filter_url) {
                                             if (cslt_tweet_info_obj.quoted_obj != null) {
                                                 let affiliate_check_quoted_text = cslt_tweet_info_obj.quoted_obj.text.replace(/@\w+\s*/g, "");
                                                 //引用のプロフィール文が空白の場合
-                                                if(cslt_tweet_info_obj.quoted_obj.user_data.description == ""){
+                                                if(cslt_tweet_info_obj.quoted_obj.user_data.description === ""){
                                                     //console.log("AffiliateStrictQuotedProfileDescriptionBlank=>"+cslt_tweet_info_obj.text)
                                                     cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                                     cslt_target_tweet_elem.textContent = "";
@@ -1331,7 +1332,8 @@ function main(filter_url, imp_filter_url) {
                                                     continue;
                                                 }
                                                 //引用返信ユーザー
-                                                if (affiliate_text_regexp.test(cslt_tweet_info_obj.quoted_obj.user_data.description) || affiliate_user_text_regexp.test(cslt_tweet_info_obj.quoted_obj.user_data.description)) {
+                                                const quoted_desc = cslt_tweet_info_obj.quoted_obj.user_data.description;
+                                                if (typeof quoted_desc === "string" && (affiliate_text_regexp.test(quoted_desc) || affiliate_user_text_regexp.test(quoted_desc))) {
                                                     //console.log("AffiliateStrictUserDescriptionText=>"+cslt_tweet_info_obj.text)
                                                     cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                                     cslt_target_tweet_elem.textContent = "";
@@ -1343,7 +1345,8 @@ function main(filter_url, imp_filter_url) {
                                                 let quoted_video_user_hide_flag = false;
                                                 for (let video_index = 0; video_index < cslt_tweet_info_obj.tweet_video_info.length; video_index++) {
                                                     if(cslt_tweet_info_obj.tweet_video_info[video_index]?.video_source_user_info != undefined){
-                                                        if (affiliate_user_text_regexp.test(cslt_tweet_info_obj.tweet_video_info[video_index].video_source_user_info.user_data.description)||affiliate_text_regexp.test(cslt_tweet_info_obj.tweet_video_info[video_index].video_source_user_info.user_data.description)||cslt_tweet_info_obj.tweet_video_info[video_index].video_source_user_info.user_data.description == "") {
+                                                        const video_desc = cslt_tweet_info_obj.tweet_video_info[video_index].video_source_user_info.user_data.description;
+                                                        if (typeof video_desc === "string" && (affiliate_user_text_regexp.test(video_desc) || affiliate_text_regexp.test(video_desc) || video_desc === "")) {
                                                             //console.log("AffiliateStrictVideoQuotedUserDescriptionText=>"+cslt_tweet_info_obj.text)
                                                             quoted_video_user_hide_flag = true;
                                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
@@ -1467,7 +1470,7 @@ function main(filter_url, imp_filter_url) {
                                     const replace_emoji_regexp = /[\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F]/gu;
                                     //絵文字を排除
                                     const delete_emoji_user_name = cslt_tweet_info_obj.user_data.name.replace(replace_emoji_regexp, "");
-                                    const delete_emoji_user_profile = cslt_tweet_info_obj.user_data.description.replace(replace_emoji_regexp, "");
+                                    const delete_emoji_user_profile = cslt_tweet_info_obj.user_data.description?.replace(replace_emoji_regexp, "");
                                     const delete_emoji_text = cslt_tweet_info_obj.text.replace(replace_emoji_regexp, "");
                                     //アラビア文字等ユーザー対象有効時
                                     if (cslp_settings.arabic_user_reply_block == true) {
@@ -1479,7 +1482,7 @@ function main(filter_url, imp_filter_url) {
                                         }
                                     }
                                     //ユーザーアカウントプロフィールテキストチェック
-                                    if (cslp_settings.arabic_user_profile_text_block) {
+                                    if (cslp_settings.arabic_user_profile_text_block && delete_emoji_user_profile != null) {
                                         if (arabic_regexp.test(delete_emoji_user_profile)) {
                                             //console.log("ArabicUserDescription=>" + cslt_tweet_info_obj.text)
                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
@@ -1497,7 +1500,7 @@ function main(filter_url, imp_filter_url) {
                                     //引用チェック
                                     if (cslt_tweet_info_obj.quoted_obj != null) {
                                         const delete_emoji_quoted_user_name = cslt_tweet_info_obj.quoted_obj.user_data.name.replace(replace_emoji_regexp, "");
-                                        const delete_emoji_quoted_user_profile = cslt_tweet_info_obj.quoted_obj.user_data.description.replace(replace_emoji_regexp, "");
+                                        const delete_emoji_quoted_user_profile = cslt_tweet_info_obj.quoted_obj.user_data.description?.replace(replace_emoji_regexp, "");
                                         const delete_emoji_quoted_text = cslt_tweet_info_obj.quoted_obj.text.replace(replace_emoji_regexp, "");
                                         //引用内ユーザー名チェック
                                         if (cslp_settings.arabic_user_reply_block == true) {
@@ -1509,7 +1512,7 @@ function main(filter_url, imp_filter_url) {
                                             }
                                         }
                                         //引用内のユーザー説明文チェック
-                                        if (arabic_regexp.test(delete_emoji_quoted_user_profile)) {
+                                        if (delete_emoji_quoted_user_profile != null && arabic_regexp.test(delete_emoji_quoted_user_profile)) {
                                             //console.log("ArabicUserQuotedDescription=>" + cslt_tweet_info_obj.text)
                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                             cslt_target_tweet_elem.textContent = "";
