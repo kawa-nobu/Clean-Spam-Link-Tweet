@@ -1023,6 +1023,7 @@
 
         const btn = document.createElement("button");
         btn.textContent = "閉じる";
+        btn.style = 'text-wrap-mode: nowrap;';
         btn.addEventListener("click", () => {
           localStorage.setItem("cslt_2607_ref_msg_read", true);
           this.alive = false;
