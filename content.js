@@ -243,6 +243,7 @@ a[data-cslt-is-spam]{
     color: #fff;
     border-radius: 5px;
     font-size: 0.8rem;
+    font-family: system-ui;
     line-height: 1.3;
 }
 [data-cslt-is-spam]:has(> [data-testid="card.wrapper"]) {
