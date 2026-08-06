@@ -45,6 +45,9 @@ let fail_report_tweet_status_ids_regex = /a^/;
 //ブロック・ミュート失敗ID格納
 let fail_block_mute_user_ids = [];
 let fail_block_mute_user_ids_regex = /a^/;
+//新クライアント検出フラグ
+let is_new_client = false;
+
 //報告情報一時保管関数
 function report_ids_temp(id, mode) {
     if (id == null || id == undefined) {
@@ -166,32 +169,6 @@ document.head.insertAdjacentHTML("beforeend", `
 .cslt_report_fail:hover{
     filter: brightness(0) saturate(100%) invert(46%) sepia(95%) saturate(2856%) hue-rotate(1deg) brightness(93%) contrast(102%);
 }
-.cslt_message_wrap{
-    display: none;
-    position: fixed;
-    bottom: 4rem;
-    width: 100vw;
-    height: 2rem;
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-}
-.cslt_message_content{
-    display: flex;
-    height: 100%;
-    background: #1d9bf0;
-    color: white;
-    border-radius: 5px;
-    text-align: center;
-    vertical-align: middle;
-    align-content: center;
-    justify-content: center;
-    align-items: center;
-    font-family: system-ui;
-}
-.cslt_message_content span{
-    margin: 0 1rem 0 1rem;
-}
 .cslt_block_mute_list_func_btn{
     display: flex;
     height: 3rem;
@@ -229,13 +206,69 @@ document.head.insertAdjacentHTML("beforeend", `
 .cslt_report_icon_notification_wrap .cslt_report_icon{
     margin-left: 10px;
 }
+
+.cslt_spam_link_found{
+    position: absolute;
+    z-index: 19;
+    display: inline-flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    background-color: rgba(0,0,0,0.75);
+    color: #fff;
+    font-size: 16px;
+    font-family: system-ui;
+    cursor: default;
+}
+a[data-cslt-is-spam]{
+    pointer-events: none;
+}
+
+/* 旧クライアント向けのCard警告 */
+[data-cslt-is-spam] > [data-testid="card.wrapper"] {
+    position: relative;
+}
+[data-cslt-is-spam] > [data-testid="card.wrapper"]::before {
+    content: "スパムを検出!\\Aヒットしたリンク: " var(--cslt-spam-host) "\\Aクリックでツイートを開く";
+    position: absolute;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-family: system-ui;
+    line-height: 1.3;
+}
+[data-cslt-is-spam]:has(> [data-testid="card.wrapper"]) {
+    pointer-events: none;
+}
+
+/* 新クライアント向けの投稿情報コピーパネル */
+li[cslt_tweet_info]:has(.cslt_tweetdata_copy) {
+  position: relative;
+}
 </style>
 `);
+
+//新クライアント向け情報抽出スクリプト
+const new_tweet_info_script = document.createElement('script');
+new_tweet_info_script.src = chrome.runtime.getURL("cslt_tweet_ctrl_relay.js");
+document.head.appendChild(new_tweet_info_script);
+
+//従来の情報抽出スクリプト
 const tweet_info_script = document.createElement('script');
 tweet_info_script.src = chrome.runtime.getURL("cslt_tweet_ctrl.js");
 document.head.appendChild(tweet_info_script);
-//メッセージパネル挿入
-document.body.insertAdjacentHTML("afterbegin", '<div class="cslt_message_wrap"><div class="cslt_message_content"><span class="cslt_message_span">CSLTメッセージ</span></div></div>');
+
+//メッセージパネル初期化
+const systemMessagePanel = cslt_message_display_init();
 //
 chrome.storage.local.get("cslp_settings", function (value) {
     if (value.cslp_settings != undefined) {
@@ -458,7 +491,13 @@ function main(filter_url, imp_filter_url) {
             } else {
                 console.log("CSLT Settings Found!");
                 cslp_settings = JSON.parse(cslp_settings.cslp_settings);
-                const target_elem = document.getElementById("react-root");
+                //クライアントのルートを取得する
+                let target_elem = document.getElementById("react-root");
+                if(!target_elem){
+                    //新クライアントの場合
+                    target_elem = document.body;
+                    is_new_client = true;
+                }
                 //Write Latest Version
                 cslp_settings.filter_update = json[0].developer_update;
                 cslp_settings.filter_link = json[0].thanks_link;
@@ -504,10 +543,10 @@ function main(filter_url, imp_filter_url) {
                     scam_induction_spam_user_text_regexp = new RegExp(json[1].scam_induction_spam_user_text);
                 }
                 if (cslp_settings.user_register_hideuser.length != 0) {
-                    hide_user_list_regexp = array_regexp_escape(cslp_settings.user_register_hideuser, false);
+                    hide_user_list_regexp = array_regexp_escape(cslp_settings.user_register_hideuser, false, true);
                 }
                 if (cslp_settings.user_register_whitelist.length != 0) {
-                    user_whitelist_regexp = array_regexp_escape(cslp_settings.user_register_whitelist, false);
+                    user_whitelist_regexp = array_regexp_escape(cslp_settings.user_register_whitelist, false, true);
                 }
                 //投稿自動化ツールクライアント正規表現作成
                 if(cslp_settings.auto_tweet_tools_tweet_block){
@@ -703,15 +742,6 @@ function main(filter_url, imp_filter_url) {
                         return false;
                     }
                 }
-                //要素検証用関数
-                function target_element_num(input_element_num, input_selector){
-                    const target_verifi_element = target_elem.querySelectorAll(input_selector);
-                    if(input_element_num == target_verifi_element.length){
-                        return true;
-                    }else{
-                        return false;
-                    }
-                }
                 /* メイン動作関数 */
                 function run() {
                     //const cslt_performance_logging_start = performance.now();
@@ -728,18 +758,20 @@ function main(filter_url, imp_filter_url) {
                     const tweet_root_user_scrname = get_tweet_status_root_user();
                     const target_tweet_ids = [];
                     //ターゲット要素取得(任意のフラグは「:not()」内にOR条件で追加しましょう)
-                    const target_selector = `div[data-testid="cellInnerDiv"][cslt_tweet_info]:not([cslt_tweet_info_mytweet_flag="true"],[cslt_white_list_user],[cslt_hide_flag="true"],[cslt_blue_bypass_flag="true"],[cslt_night_spam_processed_flag="true"],[cslt_process_ok="true"],[cslt_temp_fail_report_flag="fail_tweet"])`;//,[cslt_report_btn_set_flag="true"] ${cslt_exclusion_css_flag}
+                    const not_selector = `:not([cslt_tweet_info_mytweet_flag="true"],[cslt_white_list_user],[cslt_hide_flag="true"],[cslt_blue_bypass_flag="true"],[cslt_night_spam_processed_flag="true"],[cslt_process_ok="true"],[cslt_temp_fail_report_flag="fail_tweet"])`;
+                    const target_selector = `div[data-testid="cellInnerDiv"][cslt_tweet_info]${not_selector},li[cslt_tweet_info]${not_selector}`;//,[cslt_report_btn_set_flag="true"] ${cslt_exclusion_css_flag}
                     const target_tweet_element = target_elem.querySelectorAll(target_selector);
                     /* 非表示等動作 */
                     /* TIPS:新しい非表示機能付けたけど画面が固まってしまう場合、フラグが立っていない可能性があります！
                     非表示処理後は「cslt_hide_flag」の値を「true」にしたフラグを立てましょう。
                     非表示以外の機能追加の場合は分かりやすい任意のフラグを追加してください！*/
                     for (let target_index = 0; target_index < target_tweet_element.length; target_index++) {
-                        //要素取りこぼし検証
-                        if (!target_element_num(target_tweet_element.length, target_selector)) {
-                            break;
-                        }
                         const cslt_target_tweet_elem = target_tweet_element[target_index];
+                        //要素がまだDOM上に残っているかチェックする
+                        if (!cslt_target_tweet_elem.isConnected) continue;
+                        //処理の対象であるかどうかチェックする
+                        if (!cslt_target_tweet_elem.matches(target_selector)) continue;
+                        
                         const cslt_tweet_info_obj = JSON.parse(cslt_target_tweet_elem.getAttribute('cslt_tweet_info'));
                         //フォロー中ユーザー除外設定フラグ
                         let processing_following_user_exclusion_flag = true;
@@ -775,7 +807,7 @@ function main(filter_url, imp_filter_url) {
                                     continue;
                                 }
                             }
-                            /* リツイート欄等では非表示機能を無効化 */
+                            /* リツイートやフォロー欄等では非表示機能を無効化 */
                             if (!is_status_rt() && processing_following_user_exclusion_flag) {
                                 //ホワイトリスト処理
                                 if (cslp_settings.user_register_whitelist.length != 0) {
@@ -800,7 +832,7 @@ function main(filter_url, imp_filter_url) {
                                 //ユーザー非表示ワードリスト
                                 if (cslp_settings.user_register_word_list != "") {
                                     //ユーザープロフィール文チェック
-                                    if (cslp_settings.user_register_word_hide_profile) {
+                                    if (cslp_settings.user_register_word_hide_profile && typeof cslt_tweet_info_obj.user_data.description === "string") {
                                         if (user_blocking_word_list_regexp.test(cslt_tweet_info_obj.user_data.description)) {
                                             //console.log("UserWordListProfile=>"+cslt_tweet_info_obj.text)
                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
@@ -1012,7 +1044,7 @@ function main(filter_url, imp_filter_url) {
                                         continue;
                                     }
                                     //ユーザープロフィール文チェック
-                                    if(scam_induction_spam_user_text_regexp){
+                                    if(scam_induction_spam_user_text_regexp && typeof cslt_tweet_info_obj.user_data.description === "string"){
                                         if(scam_induction_spam_user_text_regexp.test(cslt_tweet_info_obj.user_data.description)){
                                             //console.log("ScamInductionDescription=>"+cslt_tweet_info_obj.text)
                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
@@ -1023,7 +1055,7 @@ function main(filter_url, imp_filter_url) {
                                 }
                                 //プロフィール文空白アカウント非表示
                                 if(cslp_settings.blank_profile_hide){
-                                    if(cslt_tweet_info_obj.user_data.description == ""){
+                                    if(cslt_tweet_info_obj.user_data.description === ""){
                                         //console.log("ProfileDescriptionBlank=>"+cslt_tweet_info_obj.text)
                                         cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                         cslt_target_tweet_elem.textContent = "";
@@ -1262,7 +1294,8 @@ function main(filter_url, imp_filter_url) {
                                                 }
                                             }
                                             //返信本文ユーザープロフィール文チェック
-                                            if (affiliate_text_regexp.test(cslt_tweet_info_obj.user_data.description) || affiliate_user_text_regexp.test(cslt_tweet_info_obj.user_data.description)) {
+                                            const user_desc = cslt_tweet_info_obj.user_data.description;
+                                            if (typeof user_desc === "string" && (affiliate_text_regexp.test(user_desc) || affiliate_user_text_regexp.test(user_desc))) {
                                                 //console.log("AffiliateStrictUserDescriptionText=>"+cslt_tweet_info_obj.text)
                                                 cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                                 cslt_target_tweet_elem.textContent = "";
@@ -1272,7 +1305,7 @@ function main(filter_url, imp_filter_url) {
                                             if (cslt_tweet_info_obj.quoted_obj != null) {
                                                 let affiliate_check_quoted_text = cslt_tweet_info_obj.quoted_obj.text.replace(/@\w+\s*/g, "");
                                                 //引用のプロフィール文が空白の場合
-                                                if(cslt_tweet_info_obj.quoted_obj.user_data.description == ""){
+                                                if(cslt_tweet_info_obj.quoted_obj.user_data.description === ""){
                                                     //console.log("AffiliateStrictQuotedProfileDescriptionBlank=>"+cslt_tweet_info_obj.text)
                                                     cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                                     cslt_target_tweet_elem.textContent = "";
@@ -1300,7 +1333,8 @@ function main(filter_url, imp_filter_url) {
                                                     continue;
                                                 }
                                                 //引用返信ユーザー
-                                                if (affiliate_text_regexp.test(cslt_tweet_info_obj.quoted_obj.user_data.description) || affiliate_user_text_regexp.test(cslt_tweet_info_obj.quoted_obj.user_data.description)) {
+                                                const quoted_desc = cslt_tweet_info_obj.quoted_obj.user_data.description;
+                                                if (typeof quoted_desc === "string" && (affiliate_text_regexp.test(quoted_desc) || affiliate_user_text_regexp.test(quoted_desc))) {
                                                     //console.log("AffiliateStrictUserDescriptionText=>"+cslt_tweet_info_obj.text)
                                                     cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                                     cslt_target_tweet_elem.textContent = "";
@@ -1312,7 +1346,8 @@ function main(filter_url, imp_filter_url) {
                                                 let quoted_video_user_hide_flag = false;
                                                 for (let video_index = 0; video_index < cslt_tweet_info_obj.tweet_video_info.length; video_index++) {
                                                     if(cslt_tweet_info_obj.tweet_video_info[video_index]?.video_source_user_info != undefined){
-                                                        if (affiliate_user_text_regexp.test(cslt_tweet_info_obj.tweet_video_info[video_index].video_source_user_info.user_data.description)||affiliate_text_regexp.test(cslt_tweet_info_obj.tweet_video_info[video_index].video_source_user_info.user_data.description)||cslt_tweet_info_obj.tweet_video_info[video_index].video_source_user_info.user_data.description == "") {
+                                                        const video_desc = cslt_tweet_info_obj.tweet_video_info[video_index].video_source_user_info.user_data.description;
+                                                        if (typeof video_desc === "string" && (affiliate_user_text_regexp.test(video_desc) || affiliate_text_regexp.test(video_desc) || video_desc === "")) {
                                                             //console.log("AffiliateStrictVideoQuotedUserDescriptionText=>"+cslt_tweet_info_obj.text)
                                                             quoted_video_user_hide_flag = true;
                                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
@@ -1436,7 +1471,7 @@ function main(filter_url, imp_filter_url) {
                                     const replace_emoji_regexp = /[\p{Emoji_Presentation}\p{Extended_Pictographic}\uFE0F]/gu;
                                     //絵文字を排除
                                     const delete_emoji_user_name = cslt_tweet_info_obj.user_data.name.replace(replace_emoji_regexp, "");
-                                    const delete_emoji_user_profile = cslt_tweet_info_obj.user_data.description.replace(replace_emoji_regexp, "");
+                                    const delete_emoji_user_profile = cslt_tweet_info_obj.user_data.description?.replace(replace_emoji_regexp, "");
                                     const delete_emoji_text = cslt_tweet_info_obj.text.replace(replace_emoji_regexp, "");
                                     //アラビア文字等ユーザー対象有効時
                                     if (cslp_settings.arabic_user_reply_block == true) {
@@ -1448,7 +1483,7 @@ function main(filter_url, imp_filter_url) {
                                         }
                                     }
                                     //ユーザーアカウントプロフィールテキストチェック
-                                    if (cslp_settings.arabic_user_profile_text_block) {
+                                    if (cslp_settings.arabic_user_profile_text_block && delete_emoji_user_profile != null) {
                                         if (arabic_regexp.test(delete_emoji_user_profile)) {
                                             //console.log("ArabicUserDescription=>" + cslt_tweet_info_obj.text)
                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
@@ -1466,7 +1501,7 @@ function main(filter_url, imp_filter_url) {
                                     //引用チェック
                                     if (cslt_tweet_info_obj.quoted_obj != null) {
                                         const delete_emoji_quoted_user_name = cslt_tweet_info_obj.quoted_obj.user_data.name.replace(replace_emoji_regexp, "");
-                                        const delete_emoji_quoted_user_profile = cslt_tweet_info_obj.quoted_obj.user_data.description.replace(replace_emoji_regexp, "");
+                                        const delete_emoji_quoted_user_profile = cslt_tweet_info_obj.quoted_obj.user_data.description?.replace(replace_emoji_regexp, "");
                                         const delete_emoji_quoted_text = cslt_tweet_info_obj.quoted_obj.text.replace(replace_emoji_regexp, "");
                                         //引用内ユーザー名チェック
                                         if (cslp_settings.arabic_user_reply_block == true) {
@@ -1478,7 +1513,7 @@ function main(filter_url, imp_filter_url) {
                                             }
                                         }
                                         //引用内のユーザー説明文チェック
-                                        if (arabic_regexp.test(delete_emoji_quoted_user_profile)) {
+                                        if (delete_emoji_quoted_user_profile != null && arabic_regexp.test(delete_emoji_quoted_user_profile)) {
                                             //console.log("ArabicUserQuotedDescription=>" + cslt_tweet_info_obj.text)
                                             cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                             cslt_target_tweet_elem.textContent = "";
@@ -1546,45 +1581,11 @@ function main(filter_url, imp_filter_url) {
                         /*元ツイート以外にも適用するにはここから記述*/
                         //ナイト系スパム対策
                         if (cslp_settings.night_spam_block == true && !is_follow_page() && !is_status_rt() && processing_following_user_exclusion_flag && window.location.search.match(/f=user/g) == null) {
+                            cslt_target_tweet_elem.setAttribute("cslt_night_spam_processed_flag", "true");
                             //テキスト内のURLチェック
                             const night_spam_text_urls = cslt_tweet_info_obj.text.replaceAll('\n', ' ').match(/((https?:\/\/|www\.)[^\s/$.?#].[^\s]*)/gi);
                             let night_spam_processed_flag = false;
                             //console.log(night_spam_text_urls)
-                            if (night_spam_text_urls != null && cslt_tweet_info_obj.attached_urls != null) {
-                                for (let text_urls_index = 0; text_urls_index < cslt_tweet_info_obj.attached_urls.length; text_urls_index++) {
-                                    const expanded_url = cslt_tweet_info_obj.attached_urls[text_urls_index].expanded_url;
-                                    const tco_url = cslt_tweet_info_obj.attached_urls[text_urls_index].url;
-                                    if (night_spam_text_urls[text_urls_index] == tco_url) {
-                                        if (block_regexp.test(expanded_url)) {
-                                            //console.log("NightSpamText=>"+cslt_tweet_info_obj.text)
-                                            if (cslp_settings.hit_del == true && !cslt_tweet_info_obj.is_root_tweet) {
-                                                //ヒットツイート非表示有効&元ツイートでない場合非表示
-                                                night_spam_processed_flag = true;
-                                                cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
-                                                cslt_target_tweet_elem.textContent = "";
-                                                break;
-                                            } else {
-                                                //ヒットツイート非表示無効
-                                                const night_spam_text_url_nodelist = cslt_target_tweet_elem.querySelectorAll(`div[data-testid="tweetText"] a[href="${tco_url}"]`);
-                                                let ins_html;
-                                                for (let spam_link_index = 0; spam_link_index < night_spam_text_url_nodelist.length; spam_link_index++) {
-                                                    if (night_spam_text_url_nodelist[spam_link_index].offsetWidth < 230) {
-                                                        ins_html = `<div style="position: absolute;z-index: 99999;width: ${night_spam_text_url_nodelist[spam_link_index].offsetWidth + 1}px;height: ${night_spam_text_url_nodelist[spam_link_index].offsetHeight + 5}px;max-height:25px;display: inline-flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;font-size: 0.5rem;"><p>スパム</p></div>`;
-                                                    } else {
-                                                        ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: ${night_spam_text_url_nodelist[spam_link_index].offsetWidth + 1}px;height: ${night_spam_text_url_nodelist[spam_link_index].offsetHeight + 5}px;max-height:25px;display: inline-flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;"><p>スパムを検出!&nbsp;(${night_spam_text_url_nodelist[spam_link_index].textContent.match(/\/\/([^/]*)/)[1]})</p></div>`;
-                                                    }
-                                                    night_spam_text_url_nodelist[spam_link_index].style.whiteSpace = "nowrap";
-                                                    night_spam_text_url_nodelist[spam_link_index].insertAdjacentHTML("beforebegin", ins_html);
-                                                    if (cslp_settings.hit_url_copy == true) {
-                                                        copy_url(cslt_target_tweet_elem);
-                                                    }
-                                                }
-                                                night_spam_processed_flag = true;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
                             //TwitterCard処理
                             if (cslt_tweet_info_obj.tw_card_obj != null) {
                                 if (block_regexp.test(cslt_tweet_info_obj.tw_card_obj.domain)) {
@@ -1594,10 +1595,26 @@ function main(filter_url, imp_filter_url) {
                                         cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                         cslt_target_tweet_elem.textContent = "";
                                     } else {
-                                        const ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 5px 5px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${cslt_tweet_info_obj.tw_card_obj.domain}<br>クリックでツイートを開く</p></div>`;
+                                        let ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 5px 5px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${cslt_tweet_info_obj.tw_card_obj.domain}<br>クリックでツイートを開く</p></div>`;
                                         //cslt_target_tweet_elem.querySelector(`div[data-testid="card.wrapper"]`).insertAdjacentHTML("beforebegin", ins_html);
-                                        const night_spam_twitter_card_elem = cslt_target_tweet_elem.querySelector(`div[aria-labelledby][id]`);
+                                        let night_spam_twitter_card_elem = cslt_target_tweet_elem.querySelector(`div[aria-labelledby][id], a[href="${cslt_tweet_info_obj.tw_card_obj.card_url}"], button:has(img[src*="card_img"])`);
                                         if (night_spam_twitter_card_elem != null) {
+                                            night_spam_twitter_card_elem.dataset.csltIsSpam = true;
+                                            if (is_new_client) {
+                                                //ボタンのタイプのCardでクリックしても動作しないようにする
+                                                if(night_spam_twitter_card_elem.tagName === "BUTTON") {
+                                                    night_spam_twitter_card_elem.disabled = true;
+                                                }
+                                                //通常タイプのCard(カード本体と提供元リンクが兄弟の場合のみ親へ繰り上げる)
+                                                if (night_spam_twitter_card_elem.tagName === "A" && night_spam_twitter_card_elem.parentElement.querySelectorAll(`a[href="${cslt_tweet_info_obj.tw_card_obj.card_url}"]`).length > 1) {
+                                                    night_spam_twitter_card_elem = night_spam_twitter_card_elem.parentElement;
+                                                }
+                                                night_spam_twitter_card_elem.style.position = "relative";
+                                                ins_html = `<div class="cslt_spam_link_found" style="inset:0;border-radius:5px;"><p>スパムを検出!<br>ヒットしたURL:${cslt_tweet_info_obj.tw_card_obj.domain}<br>クリックでツイートを開く</p></div>`;
+                                            }else{
+                                                night_spam_twitter_card_elem.style.setProperty("--cslt-spam-host", JSON.stringify(cslt_tweet_info_obj.tw_card_obj.domain));
+                                                ins_html = "";
+                                            }
                                             night_spam_twitter_card_elem.insertAdjacentHTML("afterbegin", ins_html);
                                             if (cslp_settings.hit_url_copy == true) {
                                                 copy_url(cslt_target_tweet_elem);
@@ -1618,9 +1635,21 @@ function main(filter_url, imp_filter_url) {
                                         cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
                                         cslt_target_tweet_elem.textContent = "";
                                     } else {
-                                        const ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 5px 5px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${video_card_url.host}<br>クリックでツイートを開く</p></div>`;
-                                        const night_spam_twitter_card_elem = cslt_target_tweet_elem.querySelector(`div[aria-labelledby][id]`);
+                                        let ins_html = `<div class="cslt_spam_link_found" style="position: absolute;z-index: 99999;width: 100%;height: 101%;display: flex;align-items: center;text-align: center;justify-content: center;background-color: rgba(0,0,0,0.75);color: #fff;border-radius: 5px 5px 5px 5px;"><p>スパムを検出!<br>ヒットしたURL:${video_card_url.host}<br>クリックでツイートを開く</p></div>`;
+                                        let night_spam_twitter_card_elem = cslt_target_tweet_elem.querySelector(`div[aria-labelledby][id], a[href="${video_card_url_data.url}"]`);
                                         if (night_spam_twitter_card_elem != null) {
+                                            night_spam_twitter_card_elem.dataset.csltIsSpam = true;
+                                            if (is_new_client) {
+                                                //カード本体と提供元リンクが兄弟なので親へ繰り上げる
+                                                if (night_spam_twitter_card_elem.tagName === "A") {
+                                                    night_spam_twitter_card_elem = night_spam_twitter_card_elem.parentElement;
+                                                }
+                                                night_spam_twitter_card_elem.style.position = "relative";
+                                                ins_html = `<div class="cslt_spam_link_found" style="inset:0;border-radius:5px;"><p>スパムを検出!<br>ヒットしたURL:${video_card_url.host}<br>クリックでツイートを開く</p></div>`;
+                                            }else{
+                                                night_spam_twitter_card_elem.style.setProperty("--cslt-spam-host", `"${video_card_url.host}"`);
+                                                ins_html = "";
+                                            }
                                             night_spam_twitter_card_elem.insertAdjacentHTML("afterbegin", ins_html);
                                             if (cslp_settings.hit_url_copy == true) {
                                                 copy_url(cslt_target_tweet_elem);
@@ -1628,9 +1657,50 @@ function main(filter_url, imp_filter_url) {
                                         }
                                     }
                                 }
+                                night_spam_processed_flag = true;
+                            }
+                            //通常のリンク
+                            if (night_spam_text_urls != null && cslt_tweet_info_obj.attached_urls != null) {
+                                for (let text_urls_index = 0; text_urls_index < cslt_tweet_info_obj.attached_urls.length; text_urls_index++) {
+                                    const expanded_url = cslt_tweet_info_obj.attached_urls[text_urls_index].expanded_url;
+                                    const tco_url = cslt_tweet_info_obj.attached_urls[text_urls_index].url;
+                                    if (night_spam_text_urls[text_urls_index] == tco_url) {
+                                        if (block_regexp.test(expanded_url)) {
+                                            //console.log("NightSpamText=>"+cslt_tweet_info_obj.text)
+                                            if (cslp_settings.hit_del == true && !cslt_tweet_info_obj.is_root_tweet) {
+                                                //ヒットツイート非表示有効&元ツイートでない場合非表示
+                                                night_spam_processed_flag = true;
+                                                cslt_target_tweet_elem.setAttribute("cslt_hide_flag", "true");
+                                                cslt_target_tweet_elem.textContent = "";
+                                                break;
+                                            } else {
+                                                //ヒットツイート非表示無効
+                                                const night_spam_text_url_nodelist = cslt_target_tweet_elem.querySelectorAll(`div[data-testid="tweetText"] a[href="${tco_url}"], a[href="${tco_url}"], a[href="${expanded_url}"]`);
+                                                let ins_html;
+                                                const host = expanded_url.match(/\/\/([^/]*)/)?.[1] ?? "不明";
+                                                for (let spam_link_index = 0; spam_link_index < night_spam_text_url_nodelist.length; spam_link_index++) {
+                                                    if (night_spam_text_url_nodelist[spam_link_index].closest("[data-cslt-is-spam]")) continue;
+                                                    night_spam_text_url_nodelist[spam_link_index].dataset.csltIsSpam = true;
+                                                    const rect = night_spam_text_url_nodelist[spam_link_index].getClientRects()[0];
+                                                    if (rect == null) continue;
+                                                    if (rect.width < 230) {
+                                                        ins_html = `<div class="cslt_spam_link_found" style="inset:0;font-size:0.5rem;"><p>スパム</p></div>`;
+                                                    } else {
+                                                        ins_html = `<div class="cslt_spam_link_found" style="inset:0;"><p>スパムを検出!&nbsp;(${host})</p></div>`;
+                                                    }
+                                                    night_spam_text_url_nodelist[spam_link_index].style.position = "relative";
+                                                    night_spam_text_url_nodelist[spam_link_index].insertAdjacentHTML("afterbegin", ins_html);
+                                                }
+                                                if (cslp_settings.hit_url_copy == true) {
+                                                    copy_url(cslt_target_tweet_elem);
+                                                }
+                                                night_spam_processed_flag = true;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                             if (night_spam_processed_flag) {
-                                cslt_target_tweet_elem.setAttribute("cslt_night_spam_processed_flag", "true");
                                 continue;
                             }
                         }
@@ -1643,14 +1713,14 @@ function main(filter_url, imp_filter_url) {
 
                 /* MutationObserverによる監視 */
                 if (JSON.parse(cslp_settings.filter) == true) {
-                    const observer = new MutationObserver(run)
+                    const observer = new MutationObserver(run);
                     observer.observe(target_elem, {
                         childList: true,
                         attributes: true,
                         characterData: true,
                         subtree: true,
-                        attributeOldValue: true,
-                        characterDataOldValue: true
+                        attributeOldValue: false,
+                        characterDataOldValue: false
                     });
                 }
                 /* 以下非表示以外の機能用関数 */
@@ -1723,6 +1793,7 @@ function main(filter_url, imp_filter_url) {
                     if (is_follow_page() || is_status_rt() && cslp_settings.oneclick_report_follow_list == true || window.location.search.match(/f=user/g)?.length == 1 && cslp_settings.oneclick_report_follow_list == true) {
                         if (cslp_settings.imp_user_block == true && cslp_settings.follow_list_imp_find_user == true) {
                             const follower_user_id = input_element.querySelector('[data-testid="UserCell"] a[role="link"]')?.href.replace(/(https:\/\/x.com\/|https:\/\/twitter.com\/)/g, "");
+                            //TODO: 新クライアントの通知とフォロー画面が確認できていないので、今後対応させる
                             if (imp_user_block_list_regexp.test(follower_user_id) && input_element.querySelector('[data-testid="UserCell"]').getAttribute("cslt_flag") != "follower_imp_ok") {
                                 input_element.querySelector('[data-testid="UserCell"]').setAttribute("cslt_flag", "follower_imp_ok");
                                 input_element.querySelector('[data-testid="UserCell"]').style.backgroundColor = "#ffb9ad";
@@ -1733,24 +1804,42 @@ function main(filter_url, imp_filter_url) {
                         }
                         input_element.querySelector('[data-testid="UserCell"]')?.insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
                     } else {
+                        const is_input_elem_li = input_element.tagName === 'LI';
                         //"follow"
                         switch (btn_mode) {
                             case "follow":
-                                input_element.querySelector('[data-testid="UserCell"]').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                //新クライアントは現状、調査ができないので一旦無効にしておく
+                                if (!is_new_client){
+                                    input_element.querySelector('[data-testid="UserCell"]').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                }
                                 break;
                             case "share":
                                 //従来のボタン配置
-                                input_element.querySelector('div[role="group"]:not([cslt_flag="report_ok"])').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                if(is_input_elem_li){
+                                    input_element.querySelector('button[id^="base-ui-"]:not([cslt_flag="report_ok"])').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                }else{
+                                    input_element.querySelector('div[role="group"]:not([cslt_flag="report_ok"])').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                }
                                 break;
                             case "more":
                                 //もっと見る付近に配置
-                                input_element.querySelector('article').insertAdjacentHTML("beforeend", `<div class="cslt_report_icon_tweetmore_wrap"><a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a></div>`);
+                                if(is_input_elem_li){
+                                    input_element.querySelector('button[aria-haspopup="dialog"]:has(svg[data-icon="icon-more"])').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                }else{
+                                    input_element.querySelector('article').insertAdjacentHTML("beforeend", `<div class="cslt_report_icon_tweetmore_wrap"><a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a></div>`);
+                                }
                                 break;
                             case "notification":
-                                input_element.querySelector('.cslt_report_icon_notification_wrap').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="${notification_user_page_data.user_data.name}(@${notification_user_page_data.user_data.scr_name})を報告"></a>`);
+                                //新クライアントは現状、調査ができないので一旦無効にしておく
+                                if (!is_new_client){
+                                    input_element.querySelector('.cslt_report_icon_notification_wrap').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="${notification_user_page_data.user_data.name}(@${notification_user_page_data.user_data.scr_name})を報告"></a>`);
+                                }
                                 break;
                             case "user_page":
-                                input_element.closest('div[aria-label][tabindex="0"]').querySelector('button[data-testid="userActions"][aria-haspopup="menu"][role="button"]').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_user_page" title="このユーザーを報告"><div class="cslt_report_icon"></div></a>`);
+                                //新クライアントは現状、調査ができないので一旦無効にしておく
+                                if (!is_new_client){
+                                    input_element.closest('div[aria-label][tabindex="0"]').querySelector('button[data-testid="userActions"][aria-haspopup="menu"][role="button"]').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_user_page" title="このユーザーを報告"><div class="cslt_report_icon"></div></a>`);
+                                }
                                 break;
                             default:
 
@@ -1764,13 +1853,24 @@ function main(filter_url, imp_filter_url) {
                     if (cslp_settings.hit_url_copy == true && btn_mode != "notification") {
                         //URLコピー用要素追加
                         let tweet_info_copy_ins_html = `<div id="cslt_tweet_info_copy_${random_id}" class="cslt_tweetdata_copy" style="width: 100%;height: 100%;position: absolute;z-index: 100;display: flex;align-items: center;text-align: center;justify-content: center;font-weight:bold;background-color: rgba(0,0,0,0.75);color: #fff;outline:solid 5px #1173ff;outline-offset:-5px;cursor:copy;visibility:hidden;">クリックで情報をコピー</div>`;
-                        const reply_elem_user_cell_copy = input_element.closest('[data-testid="cellInnerDiv"], [data-testid="UserCell"]:not([cslt_copy_tweet_data_success])');
-                        reply_elem_user_cell_copy.insertAdjacentHTML("afterbegin", tweet_info_copy_ins_html);
-                        copy_tweet_data(reply_elem_user_cell_copy.getAttribute("cslt_tweet_info"), `cslt_tweet_info_copy_${random_id}`);
-                        reply_elem_user_cell_copy.setAttribute('cslt_copy_tweet_data_success', '');
+                        const reply_elem_user_cell_copy = input_element.closest('li[cslt_tweet_info], [data-testid="cellInnerDiv"], [data-testid="UserCell"]:not([cslt_copy_tweet_data_success])');
+                        
+                        //ターゲットとなる投稿本体の存在状態によって追加を決定する
+                        if(reply_elem_user_cell_copy){
+                            reply_elem_user_cell_copy.insertAdjacentHTML("afterbegin", tweet_info_copy_ins_html);
+                            copy_tweet_data(reply_elem_user_cell_copy.getAttribute("cslt_tweet_info"), `cslt_tweet_info_copy_${random_id}`);
+                            reply_elem_user_cell_copy.setAttribute('cslt_copy_tweet_data_success', '');
+                        }
                     }
                     //報告ボタン動作
                     document.getElementById(random_id)?.addEventListener("click", async function () {
+                        //非ログイン状態では報告機能諸々は利用できないので早期にreturnしておく
+                        const ct0 = await ct0_token_get(location.host)
+                        if (!ct0){
+                            systemMessagePanel.setMessage(`ログインされていないため報告ボタンは機能しません`, "error");
+                            return;
+                        };
+
                         let get_cookie_twid = null;
                         //ログインユーザーID取得
                         if (is_use_cookie_mode()) {
@@ -1794,7 +1894,7 @@ function main(filter_url, imp_filter_url) {
                         if (report_confirm == true) {
                             const report_srvurl = cslp_settings.oneclick_developer_reportsrv_url;
                             //console.log(random_id);
-                            const target_element = this.closest('[data-testid="cellInnerDiv"]');
+                            const target_element = this.closest('[data-testid="cellInnerDiv"], li[cslt_tweet_info]');
                             //console.log(target_element)
                             let tweet_info = null;
                             switch (btn_mode) {
@@ -1850,12 +1950,12 @@ function main(filter_url, imp_filter_url) {
                                                                 case "0":
                                                                     if(tweet_info?.is_user_data_only != undefined){
                                                                         if(!tweet_info.is_user_data_only){
-                                                                            cslt_message_display("投稿の報告のみを行います", "message");
+                                                                            systemMessagePanel.setMessage("投稿の報告のみを行います", "info");
                                                                             report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.tweet_id, location.host,"none", false, null).then((report_status) => {
                                                                                 resolve(report_status);
                                                                             });
                                                                         }else{
-                                                                            cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                                            systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                                             report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                                 resolve(report_status);
                                                                             });
@@ -1864,7 +1964,7 @@ function main(filter_url, imp_filter_url) {
                                                                     
                                                                     break;
                                                                 case "1":
-                                                                    cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                                    systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                                     report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                         resolve(report_status);
                                                                     });
@@ -1874,14 +1974,14 @@ function main(filter_url, imp_filter_url) {
                                                                         if(!tweet_info.is_user_data_only){
                                                                             //返信報告
                                                                             report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.tweet_id, location.host,"none", false, null).then((report_status) => {
-                                                                                cslt_message_display("ユーザーの報告を行います", "message");
+                                                                                systemMessagePanel.setMessage("ユーザーの報告を行います", "info");
                                                                                 //ユーザー報告
                                                                                 report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                                     resolve(report_status);
                                                                                 });
                                                                             });
                                                                         }else{
-                                                                            cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                                            systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                                             report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                                 resolve(report_status);
                                                                             });
@@ -1900,7 +2000,7 @@ function main(filter_url, imp_filter_url) {
                                                     }
                                                 } else {
                                                     //フォロー欄などのユーザーを報告した場合
-                                                    cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                    systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                     report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                         resolve(report_status);
                                                     });
@@ -1917,13 +2017,13 @@ function main(filter_url, imp_filter_url) {
                                                 //
                                                 switch (cslp_settings.oneclick_report_target_mode) {
                                                     case "0":
-                                                        cslt_message_display("投稿の報告のみを行います", "message");
+                                                        systemMessagePanel.setMessage("投稿の報告のみを行います", "info");
                                                             report_tweet_community(cslp_settings.oneclick_report_option, target_element, tweet_info.tweet_id, location.host).then((report_status) => {
                                                                 resolve(report_status);
                                                             });
                                                         break;
                                                     case "1":
-                                                        cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                        systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                         report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                             resolve(report_status);
                                                         });
@@ -1938,7 +2038,7 @@ function main(filter_url, imp_filter_url) {
                                                                     });
                                                                 });
                                                             }else{
-                                                                cslt_message_display("ユーザーの報告のみを行います", "message");
+                                                                systemMessagePanel.setMessage("ユーザーの報告のみを行います", "info");
                                                                 report_tweet(cslp_settings.oneclick_report_option, target_element, tweet_info.user_data.user_id, location.host,"user", false, null).then((report_status) => {
                                                                     resolve(report_status);
                                                                 });
@@ -2009,7 +2109,7 @@ function main(filter_url, imp_filter_url) {
                                             //開発者情報提供
                                             if (!tweet_info?.is_user_data_only && btn_mode != "notification" && is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
-                                                cslt_message_display("情報提供の処理を行いました", "message");
+                                                systemMessagePanel.setMessage("情報提供の処理を行いました", "info");
                                             }
                                         }
                                         //this.classList.add("cslt_report_complete");
@@ -2021,7 +2121,7 @@ function main(filter_url, imp_filter_url) {
                                             //開発者情報提供
                                             if (!tweet_info?.is_user_data_only && btn_mode != "notification" && is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
-                                                cslt_message_display("情報提供の処理を行いました", "message");
+                                                systemMessagePanel.setMessage("情報提供の処理を行いました", "info");
                                             }
                                         }
                                         //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
@@ -2043,7 +2143,7 @@ function main(filter_url, imp_filter_url) {
                                         //
                                     } else {
                                         document.querySelector('[id="layers"] div[role="group"] div div')?.click();
-                                        cslt_message_display("自身のツイートにこの操作はできません", "error");
+                                        systemMessagePanel.setMessage("自身のツイートにこの操作はできません", "error");
                                     }
                                 }
                                 if (cslp_settings.oneclick_report_after_mode == '4') {
@@ -2052,7 +2152,7 @@ function main(filter_url, imp_filter_url) {
                                             //開発者情報提供
                                             if (!tweet_info?.is_user_data_only && btn_mode != "notification" && is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
-                                                cslt_message_display("情報提供の処理を行いました", "message");
+                                                systemMessagePanel.setMessage("情報提供の処理を行いました", "info");
                                             }
                                         }
                                         //const tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
@@ -2077,7 +2177,7 @@ function main(filter_url, imp_filter_url) {
                                         //
                                     } else {
                                         document.querySelector('[id="layers"] div[role="group"] div div')?.click();
-                                        cslt_message_display("自身のツイートにこの操作はできません", "error");
+                                        systemMessagePanel.setMessage("自身のツイートにこの操作はできません", "error");
                                     }
                                 }
                                 //開発者情報提供は通知とユーザーページでは無効とする
@@ -2090,12 +2190,12 @@ function main(filter_url, imp_filter_url) {
                                             if (is_follow_page() == false) {
                                                 developer_spam_user_share(report_srvurl, target_element);
                                                 tweet_area_clear(target_element, "report_only");
-                                                cslt_message_display("情報提供の処理を行いました", "message");
+                                                systemMessagePanel.setMessage("情報提供の処理を行いました", "info");
                                             }
                                             //this.classList.add("cslt_report_complete");
                                         } else {
                                             document.querySelector('[id="layers"] div[role="group"] div div')?.click();
-                                            cslt_message_display("自身のツイートにこの操作はできません", "error");
+                                            systemMessagePanel.setMessage("自身のツイートにこの操作はできません", "error");
                                         }
                                     }
                                 }
@@ -2112,10 +2212,10 @@ function main(filter_url, imp_filter_url) {
                                         //console.log(fail_report_tweet_status_ids_regex.test(tweet_info.tweet_id));
                                         switch (btn_mode) {
                                             case "notification":
-                                                cslt_message_display("通知のため、非表示処理はスキップされます", "message");
+                                                systemMessagePanel.setMessage("通知のため、非表示処理はスキップされます", "info");
                                                 break;
                                             case "user_page":
-                                                cslt_message_display("ブロック/ミュート処理は、再読み込みで反映を確認可能です", "message");
+                                                systemMessagePanel.setMessage("ブロック/ミュート処理は、再読み込みで反映を確認可能です", "info");
                                                 break;
                                             default:
                                                 if (cslp_settings.oneclick_report == true && cslp_settings.oneclick_report_after_mode == '0') {
@@ -2137,13 +2237,16 @@ function main(filter_url, imp_filter_url) {
                                 //this.classList.add("cslt_report_complete");
                             } else {
                                 document.querySelector('[id="layers"] div[role="group"] div div')?.click();
-                                cslt_message_display("自身のツイートにこの操作はできません", "error");
+                                systemMessagePanel.setMessage("自身のツイートにこの操作はできません", "error");
                             }
                         }
                     })
                 }
                 //URLコピー関数(ナイト系スパム関連。レガシー)
                 function copy_url(input_element) {
+                    //レガシー機能のため、新クライアントでは無効にする
+                    if(is_new_client) return;
+
                     //コピー変数
                     let copy_tw_id = null;
                     let copy_tw_date = null;
@@ -2158,7 +2261,7 @@ function main(filter_url, imp_filter_url) {
                     document.getElementById(copy_btn_random_id).addEventListener("click", function () {
                         //console.log(this)
                         //ツイート情報取得
-                        const get_tw_id_url = new URL(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"]  a[dir="ltr"], div[dir="ltr"] [aria-describedby][role="link"]').href);
+                        const get_tw_id_url = new URL(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"]  a[dir="ltr"], div[dir="ltr"] [aria-describedby][role="link"], div[id][aria-labelledby] a').href);
                         const get_tw_date = new Date(this.closest('[data-testid="cellInnerDiv"]').querySelector('[data-testid="User-Name"] a[dir="ltr"] time, div[dir="ltr"] [aria-describedby][role="link"] time').getAttribute("datetime"));
                         copy_tw_id = get_tw_id_url.pathname.match("/status/(\\d+)")[1];
                         copy_tw_date = `${get_tw_date.getFullYear()}_${(get_tw_date.getMonth() + 1).toString().padStart(2, '0')}_${get_tw_date.getDate().toString().padStart(2, '0')}_${get_tw_date.getHours()}_${get_tw_date.getMinutes()}_${get_tw_date.getSeconds()}`;
@@ -2337,7 +2440,7 @@ function main(filter_url, imp_filter_url) {
                             }
                             //アドバンスド解析ベースモードからのt.coリンク取得部分移植
                             function get_tco_new(input_element) {
-                                let target_element_a = input_element.parentElement.querySelectorAll('[data-testid="card.wrapper"] a , [data-testid="tweetText"] a');
+                                let target_element_a = input_element.parentElement.querySelectorAll('[data-testid="card.wrapper"] a,  div[aria-labelledby] a, [data-testid="tweetText"] a');
                                 let target_url = null;
                                 if (input_element.parentElement.querySelectorAll('[data-testid="tweetText"] a').length != 0) {
                                     target_element_a = input_element.parentElement.querySelectorAll('[data-testid="tweetText"] a');
@@ -2449,11 +2552,12 @@ function main(filter_url, imp_filter_url) {
             function copy_tweet_data(element_json, target_id) {
                 document.getElementById(target_id).addEventListener("click", function () {
                     const copy_obj = JSON.parse(element_json);
+                    delete copy_obj.user_report_json;
                     delete copy_obj.report_json;
                     const copy_json = JSON.stringify(copy_obj);
                     navigator.clipboard.writeText(copy_json).then(() => {
                         //console.log(copy_json)
-                        cslt_message_display("クリップボードにJSONをコピーしました", "message");
+                        systemMessagePanel.setMessage("クリップボードにJSONをコピーしました", "info");
                     });
                 });
             }
@@ -2499,7 +2603,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
     //console.log(report_req_obj)
     //プロモーションの場合関数終了
     if (report_req_obj.is_promoted == true) {
-        cslt_message_display(`広告のため報告はスキップされます`, "warning");
+        systemMessagePanel.setMessage(`広告のため報告はスキップされます`, "warning");
         return true;
     }
     const get_ct0_token = await new Promise((resolve) => {
@@ -2574,7 +2678,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                         if(input_response.subtasks[0].choice_selection.choices.some(option => option.id === simple_option_map[user_choice])){
                             report_type = simple_option_map[user_choice];
                         }else{
-                            cslt_message_display('設定された報告種別を選択できませんでした。スパムとして報告を行います', "message");
+                            systemMessagePanel.setMessage('設定された報告種別を選択できませんでした。スパムとして報告を行います', "info");
                         }
                         report_second_stage_body = `{\"flow_token\":\"${input_token_convert}\",\"subtask_inputs\":[{\"subtask_id\":\"single-selection\",\"choice_selection\":{\"link\":\"next_link\",\"selected_choices\":[\"${report_type}\"]}}]}`;
                     }else{
@@ -2615,37 +2719,37 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                     if (response.status != 200) {
                         switch (response.status) {
                             case 429:
-                                cslt_message_display(`通報の${now_steps}ステップ目失敗(レートリミット)`, "error");
+                                systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(レートリミット)`, "error");
                                 console.error(response.status);
                                 resolve(false);
                                 //throw new Error(response.status);
                                 break;
                             case 304:
-                                cslt_message_display(`通報の${now_steps}ステップ目失敗(レートリミットの可能性)(Res:${response.status})`, "error");
+                                systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(レートリミットの可能性)(Res:${response.status})`, "error");
                                 console.error(response.status);
                                 resolve(false);
                                 //throw new Error(response.status);
                                 break;
                             default:
-                                cslt_message_display(`通報の${now_steps}ステップ目失敗(Res:${response.status})`, "error");
+                                systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(Res:${response.status})`, "error");
                                 console.error(response.status);
                                 resolve(false);
                                 //throw new Error(response.status);
                                 break;
                         }
                         /*if (response.status == 429) {
-                            cslt_message_display(`通報の${now_steps}ステップ目失敗(レートリミット)`, "error");
+                            systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(レートリミット)`, "error");
                             console.error(response.status);
                             resolve(false);
                             //throw new Error(response.status);
                         } else {
-                            cslt_message_display(`通報の${now_steps}ステップ目失敗(Res:${response.status})`, "error");
+                            systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(Res:${response.status})`, "error");
                             console.error(response.status);
                             resolve(false);
                             //throw new Error(response.status);
                         }*/
                     } else {
-                        cslt_message_display(`通報の${now_steps}ステップ目成功(Res:${response.status})`, "message");
+                        systemMessagePanel.setMessage(`通報の${now_steps}ステップ目成功(Res:${response.status})`, "info");
                         return response.json();
                     }
                 }).then((resp_json_secondstep) => {
@@ -2657,7 +2761,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                             report_finalize = true;
                             send_srv(resp_json_secondstep);
                         } else {
-                            cslt_message_display(`通報の最終ステップ成功`, "message");
+                            systemMessagePanel.setMessage(`通報の最終ステップ成功`, "info");
                             if (fail_report_tweet_status_ids_regex != null && fail_report_tweet_status_ids_regex.test(report_twid) == true) {
                                 report_ids_temp(report_twid, "fail_report_delete");
                             }
@@ -2668,9 +2772,9 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
                     console.log("Report 2nd stage error");
                     //連続報告を行った際に発生するエラーを判定する
                     if(now_steps === 2 && error.message.includes("(reading 'subtasks')")){
-                        cslt_message_display(`通報の${now_steps}ステップ目失敗(連続報告により一時的に制限された可能性)`, "error");
+                        systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(連続報告により一時的に制限された可能性)`, "error");
                     }else{
-                        cslt_message_display(`通報の${now_steps}ステップ目失敗(${error.message})`, "error");
+                        systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(${error.message})`, "error");
                     }
                     report_ids_temp(report_twid, "fail_report");
                     console.log(error);
@@ -2696,14 +2800,14 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
         }).then(response => {
             if (response.status != 200) {
                 if (response.status == 429) {
-                    cslt_message_display(`通報の初期ステップ失敗(レートリミット)`, "error");
+                    systemMessagePanel.setMessage(`通報の初期ステップ失敗(レートリミット)`, "error");
                     throw new Error(response.status);
                 } else {
-                    cslt_message_display(`通報の初期ステップ失敗(Res:${response.status})`, "error");
+                    systemMessagePanel.setMessage(`通報の初期ステップ失敗(Res:${response.status})`, "error");
                     throw new Error(response.status);
                 }
             } else {
-                cslt_message_display(`通報の初期ステップ成功(Res:${response.status})`, "message");
+                systemMessagePanel.setMessage(`通報の初期ステップ成功(Res:${response.status})`, "info");
                 return response.json();
             }
         }).then((resp_json_firststep) => {
@@ -2714,7 +2818,7 @@ async function report_tweet(report_mode, report_element, report_twid, host_mode,
             });
         }).catch(error => {
             console.log("Report 1st stage error");
-            cslt_message_display(`通報の初期ステップ失敗(${error.message})`, "error");
+            systemMessagePanel.setMessage(`通報の初期ステップ失敗(${error.message})`, "error");
             report_ids_temp(report_twid, "fail_report");
             resolve(false);
             console.log(error);
@@ -2736,7 +2840,7 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
     let old_send_url = `https://${access_host}/i/report/status/${report_twid}`;
     //プロモーションの場合関数終了
     if (tweet_info_obj.is_promoted == true) {
-        cslt_message_display(`広告のため報告はスキップされます`, "warning");
+        systemMessagePanel.setMessage(`広告のため報告はスキップされます`, "warning");
         return true;
     }
     switch (report_mode_conv) {
@@ -2801,17 +2905,17 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
                 }).then(response => {
                     if (response.status != 200 && response.status != 302) {
                         if (response.status == 429) {
-                            cslt_message_display(`通報の${now_steps}ステップ目失敗(コミュニティ/レートリミット)`, "error");
+                            systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(コミュニティ/レートリミット)`, "error");
                             console.error(response.status);
                             resolve(false);
                         } else {
-                            cslt_message_display(`通報の${now_steps}ステップ目失敗(コミュニティ/Res:${response.status})`, "error");
+                            systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(コミュニティ/Res:${response.status})`, "error");
                             console.error(response.status);
                             resolve(false);
                         }
                     } else {
                         old_send_url = response.url;
-                        cslt_message_display(`通報の${now_steps}ステップ目成功(コミュニティ/Res:${response.status})`, "message");
+                        systemMessagePanel.setMessage(`通報の${now_steps}ステップ目成功(コミュニティ/Res:${response.status})`, "info");
                         return response.text();
                     }
                 }).then((resp_text_firststep) => {
@@ -2821,7 +2925,7 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
                         send_srv(resp_text_firststep);
                     } else {
                         //console.log("community report end!");
-                        cslt_message_display(`通報の最終ステップ成功(コミュニティ)`, "message");
+                        systemMessagePanel.setMessage(`通報の最終ステップ成功(コミュニティ)`, "info");
                         if (fail_report_tweet_status_ids_regex != null && fail_report_tweet_status_ids_regex.test(report_twid) == true) {
                             report_ids_temp(report_twid, "fail_report_delete");
                         }
@@ -2830,7 +2934,7 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
                 }).catch(error => {
                     console.log("Community Report 2nd stage error");
                     report_ids_temp(report_twid, "fail_report");
-                    cslt_message_display(`通報の${now_steps}ステップ目失敗(コミュニティ/${error.message})`, "error");
+                    systemMessagePanel.setMessage(`通報の${now_steps}ステップ目失敗(コミュニティ/${error.message})`, "error");
                     resolve(false);
                     console.log(error);
                 });
@@ -2853,15 +2957,15 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
             //console.log(response.ok)
             if (response.status != 200) {
                 if (response.status == 429) {
-                    cslt_message_display(`通報の初期ステップ失敗(コミュニティ/レートリミット)`, "error");
+                    systemMessagePanel.setMessage(`通報の初期ステップ失敗(コミュニティ/レートリミット)`, "error");
                     throw new Error(response.status);
                 } else {
-                    cslt_message_display(`通報の初期ステップ失敗(コミュニティ/Res:${response.status})`, "error");
+                    systemMessagePanel.setMessage(`通報の初期ステップ失敗(コミュニティ/Res:${response.status})`, "error");
                     throw new Error(response.status);
                 }
             } else {
                 old_send_url = response.url;
-                cslt_message_display(`通報の初期ステップ成功(コミュニティ/Res:${response.status})`, "message");
+                systemMessagePanel.setMessage(`通報の初期ステップ成功(コミュニティ/Res:${response.status})`, "info");
                 return response.text();
             }
         }).then((resp_text_firststep) => {
@@ -2872,7 +2976,7 @@ function report_tweet_community(report_mode, report_element, report_twid, host_m
             });
         }).catch(error => {
             console.log("Community Report 1st stage error");
-            cslt_message_display(`通報の初期ステップ失敗(コミュニティ/${error.message})`, "error");
+            systemMessagePanel.setMessage(`通報の初期ステップ失敗(コミュニティ/${error.message})`, "error");
             report_ids_temp(report_twid, "fail_report");
             resolve(false);
             console.log(error);
@@ -2905,11 +3009,11 @@ async function block_user(user_id, screen_name, host_mode) {
             }).then((resp) => {
                 if (resp.status != 200) {
                     if (resp.status == 429) {
-                        cslt_message_display("ブロックできません(レートリミット)", "error");
+                        systemMessagePanel.setMessage("ブロックできません(レートリミット)", "error");
                     }
                     throw new Error(resp.status);
                 } else {
-                    cslt_message_display("ブロックしました", "message");
+                    systemMessagePanel.setMessage("ブロックしました", "info");
                     if (fail_block_mute_user_ids_regex != null && fail_block_mute_user_ids_regex.test(user_id) == true) {
                         report_ids_temp(user_id, "fail_block_mute_delete");
                         //console.log(fail_block_mute_user_ids)
@@ -2923,7 +3027,7 @@ async function block_user(user_id, screen_name, host_mode) {
                 console.log("fail block");
                 console.log(error);
                 report_ids_temp(user_id, "fail_block_mute");
-                cslt_message_display(`ブロックできません(${error.message})`, "error");
+                systemMessagePanel.setMessage(`ブロックできません(${error.message})`, "error");
                 resolve(false);
             });
         });
@@ -2959,11 +3063,11 @@ async function mute_user(user_id, screen_name, host_mode) {
             }).then((resp) => {
                 if (resp.status != 200) {
                     if (resp.status == 429) {
-                        cslt_message_display("ミュートできません(レートリミット)", "error");
+                        systemMessagePanel.setMessage("ミュートできません(レートリミット)", "error");
                     }
                     throw new Error(resp.status);
                 } else {
-                    cslt_message_display("ミュートしました", "message");
+                    systemMessagePanel.setMessage("ミュートしました", "info");
                     if (fail_block_mute_user_ids_regex != null && fail_block_mute_user_ids_regex.test(user_id) == true) {
                         report_ids_temp(user_id, "fail_block_mute_delete");
                     }
@@ -2976,7 +3080,7 @@ async function mute_user(user_id, screen_name, host_mode) {
                 console.log("fail mute");
                 console.log(error);
                 report_ids_temp(user_id, "fail_block_mute");
-                cslt_message_display(`ミュートできません(${error.message})`, "error");
+                systemMessagePanel.setMessage(`ミュートできません(${error.message})`, "error");
                 resolve(false);
             });
         });
@@ -3055,7 +3159,7 @@ async function get_block_mute_list(mode, host_mode, cursor_id) {
 
                 if (lists_api_access.status != 200) {
                     if (lists_api_access.status == 429) {
-                        cslt_message_display("リストが取得できません(レートリミット)", "error");
+                        systemMessagePanel.setMessage("リストが取得できません(レートリミット)", "error");
                         if (cursor_str == null) {
                             //console.log(lists_api_access)
                             const limit_date = new Date(lists_api_access.headers.get("x-rate-limit-reset") * 1000);
@@ -3086,7 +3190,7 @@ async function get_block_mute_list(mode, host_mode, cursor_id) {
                     resolve(user_lists_concat);
                 }
             } catch (error) {
-                cslt_message_display(`リストが取得できません(${error.message})`, "error");
+                systemMessagePanel.setMessage(`リストが取得できません(${error.message})`, "error");
                 console.error(error)
                 if (user_lists_concat.length == 0) {
                     resolve(null);
@@ -3104,42 +3208,79 @@ async function get_block_mute_list(mode, host_mode, cursor_id) {
 //開発者提供用関数
 function developer_spam_user_share(report_srv, spam_element) {
     const report_json_del_privacy = JSON.parse(spam_element.getAttribute('cslt_tweet_info'));
-    //提供者情報を含むデータを削除
+    //不要なデータを削除
+    delete report_json_del_privacy.user_report_json;
     delete report_json_del_privacy.report_json;
     //console.log(report_json_del_privacy)
     let tweet_user_id = null;
     let tweet_uesr_name = null;
     let tweet_text = null;
     let tweet_text_length = null;
-    tweet_user_id = spam_element.querySelector('[data-testid="User-Name"]  a').href.replace(/(https:\/\/x.com\/|https:\/\/twitter.com\/)/g, "");
-    tweet_uesr_name = spam_element.querySelector('article [data-testid="User-Name"] a').textContent;
-    tweet_text = `${spam_element.querySelector('article[data-testid="tweet"] [aria-labelledby]')?.innerText}%and%${spam_element.querySelector('[aria-labelledby] div[data-testid="tweetText"]')?.innerText}`;
+    tweet_user_id = report_json_del_privacy.user_data.scr_name;
+    tweet_uesr_name = report_json_del_privacy.user_data.name
+    tweet_text = report_json_del_privacy.text;
     tweet_text_length = tweet_text.length;
     //console.log({tweet_user_id:tweet_user_id, tweet_user_name:tweet_uesr_name, tweet_text:tweet_text, tweet_length:tweet_text_length})
     chrome.runtime.sendMessage({ message: { mode: "developer_report_share", target: { report_srv_url: report_srv, tweet_user_id: tweet_user_id, tweet_user_name: tweet_uesr_name, tweet_text: tweet_text, tweet_length: tweet_text_length, report_json_data: report_json_del_privacy } } }, (response) => { });
 }
-//ユーザーメッセージ表示関数
-async function cslt_message_display(message, mode) {
-    new Promise(() => {
-        document.querySelector(".cslt_message_wrap").style.display = "flex";
-        document.querySelector(".cslt_message_span").textContent = message;
-        switch (mode) {
-            case "warning":
-                document.querySelector(".cslt_message_content").style.backgroundColor = "#f0721d";
-                break;
-            case "error":
-                document.querySelector(".cslt_message_content").style.backgroundColor = "#f01d47";
-                break;
-
-            default:
-                document.querySelector(".cslt_message_content").style.backgroundColor = "#1d9bf0";
-                break;
-        }
-        setTimeout(function () {
-            document.querySelector(".cslt_message_wrap").style.display = "none";
-        }, 5000);
+//ユーザーメッセージ表示領域初期化関数
+function cslt_message_display_init() {
+    //カラーを定義
+    const colors = {
+        info:    "#1d9bf0",
+        warning: "#f0721d",
+        error:   "#f01d47",
+    };
+    //メッセージラッパーを設定
+    const wrap = document.createElement("div");
+    Object.assign(wrap.style, {
+        display: "none",
+        position: "fixed",
+        bottom: "4rem",
+        width: "100vw",
+        height: "2rem",
+        zIndex: "9999",
+        alignItems: "center",
+        justifyContent: "center",
     });
+    //メッセージ本体を設定
+    const content = document.createElement("div");
+    Object.assign(content.style, {
+        display: "flex",
+        height: "100%",
+        padding: "0 10px",
+        color: "white",
+        borderRadius: "5px",
+        textAlign: "center",
+        alignContent: "center",
+        justifyContent: "center",
+        alignItems: "center",
+        fontFamily: "system-ui",
+    });
+
+    const text = document.createElement("span");
+    content.append(text);
+    wrap.append(content);
+    document.body.prepend(wrap);
+
+    let timer = null;
+
+    return {
+        //メッセージ設定の関数を返す
+        setMessage(message, mode = "info", autoCloseMs = 5000){
+            if (!document.contains(wrap)) document.body.prepend(wrap);
+
+            text.textContent = message;
+            content.style.backgroundColor = colors[mode] || colors.info;
+            wrap.style.display = "flex";
+            if (timer) clearTimeout(timer);
+            if (autoCloseMs > 0) {
+                timer = setTimeout(() => { wrap.style.display = "none"; }, autoCloseMs);
+            }
+        },
+    };
 }
+
 async function tweet_area_clear(target_element, mode) {
     new Promise(() => {
         const target_tweet_info = JSON.parse(target_element.getAttribute("cslt_tweet_info"));
@@ -3170,12 +3311,12 @@ function ctid_create() {
     return btoa(String.fromCharCode.apply(null, crypto.getRandomValues(new Uint8Array(70)))).replaceAll("=", "");
 }
 async function ct0_token_get(host_mode) {
-    return await new Promise(async (resolve) => {
+    return await new Promise(async (resolve, reject) => {
         const is_private_mode = chrome.extension.inIncognitoContext;
         //console.log(is_use_cookie_mode())
         if (is_private_mode || is_use_cookie_mode()) {
-            const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)[1];
-            resolve(doc_cookie_ct0);
+            const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)?.[1];
+            resolve(doc_cookie_ct0 || false);
         } else {
             const get_broswer_api_ct0 = await new Promise((api_resolve) => {
                 chrome.runtime.sendMessage({ message: { mode: "ct0_token_get", target: { target_host_mode: host_mode } } }, (response) => {
@@ -3187,8 +3328,8 @@ async function ct0_token_get(host_mode) {
                 resolve(get_broswer_api_ct0);
             } else {
                 //console.log("DocumentMode")
-                const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)[1];
-                resolve(doc_cookie_ct0);
+                const doc_cookie_ct0 = document.cookie.match(/(?:^|;\s*)ct0=([^;]*)/)?.[1];
+                resolve(doc_cookie_ct0 || false);
             }
         }
     })
@@ -3234,7 +3375,7 @@ function block_mute_io() {
                 } else {
                     user_list = await get_block_mute_list("block", location.host, null);
                 }
-                cslt_message_display("ユーザーリストの取得中", "message");
+                systemMessagePanel.setMessage("ユーザーリストの取得中", "info");
                 user_list.forEach((user_data) => {
                     if (user_data.content.itemContent?.user_results != undefined) {
                         //console.log(user_data.content.itemContent.user_results.result.legacy.name)
@@ -3254,13 +3395,13 @@ function block_mute_io() {
                 } else {
                     user_list = await get_block_mute_list("mute", location.host, null);
                 }
-                cslt_message_display("ユーザーリストの取得中", "message");
+                systemMessagePanel.setMessage("ユーザーリストの取得中", "info");
                 user_list.forEach((user_data) => {
                     if (user_data.content.itemContent?.user_results != undefined) {
                         export_user_list.push(user_data.content.itemContent.user_results.result);
                     }
                 });
-                cslt_message_display("ユーザーリストのダウンロードを行います", "message");
+                systemMessagePanel.setMessage("ユーザーリストのダウンロードを行います", "info");
                 download_list(export_user_list, "Mute");
             }
         })
@@ -3288,9 +3429,9 @@ function block_mute_io() {
                     if (confirm(`${input_user_list.length}件のユーザーを現在のリストに追加しますか？`)) {
                         if (window.location.pathname.split("/")[2] == 'blocked') {
                             let now_status_num = 1;
-                            cslt_message_display("処理を開始します", "message");
+                            systemMessagePanel.setMessage("処理を開始します", "info");
                             for (const user_data of input_user_list) {
-                                cslt_message_display(`${now_status_num}/${input_user_list.length}処理中-${user_data.legacy.name}`, "message");
+                                systemMessagePanel.setMessage(`${now_status_num}/${input_user_list.length}処理中-${user_data.legacy.name}`, "info");
                                 //console.log(user_data.rest_id)
                                 //console.log(user_data.legacy.name)
                                 const block_run = await new Promise((resolve) => {
@@ -3311,14 +3452,14 @@ function block_mute_io() {
                                     break;
                                 }
                                 if (now_status_num > input_user_list.length) {
-                                    cslt_message_display("処理が完了しました", "message");
+                                    systemMessagePanel.setMessage("処理が完了しました", "info");
                                 }
                             }
                         } else {
                             let now_status_num = 1;
-                            cslt_message_display("処理を開始します", "message");
+                            systemMessagePanel.setMessage("処理を開始します", "info");
                             for (const user_data of input_user_list) {
-                                cslt_message_display(`${now_status_num}/${input_user_list.length}処理中-${user_data.legacy.name}`, "message");
+                                systemMessagePanel.setMessage(`${now_status_num}/${input_user_list.length}処理中-${user_data.legacy.name}`, "info");
                                 //console.log(user_data.rest_id)
                                 //console.log(user_data.legacy.name)
                                 const mute_run = await new Promise((resolve) => {
@@ -3339,14 +3480,14 @@ function block_mute_io() {
                                     break;
                                 }
                                 if (now_status_num > input_user_list.length) {
-                                    cslt_message_display("処理が完了しました！リストを開き直してください", "message");
+                                    systemMessagePanel.setMessage("処理が完了しました！リストを開き直してください", "info");
                                 }
                             }
                         }
                     }
                 }
                 file_reader.onerror = function () {
-                    cslt_message_display("ファイルの読み込みに失敗しました", "error");
+                    systemMessagePanel.setMessage("ファイルの読み込みに失敗しました", "error");
                 }
             }
             this.value = '';
@@ -3354,12 +3495,12 @@ function block_mute_io() {
     }
 }
 //配列内文字列エスケープ処理&正規表現作成関数
-function array_regexp_escape(input_array, is_group){
-    if(is_group){
-        return new RegExp(`(${input_array.join("<-NO_RP->").replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/<-NO_RP->/g, "|")})`, 'g');
-    }else{
-        return new RegExp(`(${input_array.join("<-NO_RP->").replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/<-NO_RP->/g, "|")})`);
-    }
+function array_regexp_escape(input_array, is_group, anchor=false){
+    let pattern = `(${input_array.map(s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join("|")})`;
+
+    if(anchor) pattern = `^${pattern}$`;
+
+    return new RegExp(pattern, is_group ? "g" : "");
 }
 //任意月以内検出関数
 function is_date_with_month(date, range){
