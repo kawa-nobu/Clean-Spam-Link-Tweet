@@ -856,7 +856,7 @@
 
     //レンダリングされた未処理の投稿をまとめて取得する
     const tweets = document.querySelectorAll(
-      "div[itemscope] ul li:not([cslt_tweet_info])",
+      "main div ul li:not([cslt_tweet_info])",
     );
     for (let i = 0; i < tweets.length; i++) {
       const tweet = tweets[i];
