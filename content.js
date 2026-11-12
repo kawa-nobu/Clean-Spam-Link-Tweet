@@ -1816,7 +1816,7 @@ function main(filter_url, imp_filter_url) {
                             case "share":
                                 //従来のボタン配置
                                 if(is_input_elem_li){
-                                    input_element.querySelector('button[id^="base-ui-"]:not([cslt_flag="report_ok"])').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                    input_element.querySelector('button[data-engagement-action="share"]:not([cslt_flag="report_ok"]), button:has(use[href="#icon-share-ios"]):not([cslt_flag="report_ok"])').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
                                 }else{
                                     input_element.querySelector('div[role="group"]:not([cslt_flag="report_ok"])').insertAdjacentHTML("beforeend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
                                 }
@@ -1824,7 +1824,7 @@ function main(filter_url, imp_filter_url) {
                             case "more":
                                 //もっと見る付近に配置
                                 if(is_input_elem_li){
-                                    input_element.querySelector('button[aria-haspopup="dialog"]:has(svg[data-icon="icon-more"])').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
+                                    input_element.querySelector('button:has(use[href="#icon-more-dots-hor"]):not([cslt_flag="report_ok"]), button[id^="base-ui-"]:not([cslt_flag="report_ok"])').insertAdjacentHTML("afterend", `<a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a>`);
                                 }else{
                                     input_element.querySelector('article').insertAdjacentHTML("beforeend", `<div class="cslt_report_icon_tweetmore_wrap"><a cslt_report_btn id="${random_id}" class="cslt_report_icon" title="報告"></a></div>`);
                                 }
